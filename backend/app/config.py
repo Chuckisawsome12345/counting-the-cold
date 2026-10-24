@@ -1,0 +1,30 @@
+"""Runtime settings, read from environment variables (and the repo-root .env in local dev)."""
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+DATA_DIR = BACKEND_DIR / "data"
+CACHE_DIR = BACKEND_DIR / ".cache"
+
+load_dotenv(REPO_ROOT / ".env")
+
+CIMIS_KEY = os.getenv("CIMIS_KEY", "")
+DEMO_MODE = os.getenv("DEMO_MODE", "0") == "1"
+ALLOWED_ORIGINS = [
+    o.strip()
+    for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+    if o.strip()
+]
+
+# Fixed UTC-8 with no daylight saving, to match CIMIS. Note the inverted sign in the Etc/ zone name.
+PST = "Etc/GMT+8"
+
+# Pins the demo uses; scripts/prewarm.py caches and snapshots these.
+DEMO_PINS = {
+    "butte-durham": (39.640, -121.790),  # orchard near the closed Durham #12 station
+    "davis": (38.5357, -121.7764),
+    "parlier": (36.5974, -119.5040),
+}
