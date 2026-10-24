@@ -1,6 +1,6 @@
 # Counting the Cold: Team Build Plan
 
-Last updated Oct 23, 2026 · [Chuckisawsome12345/counting-the-cold](https://github.com/Chuckisawsome12345/counting-the-cold)
+Last updated Oct 24, 2026 · [Chuckisawsome12345/counting-the-cold](https://github.com/Chuckisawsome12345/counting-the-cold) · **Live:** [counting-the-cold-jfm3.vercel.app](https://counting-the-cold-jfm3.vercel.app) · API [counting-the-cold.vercel.app](https://counting-the-cold.vercel.app)
 
 Three people have 24 hours at Reboot Earth (UC Davis, Oct 23–24 2026) to ship a free web app that gives any California orchard its chill and GDD, checked against CIMIS stations. One-liner: *"Your orchard's chill and heat, not a station's."*
 
@@ -336,8 +336,8 @@ The demo survives any single upstream outage because demo pins are cached and sn
 
 The backend goes on Render and the frontend on Vercel. Deploy the skeleton at H4, not at the end.
 
-- **Backend on Vercel** (issue [#5](https://github.com/Chuckisawsome12345/counting-the-cold/issues/5)): Render's email verification failed, so the backend moved to Vercel too. Project root `backend`; `api/index.py` serves the FastAPI app as a Python function and `backend/vercel.json` routes every path to it and bundles `app/` and `data/`. The cache lives in `/tmp` (per instance, resets on cold starts); committed snapshots cover the demo. Env: `ALLOWED_ORIGINS` = the frontend URL, `CIMIS_KEY` optional.
-- **Frontend on Vercel** (issue [#24](https://github.com/Chuckisawsome12345/counting-the-cold/issues/24)): root `frontend`, Vite preset, `VITE_API_URL=<render url>`. Every PR gets a preview URL.
+- **Backend on Vercel** (issue [#5](https://github.com/Chuckisawsome12345/counting-the-cold/issues/5)), project `counting-the-cold`, live at https://counting-the-cold.vercel.app: Render's email verification failed, so the backend moved to Vercel too. Project root `backend`; `api/index.py` serves the FastAPI app as a Python function and `backend/vercel.json` routes every path to it and bundles `app/` and `data/`. The cache lives in `/tmp` (per instance, resets on cold starts); committed snapshots cover the demo. Env: `ALLOWED_ORIGINS` = the frontend URL, `CIMIS_KEY` optional.
+- **Frontend on Vercel** (issue [#24](https://github.com/Chuckisawsome12345/counting-the-cold/issues/24)), project `counting-the-cold-jfm3`, live at https://counting-the-cold-jfm3.vercel.app: root `frontend`, Vite preset, `VITE_API_URL=<render url>`. Every PR gets a preview URL.
 - **Schedule:** pushes to main auto-deploy both. Final tagged deploy at H21.
 - **Backups:** `render.yaml` (Render) or Railway for the backend, a laptop running `uvicorn` and `npm run preview`, and the recorded video.
 
