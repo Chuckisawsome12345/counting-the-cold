@@ -118,10 +118,48 @@ Before `build_validation.py` has run: `{"built_at": null, "summary": {}, "statio
 {"crops": [{"id": "almond", "label": "Almond (navel orangeworm)", "base_f": 55, "upper_f": 94}]}
 ```
 
-## Stretch endpoints (shapes to be added here before building)
+## GET /api/v1/models
 
-- `GET /api/compare?lat&lon&season`: pin vs nearest station.
-- `GET /api/hullsplit?lat&lon&bloom=YYYY-MM-DD&cultivar=`
-- `GET /api/v1/models?lat&lon`: public API, totals for every model.
+Public, embeddable summary for one location: our adoption path (FNRIC or extension advisors can show "estimate for your exact orchard"). Uses the default windows and the bias correction.
+
+| Param | Default | Notes |
+|---|---|---|
+| `lat`, `lon` | required | California only |
+| `season` | `2025` | Season start year |
+| `crop` | `almond` | GDD preset from `/api/crops` |
+
+```jsonc
+{
+  "mock": false,
+  "location": {"lat": 39.64, "lon": -121.79, "grid_lat": 39.6, "grid_lon": -121.8},
+  "season": "2025-26", "as_of": "2026-10-23", "complete": true, "corrected": true,
+  "models": {
+    "chill_portions": {"value": 62.1, "unit": "CP", "window_start": "2025-09-01", "model": "Dynamic Model (Fishman et al. 1987), FNRIC's preferred chill model"},
+    "chill_hours":    {"value": 1012, "unit": "h",  "window_start": "2025-11-01", "model": "Hours between 32 and 45 °F, through end of February"},
+    "utah_units":     {"value": 1304, "unit": "CU", "window_start": "2025-11-01", "model": "Utah Model (Richardson et al. 1974), running total floored at 0"},
+    "gdd":            {"value": 2450, "unit": "°F-days", "window_start": "2026-01-01", "model": "Average method, base 55 °F, upper 94 °F (almond preset, UC IPM thresholds)"}
+  },
+  "expected_error": {"chill_portions": 2.1, "chill_hours": 48, "utah_units": 61, "gdd": 54},  // or null
+  "nearest_station": {"id": 12, "name": "Durham", "active": false, "distance_km": 4.6},
+  "attribution": "Counting the Cold: Open-Meteo hourly temperatures, bias-corrected against CIMIS stations. ..."
+}
+```
+
+## GET /api/grid
+
+One metric on the precomputed Central Valley grid (about 0.25°), for the statewide map layer. Built offline by `backend/scripts/build_grid.py` into `backend/data/grid/<season>.json`.
+
+| Param | Default | Notes |
+|---|---|---|
+| `season` | `2025` | Season start year |
+| `metric` | `chill_portions` | One of the four metric keys |
+
+```json
+{"season": "2025-26", "metric": "chill_portions", "unit": "CP", "step_deg": 0.25,
+ "built_at": "2026-10-24T02:00:00+00:00",
+ "cells": [{"lat": 39.5, "lon": -121.75, "value": 61.8}]}
+```
+
+Before the grid is built: `"built_at": null, "cells": []`.
 
 All numbers on this page are illustrative.

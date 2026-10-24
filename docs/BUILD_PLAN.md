@@ -130,7 +130,7 @@ counting-the-cold/
 │   ├── requirements.txt  pytest.ini                        # (A)
 │   ├── app/
 │   │   ├── main.py config.py schemas.py                    # (A)
-│   │   ├── routes/     point.py stations.py validation.py meta.py   # (A)
+│   │   ├── routes/     point.py stations.py validation.py meta.py public.py grid.py   # (A)
 │   │   ├── sources/    openmeteo.py cache.py snapshots.py  # (A); cimis.py (B)
 │   │   ├── pipeline/   build_point.py timeseries.py        # (A)
 │   │   ├── calc/       chill.py gdd.py seasons.py gaps.py
@@ -140,7 +140,8 @@ counting-the-cold/
 │   │   ├── fetch_cimis.py        # (B) resumable download -> data/cimis/
 │   │   ├── build_validation.py   # (B) -> data/validation.json
 │   │   ├── prewarm.py            # (A) demo pins -> cache/snapshots
-│   │   └── make_mock.py          # (A) synthetic /api/point responses
+│   │   ├── make_mock.py          # (A) synthetic /api/point responses
+│   │   └── build_grid.py         # (A) statewide chill grid -> data/grid/
 │   ├── data/
 │   │   ├── stations.json         # 9 stations, Durham active=false (A)
 │   │   ├── mock_point*.json      # synthetic responses served until the pipeline lands (A)
@@ -282,7 +283,7 @@ These three additions make the demo land harder with judges, honestly: each one 
 **Details:**
 
 - **Accuracy map:** stations from `/api/stations`, errors from `/api/validation`. A toggle or animation goes from raw to corrected MAE per station; Durham gets a callout.
-- **Statewide chill map:** `scripts/build_grid.py` (A) computes one season's corrected chill portions on a coarse grid (about 0.25°, Central Valley only, roughly 150 cells) and commits `data/grid/<season>.json`. It runs offline once, so it costs nothing at demo time and stays inside Open-Meteo's rate budget. `/api/grid` serves it; the shape goes in `docs/api-contract.md` first.
+- **Statewide chill map:** `scripts/build_grid.py` (A) computes one season's corrected chill portions on a coarse grid (about 0.25°, Central Valley floor only, 96 cells) and commits `data/grid/<season>.json`. It runs offline once, so it costs nothing at demo time and stays inside Open-Meteo's rate budget. `/api/grid` serves it; the shape goes in `docs/api-contract.md` first.
 - **ML bias correction:** gradient-boosted trees (scikit-learn) predicting the hourly CIMIS − gridded offset from month, hour, gridded temperature, elevation, and distance to the coast. Same leave-one-station-out split as the table, so the comparison is fair. `validation.json` reports both MAEs. If ML doesn't beat the table, we say so; the honest comparison is itself a good demo moment.
 
 ## Scope: one workflow, fully working

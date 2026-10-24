@@ -11,8 +11,8 @@ Three people, three roles, separate folders. If you only follow one rule: **edit
 | `backend/app/main.py`, `config.py`, `schemas.py` | A: Data & API |
 | `backend/app/routes/`, `backend/app/pipeline/` | A |
 | `backend/app/sources/` except `cimis.py` | A |
-| `backend/scripts/prewarm.py`, `backend/scripts/make_mock.py` | A |
-| `backend/data/stations.json`, `backend/data/snapshots/`, `backend/data/mock_point*.json` | A |
+| `backend/scripts/prewarm.py`, `backend/scripts/make_mock.py`, `backend/scripts/build_grid.py` | A |
+| `backend/data/stations.json`, `backend/data/snapshots/`, `backend/data/mock_point*.json`, `backend/data/grid/` | A |
 | `backend/requirements.txt`, `backend/pytest.ini` | A |
 | `backend/tests/test_api.py`, `backend/tests/test_sources.py`, `backend/tests/test_pipeline.py` | A |
 | Root files (`README.md`, `.gitignore`, `.env.example`, `.github/`) | A |
