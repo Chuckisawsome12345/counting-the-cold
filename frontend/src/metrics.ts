@@ -1,4 +1,4 @@
-import type { Metric, SeasonInfo } from './api/types'
+import type { Metric, PointResponse, SeasonInfo } from './api/types'
 
 export interface MetricInfo {
   metric: Metric
@@ -60,3 +60,17 @@ export const METRICS: MetricInfo[] = [
   },
 ]
 
+
+// True when a measure has no data at all: zero now and zero in every one of the 10 past seasons. A real orchard never
+// has that (chill portions, for one, accumulate every winter), so it means the data service is not calculating the
+// measure yet, and the UI says so instead of drawing a flat line of zeros.
+export function isUnavailable(data: PointResponse, metric: Metric): boolean {
+  if (data.totals[metric] !== 0) return false
+  if (data.history.some((h) => h.totals[metric] !== 0)) return false
+  return !data.forecast?.daily.some((d) => d[metric] !== 0)
+}
+
+// The measure to open on: the first one that has data, so the page never greets anyone with an empty chart.
+export function firstAvailable(data: PointResponse): Metric {
+  return METRICS.find((m) => !isUnavailable(data, m.metric))?.metric ?? METRICS[0].metric
+}
