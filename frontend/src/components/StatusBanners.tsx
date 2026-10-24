@@ -1,5 +1,6 @@
 import { ApiError } from '../api/client'
-import { ClockIcon, WarnIcon } from './icons'
+import { formatDate } from '../geo'
+import { ClockIcon, OfflineIcon, WarnIcon } from './icons'
 
 // Data older than its normal refresh: served from an expired cache entry (quality.stale). The contract has no
 // timestamp for it, so the wording is generic.
@@ -12,6 +13,21 @@ export function StaleBanner({ onRefresh }: { onRefresh: () => void }) {
       </span>
       <button type="button" className="chip" onClick={onRefresh}>
         Refresh
+      </button>
+    </div>
+  )
+}
+
+// No signal: the numbers on screen are the last ones saved on this phone.
+export function OfflineBanner({ asOf, onRetry }: { asOf: string; onRetry: () => void }) {
+  return (
+    <div className="banner warn" role="status">
+      <OfflineIcon />
+      <span className="banner-text">
+        <strong>You're offline.</strong> Showing the saved numbers, as of {formatDate(asOf)}.
+      </span>
+      <button type="button" className="chip" onClick={onRetry}>
+        Try again
       </button>
     </div>
   )

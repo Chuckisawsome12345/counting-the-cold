@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { fetchPoint, type PointParams } from '../api/client'
+import { fetchPoint, servedOffline, type PointParams } from '../api/client'
 import type { PointResponse } from '../api/types'
 
 // Loads /api/point. The last good response stays in `data` while a new request runs or after it fails, so the
@@ -28,5 +28,8 @@ export function usePoint(params: PointParams | null) {
   const reload = useCallback(() => setAttempt((n) => n + 1), [])
 
   // Identifies one request, so UI state tied to an error ("show last numbers") resets when a new request starts.
-  return { data, error, loading, reload, requestId: `${key}#${attempt}` }
+  // True when `data` is a saved copy served because there is no signal.
+  const offline = data !== null && servedOffline.has(data)
+
+  return { data, error, loading, offline, reload, requestId: `${key}#${attempt}` }
 }
