@@ -2127,3 +2127,155 @@ select {
   }
 }
 
+
+/* ---------- Try the bot (Telegram replies, without Telegram) ---------- */
+
+.bot-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.bot-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.bot-head h2 {
+  margin: var(--space-1) 0;
+  font-size: 18px;
+}
+
+.bot-head p {
+  margin: 0;
+  color: var(--ink2);
+}
+
+.bot-open {
+  flex: none;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.bot-log {
+  position: relative; /* offsetTop of the bubbles is measured from here */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 420px;
+  overflow-y: auto;
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--bg2);
+}
+
+.bubble {
+  max-width: 85%;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bubble.bot {
+  align-self: flex-start;
+  border: 1px solid var(--line);
+  border-bottom-left-radius: var(--space-1);
+  background: var(--solid);
+  color: var(--ink);
+}
+
+.bubble.user {
+  align-self: flex-end;
+  border-bottom-right-radius: var(--space-1);
+  background: var(--seg-on-bg);
+  color: var(--seg-on-ink);
+}
+
+.bubble.failed {
+  border-color: var(--heatink);
+  color: var(--heatink);
+}
+
+.bubble a {
+  color: var(--coldink);
+}
+
+.bubble.typing {
+  display: flex;
+  gap: 4px;
+}
+
+.bubble.typing i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink3);
+  animation: bot-typing 1s infinite ease-in-out;
+}
+
+.bubble.typing i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.bubble.typing i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes bot-typing {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+.bot-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.bot-quick .chip,
+.bot-form .chip {
+  min-height: 36px;
+}
+
+.bot-form {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.bot-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-pill);
+  background: var(--solid);
+}
+
+@media (max-width: 600px) {
+  .bot-head {
+    flex-direction: column;
+  }
+
+  .bubble {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble.typing i {
+    animation: none;
+  }
+}
