@@ -83,15 +83,22 @@ def fetch_station(
 
 
 def detect_api(key: str, client: httpx.Client | None = None) -> str:
-    """Which endpoint accepts this key: "legacy" or "stationweb". One tiny request each at most."""
+    """Which endpoint accepts this key: "legacy" or "stationweb". One tiny request each at most.
+
+    Keys issued since the gateway launched (32 hex characters) only work on "stationweb"; the
+    legacy endpoint's firewall answers them with a "Request Rejected" HTML page.
+    """
     day = date(2024, 1, 1)
+    errors = []
     for api in APIS:
         try:
             fetch_station(6, day, day, hourly=False, key=key, api=api, client=client)
             return api
-        except CimisAuthError:
-            continue
-    raise CimisAuthError("CIMIS rejected the key on both APIs. Check CIMIS_KEY in the repo-root .env.")
+        except CimisError as e:
+            errors.append(f"{api}: {e}")
+    if all("401" in e or "403" in e or INVALID_KEY_ERROR in e for e in errors):
+        raise CimisAuthError("CIMIS rejected the key on both APIs. Check CIMIS_KEY in the repo-root .env.")
+    raise CimisError("Neither CIMIS API answered with data. " + " | ".join(errors))
 
 
 def records(raw: dict) -> list[dict]:
@@ -183,7 +190,10 @@ def _get(url: str, params: dict, headers: dict, key: str, client: httpx.Client |
         try:
             return response.json()
         except ValueError:
-            raise CimisError("CIMIS returned a 200 that isn't JSON", status=200) from None
+            # e.g. the legacy endpoint's firewall page: <title>Request Rejected</title>
+            title = response.text.split("<title>", 1)[-1].split("</title>", 1)[0] if "<title>" in response.text else ""
+            detail = f" ({_scrub(title.strip()[:80], key)})" if title else ""
+            raise CimisError(f"CIMIS returned a 200 that isn't JSON{detail}", status=200) from None
     text = _scrub(response.text.strip()[:300], key)
     code = next((c for c in (VOLUME_ERROR, INVALID_KEY_ERROR) if c in text), None)
     if code is None and "[ERR" in text:
@@ -194,13 +204,13 @@ def _get(url: str, params: dict, headers: dict, key: str, client: httpx.Client |
 
 
 def _check_units(payload: dict) -> None:
-    # unitOfMeasure=E should give "(F)"; checked before anything is stored.
+    # unitOfMeasure=E gives "(F)" on the legacy API and "(°F)" on stationweb; checked before anything is stored.
     for r in records(payload):
         for name in (HOURLY_FIELD, *DAILY_FIELDS):
             item = field(r, name)
             if isinstance(item, dict):
                 unit = (field(item, "Unit") or "").strip()
-                if unit and unit != "(F)":
+                if unit and unit.strip("()").replace("°", "").strip().upper() != "F":
                     raise CimisError(f"expected °F from CIMIS, got {unit} for {name}")
 
 

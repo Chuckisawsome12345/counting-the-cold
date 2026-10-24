@@ -187,6 +187,26 @@ def test_detect_api_falls_back_to_stationweb():
     assert cimis.detect_api(KEY, httpx.Client(transport=httpx.MockTransport(handler))) == "stationweb"
 
 
+def test_detect_api_skips_the_legacy_firewall_page():
+    # Real behaviour on Oct 24 2026 for a 32-hex key: the legacy endpoint returns a 200 HTML page.
+    rejected = "<html><head><title>Request Rejected</title></head><body>The requested URL was rejected.</body></html>"
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/api/data":
+            return httpx.Response(200, text=rejected, headers={"content-type": "text/html; charset=utf-8"})
+        reading = {"Value": "60.0", "Qc": " ", "Unit": "(°F)"}  # stationweb's spelling
+        recs = [{"Date": "2024-01-01", "DayAirTmpMax": reading, "DayAirTmpMin": reading}]
+        return httpx.Response(200, json={"Data": {"Providers": [{"Records": recs}]}})
+
+    assert cimis.detect_api(KEY, httpx.Client(transport=httpx.MockTransport(handler))) == "stationweb"
+
+
+def test_non_json_200_names_the_page():
+    page = httpx.Response(200, text="<html><head><title>Request Rejected</title></head></html>")
+    with pytest.raises(cimis.CimisError, match="Request Rejected"):
+        cimis.fetch_station(6, date(2024, 1, 1), date(2024, 1, 1), True, KEY, "legacy", responding(page))
+
+
 def test_detect_api_gives_up_when_both_reject_the_key():
     with pytest.raises(cimis.CimisAuthError, match="both APIs"):
         cimis.detect_api(KEY, responding(httpx.Response(403, json="[ERR1006-INVALID APP KEY] x"), httpx.Response(401, json={})))
