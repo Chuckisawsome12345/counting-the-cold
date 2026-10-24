@@ -1285,6 +1285,23 @@ select {
 }
 
 
+/* A measure the data service has not calculated yet: said plainly, in place of a flat chart */
+.unavailable {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: 200px;
+  padding: var(--space-5);
+  color: var(--ink2);
+  text-align: center;
+}
+
+.unavailable strong {
+  color: var(--ink);
+  font-size: 16px;
+}
+
 /* ---------- Data quality, correction, and page states ---------- */
 
 .right-stack,

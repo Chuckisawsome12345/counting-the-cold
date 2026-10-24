@@ -8,13 +8,19 @@ const percent = (weight: number) => {
   return p === 0 && weight > 0 ? '<1%' : `${p}%`
 }
 
-export default function CorrectionInfo({ correction }: { correction: Correction }) {
+// `requested` is the bias-corrected switch. The data service can answer "not applied" even when it is on, if it has
+// no calibration data for the spot yet; the wording differs because "turn it on" would be wrong.
+export default function CorrectionInfo({ correction, requested }: { correction: Correction; requested: boolean }) {
   const { applied, stations } = correction
   return (
     <section className="card correction-card">
       <span className="lbl">Correction</span>
       {!applied ? (
-        <p>Raw estimate shown. Turn on bias correction to calibrate with nearby stations.</p>
+        <p>
+          {requested
+            ? "Raw estimate shown. Calibration data for this spot isn't available yet."
+            : 'Raw estimate shown. Turn on bias correction to calibrate with nearby stations.'}
+        </p>
       ) : stations.length === 0 ? (
         <p>Bias correction applied.</p>
       ) : (

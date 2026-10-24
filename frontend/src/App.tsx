@@ -16,6 +16,7 @@ import { DEMO_PINS } from './demoPins'
 import { inCalifornia } from './geo'
 import { usePoint } from './hooks/usePoint'
 import { useTheme } from './hooks/useTheme'
+import { firstAvailable } from './metrics'
 import { DEFAULT_SETTINGS, type Settings } from './settings'
 
 export default function App() {
@@ -24,7 +25,7 @@ export default function App() {
   const [pin, setPin] = useState<[number, number]>([DEMO_PINS[0].lat, DEMO_PINS[0].lon])
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [stations, setStations] = useState<Station[]>([])
-  const [metric, setMetric] = useState<Metric>('chill_portions')
+  const [chosenMetric, setMetric] = useState<Metric | null>(null) // null until a tab is clicked
   const [locateMessage, setLocateMessage] = useState<string | null>(null)
   const insideCalifornia = inCalifornia(pin[0], pin[1])
   // No request for pins outside California: the API would answer 422.
@@ -34,6 +35,8 @@ export default function App() {
   const showLast = showLastFor === requestId
   const showErrorCard = error !== null && !(showLast && data !== null)
   const stale = data?.quality.stale === true && !error
+  // Until someone clicks a tab, open on the first measure that has data.
+  const metric: Metric = chosenMetric ?? (data ? firstAvailable(data) : 'chill_portions')
 
   const pick = (lat: number, lon: number) => {
     setLocateMessage(null)
@@ -115,7 +118,7 @@ export default function App() {
                   <SeasonTotals data={data} metric={metric} />
                   <div className="stack">
                     <DataQualityBadge quality={data.quality} />
-                    <CorrectionInfo correction={data.correction} />
+                    <CorrectionInfo correction={data.correction} requested={settings.corrected} />
                   </div>
                 </div>
               </div>
