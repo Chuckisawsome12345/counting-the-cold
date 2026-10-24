@@ -1,4 +1,5 @@
 import type { PointResponse, StationsResponse, ValidationResponse } from './types'
+import { MOCK_STATIONS } from './mock/stations'
 import mockCompleteUrl from './mock/point.json?url'
 import mockCurrentUrl from './mock/point_current.json?url'
 
@@ -32,7 +33,7 @@ export function fetchPoint(params: PointParams): Promise<PointResponse> {
 }
 
 export function fetchStations(): Promise<StationsResponse> {
-  if (USE_MOCK) return Promise.resolve({ stations: [] })
+  if (USE_MOCK) return Promise.resolve({ stations: MOCK_STATIONS })
   return getJson(`${API_BASE}/api/stations`)
 }
 
