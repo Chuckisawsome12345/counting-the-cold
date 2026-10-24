@@ -1422,6 +1422,15 @@ select {
   font-weight: 600;
 }
 
+.info-body .info-foot {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+  color: var(--ink3);
+  font-size: 12px;
+  line-height: 18px;
+}
+
 .info-backdrop {
   position: fixed;
   inset: 0;

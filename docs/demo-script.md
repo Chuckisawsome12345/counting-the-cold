@@ -20,7 +20,7 @@ The script only works if these have landed. Check each one before rehearsing; if
 ## Pitch essentials (say these, in this order)
 
 - **Opening stat:** "Durham's station ran for 43 years, from 1982 until it shut down on July 30, 2025." (from the CIMIS station list)
-- **Official standards:** "Same models FNRIC uses: chill portions, chill hours, Utah, and UC IPM degree days." Say "checked against FNRIC's published numbers" **only** if B confirms the golden tests (#16) pass.
+- **Official standards:** "Same models FNRIC uses: chill portions, chill hours, Chill Units (the Utah model), and UC IPM degree days." Say "checked against FNRIC's published numbers" **only** if B confirms the golden tests (#16) pass.
 - **Closing stat:** "Corrected, we land within Y chill portions of a real station." Y is the corrected number on the accuracy tab. Never a guess.
 - **Adoption:** "We don't replace CIMIS. We fill its gaps, and FNRIC can embed it with our open API."
 
@@ -65,7 +65,7 @@ Use the **light** theme (it projects better) at normal browser zoom. Start on th
 
 **Inspiration.** CIMIS station 12 in Durham, Butte County, ran for 43 years and shut down on July 30, 2025. Almond growers who relied on it lost their chill count. Many orchards are far from any station, or in a different microclimate.
 
-**What it does.** Drop a pin on any California orchard and see chill portions, chill hours, Utah units and growing degree days for the season so far, compared with the last 10 seasons, plus a 14-day projection. Estimates come from gridded weather data (Open-Meteo), bias-corrected with CIMIS stations, including closed ones. A second tab shows how accurate it is, as a map where each station's error bubble shrinks from raw (X) to corrected (Y) across 9 stations. A chill layer colours the Central Valley, and the app keeps the last orchard on the phone so it opens with no signal.
+**What it does.** Drop a pin on any California orchard and see chill portions, chill hours, Chill Units and growing degree days for the season so far, compared with the last 10 seasons, plus a 14-day projection. Estimates come from gridded weather data (Open-Meteo), bias-corrected with CIMIS stations, including closed ones. A second tab shows how accurate it is, as a map where each station's error bubble shrinks from raw (X) to corrected (Y) across 9 stations. A chill layer colours the Central Valley, and the app keeps the last orchard on the phone so it opens with no signal.
 
 **How we built it.** FastAPI, React, Leaflet and Recharts. The chill and degree-day math is pure Python with tests; the correction is a month-by-hour offset table per station, blended by distance. [Add: validation method once B confirms.]
 
