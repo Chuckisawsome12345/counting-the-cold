@@ -24,10 +24,12 @@ export interface PointParams {
 // no answer at all (network down).
 export class ApiError extends Error {
   status?: number
-  constructor(message: string, status?: number) {
+  detail?: string // the backend's own explanation (FastAPI's "detail"), safe to show to a person
+  constructor(message: string, status?: number, detail?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
+    this.detail = detail
   }
 }
 
@@ -38,7 +40,11 @@ async function getJson<T>(url: string): Promise<T> {
   } catch {
     throw new ApiError(`${url} could not be reached`)
   }
-  if (!res.ok) throw new ApiError(`${url} failed: ${res.status}`, res.status)
+  if (!res.ok) {
+    // e.g. 503 "Demo mode: this spot isn't preloaded. Try one of the demo pins."
+    const body = await res.json().catch(() => null)
+    throw new ApiError(`${url} failed: ${res.status}`, res.status, typeof body?.detail === 'string' ? body.detail : undefined)
+  }
   return (await res.json()) as T
 }
 
