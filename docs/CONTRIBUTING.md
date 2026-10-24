@@ -2,6 +2,8 @@
 
 Three people, three roles, separate folders. If you only follow one rule: **edit only the files your role owns.**
 
+**Who's who:** A (Data & API) is [@Chuckisawsome12345](https://github.com/Chuckisawsome12345) · B (Science & Validation) is [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) · C (Frontend & Demo) is [@Zooomer69](https://github.com/Zooomer69). `.github/CODEOWNERS` encodes the table below.
+
 ## Folder ownership
 
 | Path | Owner |
@@ -28,10 +30,9 @@ Need something in a folder you don't own? Comment on the owner's issue or ping t
 
 ## Workflow
 
-1. Pick an issue with your role label and assign yourself:
+1. Your role's issues are assigned to you. Take the next one by milestone:
    ```bash
-   gh issue list --label role:science
-   gh issue edit 7 --add-assignee @me
+   gh issue list --assignee @me
    ```
 2. Branch from fresh `main`, prefixed by role (`data/`, `sci/`, `ui/`):
    ```bash

@@ -1,0 +1,27 @@
+# Folder owners, mirroring docs/CONTRIBUTING.md. GitHub requests the owner's review when a PR
+# touches their files (reviews aren't required to merge). Later lines win.
+# A (Data & API): @Chuckisawsome12345 · B (Science & Validation): @karthikmaheshwaran · C (Frontend & Demo): @Zooomer69
+
+# A: root files and everything not listed below
+*                                       @Chuckisawsome12345
+
+# B
+/backend/app/calc/                      @karthikmaheshwaran
+/backend/app/validation/                @karthikmaheshwaran
+/backend/app/sources/cimis.py           @karthikmaheshwaran
+/backend/scripts/fetch_cimis.py         @karthikmaheshwaran
+/backend/scripts/build_validation.py    @karthikmaheshwaran
+/backend/data/cimis/                    @karthikmaheshwaran
+/backend/data/validation.json           @karthikmaheshwaran
+/backend/tests/                         @karthikmaheshwaran
+/backend/tests/test_api.py              @Chuckisawsome12345
+/backend/tests/test_sources.py          @Chuckisawsome12345
+
+# C
+/frontend/                              @Zooomer69
+/docs/demo-script.md                    @Zooomer69
+
+# Shared: everyone is asked to review
+/docs/api-contract.md                   @Chuckisawsome12345 @karthikmaheshwaran @Zooomer69
+/docs/BUILD_PLAN.md                     @Chuckisawsome12345 @karthikmaheshwaran @Zooomer69
+/docs/BUILD_PLAN.pdf                    @Chuckisawsome12345 @karthikmaheshwaran @Zooomer69
