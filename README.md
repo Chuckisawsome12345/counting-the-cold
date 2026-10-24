@@ -57,7 +57,7 @@ cd frontend && npm run build
 
 ## Deploy
 
-- **Backend (Vercel project `counting-the-cold`, https://counting-the-cold.vercel.app):** root `backend` (Python function `api/index.py`, routing in `backend/vercel.json`). Pushes to `main` redeploy. Env: `ALLOWED_ORIGINS` = the frontend URL; `CIMIS_KEY` is optional (only the offline CIMIS scripts use it). The cache lives in `/tmp` there and resets on cold starts; committed snapshots cover the demo pins.
+- **Backend (Vercel project `counting-the-cold`, https://counting-the-cold.vercel.app):** root `backend` (Python function `api/index.py`, routing in `backend/vercel.json`). Pushes to `main` redeploy; other branches and PRs get no backend preview (`git.deploymentEnabled` in `backend/vercel.json`), to stay under the free plan's 100 builds a day. Env: `ALLOWED_ORIGINS` = the frontend URL; `CIMIS_KEY` is optional (only the offline CIMIS scripts use it). The cache lives in `/tmp` there and resets on cold starts; committed snapshots cover the demo pins.
 - **Frontend (Vercel project `counting-the-cold-jfm3`, https://counting-the-cold-jfm3.vercel.app):** root `frontend`, Vite preset, `VITE_API_URL` = the backend URL (no trailing slash).
 - **Backup:** `render.yaml` still describes a Render deploy if we ever need it.
 
