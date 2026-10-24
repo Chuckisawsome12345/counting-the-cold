@@ -9,6 +9,8 @@ const GAP = 8 // between the button and the popover
 interface Props {
   title: string // "Chill portions"
   text: string // the explanation, one short body from metricInfo.ts
+  footer?: string // an optional small line under the body
+  ariaLabel?: string // overrides the default "About <title>" label on the button
   live?: string // one line from the card's own values; left out when there is none
   accent: 'cold' | 'heat'
   open: boolean
@@ -18,7 +20,7 @@ interface Props {
 
 // A small "i" that opens a short explanation. A popover under the button on desktop, a bottom sheet on phones. Opens by
 // click, tap, Enter or Space (never hover); closes on Escape, a second click, or a click outside.
-export default function InfoButton({ title, text, live, accent, open, onToggle, onClose }: Props) {
+export default function InfoButton({ title, text, footer, ariaLabel, live, accent, open, onToggle, onClose }: Props) {
   const id = useId()
   const panelId = `info-panel-${id}`
   const titleId = `info-title-${id}`
@@ -99,7 +101,7 @@ export default function InfoButton({ title, text, live, accent, open, onToggle, 
         ref={buttonRef}
         type="button"
         className="info-btn"
-        aria-label={`About ${title.toLowerCase()}`}
+        aria-label={ariaLabel ?? `About ${title.toLowerCase()}`}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-controls={panelId}
@@ -135,6 +137,7 @@ export default function InfoButton({ title, text, live, accent, open, onToggle, 
               <div className="info-body">
                 {live && <p className="info-live">{live}</p>}
                 <p>{text}</p>
+                {footer && <p className="info-foot">{footer}</p>}
               </div>
             </div>
           </>,

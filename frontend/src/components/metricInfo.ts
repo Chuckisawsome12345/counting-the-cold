@@ -15,6 +15,21 @@ export interface InfoContext {
 const NONPAREIL_ALMOND = '22–23'
 const CHANDLER_WALNUT = '45–50'
 
+// Extras for a metric whose panel needs more than the body: a footer line and its own button label.
+export interface InfoExtras {
+  footer?: string
+  ariaLabel?: string
+}
+
+export function metricExtras(metric: Metric): InfoExtras {
+  return metric === 'utah_units'
+    ? {
+        footer: 'Based on the Utah chill model. Chill Hours and Chill Portions measure the same thing in different ways.',
+        ariaLabel: 'What are Chill Units?',
+      }
+    : {}
+}
+
 export function metricCopy(metric: Metric, ctx: InfoContext = {}): string {
   switch (metric) {
     case 'chill_portions':
@@ -31,9 +46,11 @@ export function metricCopy(metric: Metric, ctx: InfoContext = {}): string {
       )
     case 'utah_units':
       return (
-        'Like chill hours, but smarter about temperature. ' +
-        'Cold hours add points, mild hours add fewer, and hot hours take points away. ' +
-        'Compare your total with what your trees need.'
+        'Chill Units score each hour of winter by how well its temperature helps trees rest. ' +
+        'Hours in the best cool range count the most. Slightly cooler or milder hours count partly. ' +
+        'Warm hours count as zero or can even take units away, so a hot afternoon can undo some of your cold. ' +
+        'The total shows how much chilling your orchard has had so far this season. ' +
+        'Trees need enough of it to bloom on time and evenly.'
       )
     case 'gdd': {
       const { gddBaseF, gddUpperF } = ctx

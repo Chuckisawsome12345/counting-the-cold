@@ -4,7 +4,7 @@ import { useCountUp } from '../hooks/useCountUp'
 import { useSingleOpen } from '../hooks/useSingleOpen'
 import { METRICS, isUnavailable, type MetricInfo } from '../metrics'
 import InfoButton from './InfoButton'
-import { metricCopy } from './metricInfo'
+import { metricCopy, metricExtras } from './metricInfo'
 
 const STAGGER_MS = 80
 
@@ -81,6 +81,7 @@ function MetricCard({ data, info, index, open, onToggle, onClose }: CardProps) {
           <InfoButton
             title={label}
             text={metricCopy(metric, { gddBaseF: settings.gdd_base_f, gddUpperF: settings.gdd_upper_f })}
+            {...metricExtras(metric)}
             live={live}
             accent={accent}
             open={open}
