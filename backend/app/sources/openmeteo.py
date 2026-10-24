@@ -7,6 +7,8 @@ from datetime import date, timedelta
 import httpx
 import pandas as pd
 
+from app.sources import cache
+
 ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
@@ -37,7 +39,9 @@ def fetch_archive_hourly(
     """Reanalysis temperature_2m in °F, indexed by UTC timestamps.
 
     The archive lags about 5 days, so callers pass end <= archive_end(today) and fill the
-    rest from the forecast.
+    rest from the forecast. Settled ranges are cached forever; a range reaching into the last
+    few days is cached for an hour, since the archive is still filling in.
+    `series.attrs["stale"]` is True when an expired cached copy was served because Open-Meteo failed.
     """
     params = {
         **BASE_PARAMS,
@@ -47,7 +51,8 @@ def fetch_archive_hourly(
         "end_date": end.isoformat(),
         "models": model,
     }
-    return _hourly_series(_get(ARCHIVE_URL, params, client))
+    ttl = cache.FOREVER if end <= archive_end(date.today()) else cache.FORECAST_TTL_SECONDS
+    return _cached_series(ARCHIVE_URL, params, ttl, client)
 
 
 def fetch_forecast_hourly(
@@ -57,7 +62,10 @@ def fetch_forecast_hourly(
     forecast_days: int = 16,
     client: httpx.Client | None = None,
 ) -> pd.Series:
-    """Forecast temperature_2m in °F, indexed by UTC timestamps, covering recent past + 16 days."""
+    """Forecast temperature_2m in °F, indexed by UTC timestamps, covering recent past + 16 days.
+
+    Cached for an hour; `series.attrs["stale"]` as in fetch_archive_hourly.
+    """
     params = {
         **BASE_PARAMS,
         "latitude": lat,
@@ -65,7 +73,16 @@ def fetch_forecast_hourly(
         "past_days": past_days,
         "forecast_days": forecast_days,
     }
-    return _hourly_series(_get(FORECAST_URL, params, client))
+    return _cached_series(FORECAST_URL, params, cache.FORECAST_TTL_SECONDS, client)
+
+
+def _cached_series(url: str, params: dict, ttl: int | None, client: httpx.Client | None) -> pd.Series:
+    payload, stale = cache.get_or_fetch(
+        cache.cache_key(url, params), lambda: _check_units(_get(url, params, client)), ttl
+    )
+    series = _hourly_series(payload)
+    series.attrs["stale"] = stale
+    return series
 
 
 def _get(url: str, params: dict, client: httpx.Client | None) -> dict:
@@ -88,9 +105,14 @@ def _get(url: str, params: dict, client: httpx.Client | None) -> dict:
     return response.json()
 
 
-def _hourly_series(payload: dict) -> pd.Series:
+def _check_units(payload: dict) -> dict:
+    # Checked before caching, so a bad payload is never stored.
     if payload.get("hourly_units", {}).get("temperature_2m") != "°F":
         raise OpenMeteoError("expected temperature_2m in °F")
+    return payload
+
+
+def _hourly_series(payload: dict) -> pd.Series:
     hourly = payload["hourly"]
     index = pd.DatetimeIndex(pd.to_datetime(hourly["time"]), name="time").tz_localize("UTC")
     # Missing hours come back as null; float dtype turns them into NaN.
