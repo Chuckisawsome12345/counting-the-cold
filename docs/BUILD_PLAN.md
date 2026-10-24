@@ -74,7 +74,7 @@ The app works end to end by H4 (H = hours from kickoff), and features freeze at 
 | H4–H8 | [M2 Core science](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/3) | Utah and Dynamic Model with golden tests, gap filling, cache, 10-season history, forecast merge. Season chart and settings bar. |
 | H8–H13 | [M3 Differentiator](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/4) | CIMIS pulled for all 9 stations, `validation.json` built, correction wired in. Validation tab, station markers, Durham preset. |
 | H13–H17 | [M4 Projection and polish](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/5) | p10/p50/p90 projection, prewarm and snapshots with `DEMO_MODE`, error and stale handling, responsive layout. |
-| H17–H20 | [M5 Stretch](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/6) | Standout features in priority order (accuracy map, statewide chill map, ML correction, % of chill requirement met), then pin vs station compare, hull split, public `/api/v1` docs. Start only after M4 is done. |
+| H17–H20 | [M5 Stretch](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/6) | Standout features in priority order (accuracy map, statewide chill map, ML correction), then the public `/api/v1` API (our adoption path). Start only after M4 is done. Cut for scope: see Scope below. |
 | H20–H24 | [M6 Freeze and demo](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/7) | Feature freeze at H20. Final deploy and snapshot at H21. Rehearse 3 times, record a backup video, write Devpost and README. |
 
 Suggested sleep shifts, about 3 hours each so someone can always merge: C sleeps H11–H14, B H14–H17, A H17–H20.
@@ -86,7 +86,7 @@ Each role owns separate folders, so no two people edit the same file. Roles were
 | Role | Person | Owns (only this person edits) | Core work | Issues |
 | --- | --- | --- | --- | --- |
 | **A: Data & API** (strongest backend person) | [@Chuckisawsome12345](https://github.com/Chuckisawsome12345) | `backend/app/{main,config,schemas}.py`, `routes/`, `sources/` (except `cimis.py`), `pipeline/`, `scripts/prewarm.py`, `scripts/make_mock.py`, `data/stations.json`, `data/snapshots/`, `requirements.txt`, root files, Render deploy | Open-Meteo client and merge, PST normalization, SQLite cache, `/api/point`, history and forecast assembly, correction wiring, stations and validation routes, snapshots and DEMO_MODE, deploy, README | [#2–#12](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Adata-api) |
-| **B: Science & Validation** (strongest Python and math person) | [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) | `backend/app/calc/`, `backend/app/validation/`, `backend/tests/` (except test_api and test_sources), `sources/cimis.py`, `scripts/fetch_cimis.py`, `scripts/build_validation.py`, `data/cimis/`, `data/validation.json`, test fixtures | FNRIC reference values; chill hours, Utah, GDD, and seasons by H2 (this unblocks A); Dynamic Model with golden tests; gap filling; CIMIS fetcher (start early); bias model; leave-one-out validation; projection; hull split | [#13–#21](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Ascience) |
+| **B: Science & Validation** (strongest Python and math person) | [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) | `backend/app/calc/`, `backend/app/validation/`, `backend/tests/` (except test_api and test_sources), `sources/cimis.py`, `scripts/fetch_cimis.py`, `scripts/build_validation.py`, `data/cimis/`, `data/validation.json`, test fixtures | FNRIC reference values; chill hours, Utah, GDD, and seasons by H2 (this unblocks A); Dynamic Model with golden tests; gap filling; CIMIS fetcher (start early); bias model; leave-one-out validation; projection | [#13–#21](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Ascience) |
 | **C: Frontend & Demo** | [@Zooomer69](https://github.com/Zooomer69) | `frontend/**`, `docs/demo-script.md`, Devpost text, slides, Vercel deploy | Map and pins, cards, season chart, settings, quality badge, validation tab, correction info, compare panel, demo script, backup video | [#22–#31](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Afrontend) |
 
 **Rules that prevent overwriting each other's work:**
@@ -238,9 +238,7 @@ One endpoint, `/api/point`, carries everything the dashboard needs. FastAPI serv
 | GET | `/api/stations` | `stations.json` plus each station's validation summary |
 | GET | `/api/validation` | Raw vs corrected error per station, season, and metric, plus overall MAE |
 | GET | `/api/crops` | Crop presets |
-| GET | `/api/compare?lat&lon&season` | Stretch: pin vs nearest station, side by side |
-| GET | `/api/hullsplit?lat&lon&bloom=YYYY-MM-DD&cultivar=` | Stretch |
-| GET | `/api/v1/models?lat&lon` | Stretch: public open API with totals for every model |
+| GET | `/api/v1/models?lat&lon` | Stretch: public open API with totals for every model, for FNRIC or extension advisors to embed |
 | GET | `/api/grid?season&metric` | Stretch: precomputed statewide chill grid for the map layer |
 
 `/api/point` response, top level (see the contract for every field): `mock`, `location`, `season`, `settings`, `totals`, `daily[]` (cumulative season-to-date per day), `forecast` (null once a season is over), `history[]` (10 prior seasons), `climatology` (end-of-season p10/p50/p90, null once over), `quality`, `correction`, `nearest_station`. Until A's pipeline lands it returns synthetic data from `scripts/make_mock.py` with `"mock": true`.
@@ -268,26 +266,44 @@ A map on the left and the numbers on the right, with a second tab that shows how
 - **Data quality:** badge with missing, interpolated, and long-gap hours, plus a stale-data banner.
 - **Correction info:** e.g. "Corrected using Durham (historical) 97%, Biggs 2%, Williams 1%."
 - **Validation tab:** per-station table and bars of raw vs corrected error, with a Durham callout.
-- **Stretch:** station compare panel and hull split card.
+- **Mobile-first:** growers check this on a phone in the field. Design the phone layout first, and a pin must load fast on it.
 - **States:** loading skeletons, error and stale banners.
 
 ## Standout features (after M4)
 
-These four additions make the demo land harder with judges, honestly: each one shows something real. Build them in this order once M4 is done; each is its own issue in milestone M5.
+These three additions make the demo land harder with judges, honestly: each one shows something real. Build them in this order once M4 is done; each is its own issue in milestone M5.
 
 | Priority | Feature | Why it matters | Who |
 | --- | --- | --- | --- |
 | 1 | **Accuracy map** | The validation tab becomes a map: each station is a bubble whose error shrinks from raw to corrected. Our proof of accuracy, visible at a glance. | C (data already in `/api/validation`) |
 | 2 | **Statewide chill map** | A layer coloring the Central Valley by this season's chill, from a grid computed ahead of time. Says "every orchard, not 9 stations" in one picture. | A builds the grid and `/api/grid`; C draws the layer |
 | 3 | **ML bias correction** | A machine-learning model competes with the simple 12 × 24 table on the same leave-one-station-out test. We use whichever wins and show both scores. | B (A adds the dependency) |
-| 4 | **% of chill requirement met** | Pick a variety (e.g. Nonpareil almond) and see how close the orchard is to its chill requirement. Turns a number into a decision. | B (requirements + math), A (API field), C (card) |
 
 **Details:**
 
 - **Accuracy map:** stations from `/api/stations`, errors from `/api/validation`. A toggle or animation goes from raw to corrected MAE per station; Durham gets a callout.
 - **Statewide chill map:** `scripts/build_grid.py` (A) computes one season's corrected chill portions on a coarse grid (about 0.25°, Central Valley only, roughly 150 cells) and commits `data/grid/<season>.json`. It runs offline once, so it costs nothing at demo time and stays inside Open-Meteo's rate budget. `/api/grid` serves it; the shape goes in `docs/api-contract.md` first.
 - **ML bias correction:** gradient-boosted trees (scikit-learn) predicting the hourly CIMIS − gridded offset from month, hour, gridded temperature, elevation, and distance to the coast. Same leave-one-station-out split as the table, so the comparison is fair. `validation.json` reports both MAEs. If ML doesn't beat the table, we say so; the honest comparison is itself a good demo moment.
-- **% of chill requirement met:** chill-portion requirements per variety from published UC sources, cited in `calc/cultivars.py` (B). `/api/point` gains a requirement field through a `contract` PR (A); C adds a variety picker and a progress card. No requirement goes in without a source.
+
+## Scope: one workflow, fully working
+
+Past winners shipped one workflow that worked every time. Ours is: **drop a pin → chill and heat → compare to past seasons → "how accurate is this?"** That path gets polished before anything else.
+
+Cut (issues closed as not planned; reopen only if the core demo is done early):
+
+- Hull split prediction (#21)
+- Pin vs station compare (#11, #30)
+- % of chill requirement met (#40, #41, #42): needs sourced per-variety requirements we don't have time to verify
+
+Kept, in order, after M4: accuracy map, statewide chill map, ML correction, public `/api/v1`.
+
+## Adoption path
+
+We don't replace CIMIS; we fill its gaps, using the pieces agencies already run:
+
+- **FNRIC's chill pages:** the open API (`/api/v1/models`) lets FNRIC show "estimate for your exact orchard" next to its station tables, with the same models (chill portions, chill hours, Utah) and the same Sep 1 / Nov 1 windows.
+- **UC Cooperative Extension:** farm advisors can send growers a link to their county's orchards; nothing to install.
+- **CIMIS itself:** every estimate is calibrated against CIMIS stations, including closed ones, so each new or reopened station makes the map better.
 
 ## Risks and fallbacks
 
@@ -320,13 +336,20 @@ The backend goes on Render and the frontend on Vercel. Deploy the skeleton at H4
 
 The story is the closed Durham station: a grower loses their station, and we still give them numbers they can trust. C owns the working copy in `docs/demo-script.md`; fill in X and Y from `validation.json`.
 
-1. **0:00 Hook.** "In July 2025, CIMIS station 12 in Durham, Butte County, shut down. Every almond grower who used it lost their chill count for last winter."
-2. **0:20 Drop a pin** on a Butte orchard near Durham. The 2025-26 cards appear: portions, hours, Utah, GDD. "No station, no hardware. Your orchard's chill and heat, not a station's."
+**Pitch essentials (say these, in this order):**
+
+- **Opening stat:** "Durham's station ran for 43 years, from 1982 until it shut down on July 30, 2025." (Verified from the CIMIS station list.)
+- **Official standards:** "Same models FNRIC uses: chill portions, chill hours, Utah, and UC IPM degree days, checked against FNRIC's published numbers."
+- **Closing stat:** "Corrected, we land within Y chill portions of a real station." (From `validation.json`; use the real number, never a guess.)
+- **Adoption:** "We don't replace CIMIS. We fill its gaps, and FNRIC can embed it with our open API."
+
+1. **0:00 Hook.** "Durham's weather station in Butte County ran for 43 years. On July 30, 2025, it shut down, and every almond grower who used it lost their chill count for last winter."
+2. **0:20 Drop a pin** on a Butte orchard near Durham. The 2025-26 cards appear: portions, hours, Utah, GDD. "No station, no hardware. Your orchard's chill and heat, not a station's. Same models FNRIC uses."
 3. **0:50 History chart.** This season vs the last 10 and the median. "Chill finished X% above normal."
 4. **1:10 Toggle to 2026-27.** Portions have been accumulating since Sep 1. The 14-day forecast runs into November with an end-of-season range.
-5. **1:30 Trust: the validation tab.** "We checked ourselves against 9 CIMIS stations. Raw gridded data was off by X portions; corrected, by Y. And Durham's decade of records still calibrates the estimate after the station closed."
-6. **2:00 Microclimate.** Pin vs nearest station side by side (stretch), or move the pin and watch the numbers change.
-7. **2:15 Open and free.** Show `/docs`, the open API. Close on the one-liner.
+5. **1:30 Trust: the accuracy map.** "We checked ourselves against 9 CIMIS stations. Raw gridded data was off by X portions; corrected, by Y. And Durham's decade of records still calibrates the estimate after the station closed."
+6. **2:00 The whole valley.** Turn on the statewide chill map: "every orchard, not 9 stations."
+7. **2:15 Adoption and close.** "We don't replace CIMIS; we fill its gaps. FNRIC can embed this today through our open API." Close on the one-liner.
 
 ## Rules for AI assistants
 
@@ -362,4 +385,3 @@ Pages opened while writing this plan, plus two items still to confirm.
 - [FNRIC almond hull split model development](https://fruitsandnuts.ucdavis.edu/node/5466): GDD90, single-sine method, 12 cultivars. Regression coefficients are in [Tombesi et al. 2010](https://fruitsandnuts.ucdavis.edu/sites/g/files/dgvnsk12441/files/media/documents/Fruit%20Development%20in%20Almond%20is%20Influenced%20by%20Early%20Spring%20Temperatures%20in%20California.pdf) (not yet opened).
 - **To confirm:** FNRIC's chill windows (portions Sep 1, chill hours Nov 1) came from a search summary because the [chilling models page](https://fruitsandnuts.ucanr.edu/Weather_Services/chilling_accumulation_models/) returned 403. B confirms in issue [#13](https://github.com/Chuckisawsome12345/counting-the-cold/issues/13).
 - **To confirm:** Open-Meteo's free-tier limits and how long requests are counted, on their terms page.
-- **To find:** published chill-portion requirements per variety (UC sources) for the "% of chill requirement met" feature.
