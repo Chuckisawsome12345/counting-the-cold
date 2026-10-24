@@ -42,6 +42,7 @@ interface ErrorProps {
 
 export function ErrorCard({ error, hasLast, onRetry, onShowLast }: ErrorProps) {
   const status = error instanceof ApiError ? error.status : undefined
+  const detail = error instanceof ApiError ? error.detail : undefined
   return (
     <section className="card error-card" role="alert">
       <WarnIcon size={32} />
@@ -51,6 +52,7 @@ export function ErrorCard({ error, hasLast, onRetry, onShowLast }: ErrorProps) {
           The data service didn't answer. Your pin is saved, and nothing is lost. Try again
           {hasLast ? ', or open the last numbers we have for this spot.' : '.'}
         </p>
+        {detail && <p className="error-detail">{detail}</p>}
         <div className="error-actions">
           <button type="button" className="chip primary" onClick={onRetry}>
             Try again

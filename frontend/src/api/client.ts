@@ -1,11 +1,13 @@
-import type { Crop, PointResponse, StationsResponse, ValidationResponse } from './types'
+import type { Crop, Metric, PointResponse, StationsResponse, ValidationResponse } from './types'
+import { mockGrid } from './mock/grid'
 import { MOCK_STATIONS } from './mock/stations'
 import { MOCK_VALIDATION } from './mock/validation'
 import mockCompleteUrl from './mock/point.json?url'
 import mockCurrentUrl from './mock/point_current.json?url'
 
-// Empty in dev: Vite proxies /api to the backend. Set to the Render URL in production.
-const API_BASE = import.meta.env.VITE_API_URL ?? ''
+// Empty in dev: Vite proxies /api to the backend. Set to the backend's URL in production. A trailing slash is
+// dropped, so pasting "https://example.vercel.app/" into VITE_API_URL does not produce "//api/point".
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '')
 // VITE_USE_MOCK=1 serves the synthetic mocks without a backend.
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === '1'
 
@@ -24,10 +26,12 @@ export interface PointParams {
 // no answer at all (network down).
 export class ApiError extends Error {
   status?: number
-  constructor(message: string, status?: number) {
+  detail?: string // the backend's own explanation (FastAPI's "detail"), safe to show to a person
+  constructor(message: string, status?: number, detail?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
+    this.detail = detail
   }
 }
 
@@ -42,7 +46,11 @@ async function getJson<T>(url: string): Promise<T> {
   } catch {
     throw new ApiError(`${url} could not be reached`)
   }
-  if (!res.ok) throw new ApiError(`${url} failed: ${res.status}`, res.status)
+  if (!res.ok) {
+    // e.g. 503 "Demo mode: this spot isn't preloaded. Try one of the demo pins."
+    const body = await res.json().catch(() => null)
+    throw new ApiError(`${url} failed: ${res.status}`, res.status, typeof body?.detail === 'string' ? body.detail : undefined)
+  }
   const data = (await res.json()) as T
   if (res.headers.get('x-ctc-offline') === '1' && typeof data === 'object' && data !== null) servedOffline.add(data)
   return data
@@ -75,4 +83,25 @@ export const FALLBACK_CROPS: Crop[] = [
 export async function fetchCrops(): Promise<Crop[]> {
   if (USE_MOCK) return FALLBACK_CROPS
   return (await getJson<{ crops: Crop[] }>(`${API_BASE}/api/crops`)).crops
+}
+
+// Mirrors GET /api/grid in docs/api-contract.md. Not in types.ts: that file changes only through a contract PR.
+export interface GridCell {
+  lat: number
+  lon: number
+  value: number
+}
+
+export interface GridResponse {
+  season: string // "2025-26"
+  metric: Metric
+  unit: string
+  step_deg: number
+  built_at: string | null // null before the grid is built, with no cells
+  cells: GridCell[]
+}
+
+export function fetchGrid(season: number, metric: Metric = 'chill_portions'): Promise<GridResponse> {
+  if (USE_MOCK) return Promise.resolve(mockGrid(season))
+  return getJson(`${API_BASE}/api/grid?season=${season}&metric=${metric}`)
 }

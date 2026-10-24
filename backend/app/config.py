@@ -7,9 +7,12 @@ from dotenv import load_dotenv
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 REPO_ROOT = BACKEND_DIR.parent
 DATA_DIR = BACKEND_DIR / "data"
-CACHE_DIR = BACKEND_DIR / ".cache"
 
 load_dotenv(REPO_ROOT / ".env")
+
+# On Vercel only /tmp is writable, and it's per instance, so the cache lasts until a cold start.
+# Committed snapshots cover the demo pins either way.
+CACHE_DIR = Path(os.getenv("CACHE_DIR") or ("/tmp/counting-the-cold-cache" if os.getenv("VERCEL") else BACKEND_DIR / ".cache"))
 
 CIMIS_KEY = os.getenv("CIMIS_KEY", "")
 DEMO_MODE = os.getenv("DEMO_MODE", "0") == "1"
