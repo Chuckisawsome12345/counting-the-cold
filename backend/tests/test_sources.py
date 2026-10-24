@@ -4,7 +4,7 @@ import httpx
 import numpy as np
 import pytest
 
-from app.sources import cache, openmeteo
+from app.sources import cache, openmeteo, snapshots
 
 
 @pytest.fixture(autouse=True)
@@ -179,3 +179,12 @@ def test_gives_up_after_retries():
     with pytest.raises(openmeteo.OpenMeteoError, match="429"):
         openmeteo.fetch_forecast_hourly(39.6, -121.8, client=httpx.Client(transport=httpx.MockTransport(handler)))
     assert len(calls) == len(openmeteo.RETRY_DELAYS) + 1
+
+
+def test_snapshot_roundtrip_keyed_by_cell_and_settings(tmp_path, monkeypatch):
+    monkeypatch.setattr(snapshots, "SNAPSHOT_DIR", tmp_path)
+    path = snapshots.save_snapshot(39.64, -121.79, 2025, {"hello": 1})
+    assert path.name == "39.6_-121.8_2025_almond_corrected.json.gz"
+    assert snapshots.load_snapshot(39.61, -121.82, 2025) == {"hello": 1}  # same 0.1° cell
+    assert snapshots.load_snapshot(39.64, -121.79, 2025, corrected=False) is None
+    assert snapshots.load_snapshot(39.64, -121.79, 2026) is None

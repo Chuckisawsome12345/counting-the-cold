@@ -8,7 +8,8 @@ services:
     region: oregon            # closest free region to California
     rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    # Prewarm the demo pins in the background so the first click after a cold start is fast.
+    startCommand: python scripts/prewarm.py & uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
