@@ -12,6 +12,17 @@ type Load = { status: 'loading' } | { status: 'error'; message: string } | { sta
 // "Improvement" is how much smaller the corrected error is than the raw error, as a percent of the raw error.
 const improvement = (raw: number, corrected: number) => (raw > 0 ? ((raw - corrected) / raw) * 100 : 0)
 
+// A row's change in words: an arrow and a percent, or "no change" when the correction left the error as it was.
+const changeText = (pct: number) => (Math.round(pct) === 0 ? 'no change' : `${pct > 0 ? '▼' : '▲'} ${Math.abs(Math.round(pct))}%`)
+
+// The sentence under the headline, worked out from the numbers for whichever measure is selected.
+function headlineText(name: string, raw: number, corrected: number, gain: number) {
+  const intro = 'Tested on seasons we already know.'
+  if (gain > 0) return `${intro} For ${name}, our correction cuts the average miss by ${gain}%.`
+  if (corrected > raw) return `${intro} For ${name}, the correction did not reduce the average miss.`
+  return `${intro} For ${name}, the correction made no change to the average miss.`
+}
+
 // `progress` runs 0 (raw) to 1 (corrected); the corrected number counts down in step with the map's bubbles.
 function Headline({ info, raw, corrected, count, progress }: { info: MetricInfo; raw: number; corrected: number; count: number; progress: number }) {
   const gain = Math.round(improvement(raw, corrected))
@@ -20,11 +31,7 @@ function Headline({ info, raw, corrected, count, progress }: { info: MetricInfo;
     <section className="card v-headline">
       <div className="v-headline-text">
         <span className="lbl">Average error across {count} validation stations</span>
-        <p>
-          {gain > 0
-            ? `Tested on seasons we already know. Our correction cuts the average miss by ${gain}%.`
-            : 'Tested on seasons we already know. For this measure the correction did not reduce the average miss.'}
-        </p>
+        <p>{headlineText(info.metric === 'gdd' ? 'GDD' : info.label, raw, corrected, gain)}</p>
       </div>
       <div className="v-numbers">
         <div className="v-num raw">
@@ -40,7 +47,7 @@ function Headline({ info, raw, corrected, count, progress }: { info: MetricInfo;
           <span className="v-big">±{formatFixed(shown, info.digits)}</span>
           <span className="v-unit">
             {info.unit}
-            {gain > 0 && <> · {gain}% smaller</>}
+            {gain > 0 ? <> · {gain}% smaller</> : corrected === raw && <> · no change</>}
           </span>
         </div>
       </div>
@@ -66,9 +73,7 @@ function StationRow({ s, info, closed }: { s: StationValidation; info: MetricInf
           <span className="impr-bar" aria-hidden="true">
             <i style={{ width: `${Math.max(0, Math.min(100, pct))}%` }} />
           </span>
-          <span className="impr-pct">
-            {pct >= 0 ? '▼' : '▲'} {Math.abs(Math.round(pct))}%
-          </span>
+          <span className="impr-pct">{changeText(pct)}</span>
         </span>
       </td>
     </tr>
@@ -76,12 +81,14 @@ function StationRow({ s, info, closed }: { s: StationValidation; info: MetricInf
 }
 
 function Results({ data, stations }: { data: ValidationResponse; stations: Station[] }) {
-  const [metric, setMetric] = useState<Metric>('chill_portions')
+  // Opens on GDD: it is the measure the correction improves, so the raw-to-corrected animation has something to show.
+  const [metric, setMetric] = useState<Metric>('gdd')
   const info = METRICS.find((m) => m.metric === metric) ?? METRICS[0]
 
   const summary = data.summary[metric]
   const closedIds = new Set(stations.filter((s) => !s.active).map((s) => s.id))
   const closed = stations.find((s) => !s.active && data.stations.some((v) => v.id === s.id))
+  const closedError = data.stations.find((v) => v.id === closed?.id)?.mae.chill_portions?.corrected_mae
   // Closed stations first (Durham is the story), then the order the API gives.
   const rows = [...data.stations]
     .filter((s) => s.mae[metric])
@@ -159,9 +166,7 @@ function Results({ data, stations }: { data: ValidationResponse; stations: Stati
                   </span>
                   <span className="v-pair">
                     <span className="raw">±{formatFixed(e.raw_mae, info.digits)}</span> → <span className="corr">±{formatFixed(e.corrected_mae, info.digits)}</span>{' '}
-                    <span className="impr-pct">
-                      {pct >= 0 ? '▼' : '▲'} {Math.abs(Math.round(pct))}%
-                    </span>
+                    <span className="impr-pct">{changeText(pct)}</span>
                   </span>
                 </li>
               )
@@ -175,7 +180,13 @@ function Results({ data, stations }: { data: ValidationResponse; stations: Stati
           <strong>
             {closed.name} #{closed.id} closed{closed.disconnect_date ? ` ${formatDate(closed.disconnect_date)}` : ''}.
           </strong>{' '}
-          Its decade of records still calibrates our estimate.
+          {metric === 'gdd' && 'Its decade of records still calibrates our heat (GDD) estimate.'}
+          {/* "Closer than the nearest station" is left out: /api/validation does not carry that comparison yet. */}
+          {metric === 'chill_portions' && closedError !== undefined && (
+            <>
+              Our chill estimate lands within {Math.round(closedError)} chill {Math.round(closedError) === 1 ? 'portion' : 'portions'} at {closed.name}.
+            </>
+          )}
         </section>
       )}
     </div>
