@@ -1,8 +1,13 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import ALLOWED_ORIGINS
 from app.routes import grid, meta, point, public, sms, stations, telegram, validation
+
+# httpx logs every request URL at INFO, and Telegram's URLs carry the bot token.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 app = FastAPI(
     title="Counting the Cold API",
