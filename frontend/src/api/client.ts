@@ -4,8 +4,9 @@ import { MOCK_VALIDATION } from './mock/validation'
 import mockCompleteUrl from './mock/point.json?url'
 import mockCurrentUrl from './mock/point_current.json?url'
 
-// Empty in dev: Vite proxies /api to the backend. Set to the Render URL in production.
-const API_BASE = import.meta.env.VITE_API_URL ?? ''
+// Empty in dev: Vite proxies /api to the backend. Set to the backend's URL in production. A trailing slash is
+// dropped, so pasting "https://example.vercel.app/" into VITE_API_URL does not produce "//api/point".
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '')
 // VITE_USE_MOCK=1 serves the synthetic mocks without a backend.
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === '1'
 
@@ -24,10 +25,12 @@ export interface PointParams {
 // no answer at all (network down).
 export class ApiError extends Error {
   status?: number
-  constructor(message: string, status?: number) {
+  detail?: string // the backend's own explanation (FastAPI's "detail"), safe to show to a person
+  constructor(message: string, status?: number, detail?: string) {
     super(message)
     this.name = 'ApiError'
     this.status = status
+    this.detail = detail
   }
 }
 
@@ -38,7 +41,11 @@ async function getJson<T>(url: string): Promise<T> {
   } catch {
     throw new ApiError(`${url} could not be reached`)
   }
-  if (!res.ok) throw new ApiError(`${url} failed: ${res.status}`, res.status)
+  if (!res.ok) {
+    // e.g. 503 "Demo mode: this spot isn't preloaded. Try one of the demo pins."
+    const body = await res.json().catch(() => null)
+    throw new ApiError(`${url} failed: ${res.status}`, res.status, typeof body?.detail === 'string' ? body.detail : undefined)
+  }
   return (await res.json()) as T
 }
 

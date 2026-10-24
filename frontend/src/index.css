@@ -1415,6 +1415,11 @@ select {
   color: var(--ink2);
 }
 
+.error-card .error-detail {
+  color: var(--ink);
+  font-weight: 600;
+}
+
 .error-actions {
   display: flex;
   flex-wrap: wrap;
