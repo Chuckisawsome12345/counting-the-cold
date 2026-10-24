@@ -2,11 +2,10 @@
 # touches their files (reviews aren't required to merge). Later lines win.
 # A (Data & API): @Chuckisawsome12345 · B (Science & Validation): @karthikmaheshwaran · C (Frontend & Demo): @Zooomer69
 
-# A: root files and everything not listed below
+# A: root files and everything not listed below (including backend/app/calc/, taken over from B with #14)
 *                                       @Chuckisawsome12345
 
 # B
-/backend/app/calc/                      @karthikmaheshwaran
 /backend/app/validation/                @karthikmaheshwaran
 /backend/app/sources/cimis.py           @karthikmaheshwaran
 /backend/scripts/fetch_cimis.py         @karthikmaheshwaran

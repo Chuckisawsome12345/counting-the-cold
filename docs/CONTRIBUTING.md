@@ -16,7 +16,8 @@ Three people, three roles, separate folders. If you only follow one rule: **edit
 | `backend/requirements.txt`, `backend/pytest.ini` | A |
 | `backend/tests/test_api.py`, `backend/tests/test_sources.py`, `backend/tests/test_pipeline.py` | A |
 | Root files (`README.md`, `.gitignore`, `.env.example`, `.github/`) | A |
-| `backend/app/calc/`, `backend/app/validation/` | B: Science & Validation |
+| `backend/app/calc/` | A (taken over from B on Oct 24 with #14). B's open calc issues (#16 Dynamic Model, #17 gaps, #20 projection) can still land here, with A reviewing. |
+| `backend/app/validation/` | B: Science & Validation |
 | `backend/app/sources/cimis.py` | B |
 | `backend/scripts/fetch_cimis.py`, `backend/scripts/build_validation.py` | B |
 | `backend/data/cimis/`, `backend/data/validation.json` | B |
