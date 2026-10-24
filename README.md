@@ -38,10 +38,11 @@ cd frontend && npm run build
 
 ## Deploy
 
-- **Backend (Render):** `render.yaml` is a Render Blueprint. In Render: New → Blueprint → this repo, paste `CIMIS_KEY` when asked, Apply. Pushes to `main` redeploy. After the frontend is live, add its URL to `ALLOWED_ORIGINS` in the service's Environment tab.
-- **Frontend (Vercel):** root `frontend`, Vite preset, `VITE_API_URL` = the Render URL (issue #24).
+- **Backend (Vercel):** a Vercel project with root `backend` (Python function `api/index.py`, routing in `backend/vercel.json`). Pushes to `main` redeploy. Env: `ALLOWED_ORIGINS` = the frontend URL; `CIMIS_KEY` is optional (only the offline CIMIS scripts use it). The cache lives in `/tmp` there and resets on cold starts; committed snapshots cover the demo pins.
+- **Frontend (Vercel):** root `frontend`, Vite preset, `VITE_API_URL` = the backend URL (no trailing slash).
+- **Backup:** `render.yaml` still describes a Render deploy if we ever need it.
 
-The free Render tier sleeps after about 15 minutes idle and takes about 50 s to wake: hit `/api/health` before a demo.
+Hit `/api/health` on the backend a minute before a demo so the first click isn't a cold start.
 
 ## Status
 
