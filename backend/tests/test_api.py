@@ -249,3 +249,12 @@ def test_telegram_setup_registers_webhook_with_secret(monkeypatch):
     method, payload = calls[0]
     assert method == "setWebhook" and payload["secret_token"] == tg_route.webhook_secret(TOKEN)
     assert TOKEN not in str(body)
+
+
+def test_telegram_status_reports_webhook_info_without_token(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    info = {"ok": True, "result": {"url": "https://x/api/telegram", "pending_update_count": 2, "last_error_message": "Wrong response from the webhook: 403 Forbidden"}}
+    monkeypatch.setattr(tg_route, "telegram_api", lambda token, method, payload: info)
+    body = client.get("/api/telegram/status").json()
+    assert body["pending_update_count"] == 2 and "403" in body["last_error_message"]
+    assert TOKEN not in str(body)
