@@ -1,0 +1,172 @@
+:root {
+  --bg: #f6f8fa;
+  --panel: #ffffff;
+  --text: #1d2433;
+  --muted: #5b6575;
+  --border: #d9e0e8;
+  --accent: #1f6fb2;
+  --up: #1e7b45;
+  --down: #b03a2e;
+  font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+select {
+  font: inherit;
+}
+
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.tagline {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.tabs button {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 2fr) 3fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.map {
+  height: 520px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.demo-pins {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.demo-pins button {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.banner {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: #eef5fb;
+  border: 1px solid #cfe1f2;
+}
+
+.banner.error {
+  background: #fbebeb;
+  border-color: #f0c9c9;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.card-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.card-value {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.card-unit {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.card-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.card-sub.up {
+  color: var(--up);
+}
+
+.card-sub.down {
+  color: var(--down);
+}
+
+.placeholder {
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--muted);
+  background: var(--panel);
+}

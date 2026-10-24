@@ -1,0 +1,5 @@
+{
+  "_about": "Published FNRIC chill values used as golden tests (role B). One object per value; tests recompute each from committed CIMIS data.",
+  "_example": {"station": 6, "season": "2023-24", "model": "chill_portions", "start": "2023-09-01", "end": "2024-02-28", "value": 0.0, "url": "https://..."},
+  "values": []
+}
