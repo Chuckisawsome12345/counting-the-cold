@@ -20,9 +20,10 @@ const FIXTURE: [number, string, number, number, number][] = [
 
 const round1 = (n: number) => Math.round(n * 10) / 10
 
+// Like the real data, only GDD is corrected; the chill measures keep their raw error.
 function maeFor(raw: number, corrected: number): Partial<Record<Metric, MetricError>> {
   return Object.fromEntries(
-    METRICS.map((m) => [m, { raw_mae: round1(raw * METRIC_SCALE[m]), corrected_mae: round1(corrected * METRIC_SCALE[m]) }]),
+    METRICS.map((m) => [m, { raw_mae: round1(raw * METRIC_SCALE[m]), corrected_mae: round1((m === 'gdd' ? corrected : raw) * METRIC_SCALE[m]) }]),
   )
 }
 
