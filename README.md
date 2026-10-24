@@ -39,6 +39,15 @@ No backend handy? Run the frontend on synthetic data: `VITE_USE_MOCK=1 npm run d
 2. In the Vercel backend project, set `TWILIO_AUTH_TOKEN` to the account's auth token, so only signed Twilio requests are answered, and redeploy.
 3. Open `/api/health` a minute before demoing so the first text isn't a cold start (Twilio waits about 15 s).
 
+## Telegram bot
+
+`POST /api/telegram` answers a Telegram bot: share a location, type `39.64,-121.79`, or send `/durham`, `/davis`, `/parlier`, and the bot replies with the chill and heat summary. It's the free alternative to SMS (no carrier registration). Setup:
+
+1. In Telegram, message **@BotFather**, send `/newbot`, pick a name and a username ending in `bot`, and copy the token it gives you.
+2. In the Vercel backend project, set `TELEGRAM_BOT_TOKEN` to that token (Production) and redeploy.
+3. Open `https://counting-the-cold.vercel.app/api/telegram/setup` once. It should answer `{"ok": true, ...}`.
+4. Message the bot `/start`, then `/durham`, or share a location.
+
 ## Checks
 
 ```bash
