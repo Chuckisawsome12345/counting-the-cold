@@ -4,7 +4,10 @@ import { MapContainer, Marker, TileLayer, Tooltip, ZoomControl, useMap, useMapEv
 import type { Station, StationRef } from '../api/types'
 import { DEMO_PINS } from '../demoPins'
 import { formatDate, haversineKm } from '../geo'
+import { useGrid } from '../hooks/useGrid'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
+import { CHILL_RAMP, gridRange } from '../chill'
+import ChillLayer from './ChillLayer'
 
 const CALIFORNIA_CENTER: [number, number] = [37.6, -120.5]
 const CALIFORNIA_BOUNDS: L.LatLngBoundsExpression = [
@@ -71,15 +74,20 @@ interface Props {
   pin: [number, number] | null
   stations: Station[]
   nearest: StationRef | null // nearest station for the current pin, once the API has answered
+  season: number // for the statewide chill layer
   onPick: (lat: number, lon: number) => void
 }
 
-export default function MapPicker({ pin, stations, nearest, onPick }: Props) {
+export default function MapPicker({ pin, stations, nearest, season, onPick }: Props) {
   // "Show all stations" applies to one pin; picking a new pin flies back in.
   const icons = useMemo(() => new Map(stations.map((s) => [s.id, stationIcon(s)])), [stations])
   const pinKey = pin ? `${pin[0]},${pin[1]}` : ''
   const [showAllFor, setShowAllFor] = useState<string | null>(null)
   const showAll = showAllFor === pinKey
+  const [showLayer, setShowLayer] = useState(false)
+  const { grid, loading: gridLoading, failed: gridFailed } = useGrid(showLayer, season)
+  const layerCells = grid && grid.cells.length > 0 ? grid : null
+  const [layerMin, layerMax] = layerCells ? gridRange(layerCells) : [0, 0]
 
   const demo = pin ? DEMO_PINS.find((p) => p.lat === pin[0] && p.lon === pin[1]) : undefined
   const closedStation = nearest && !nearest.active ? stations.find((s) => s.id === nearest.id) : undefined
@@ -97,6 +105,7 @@ export default function MapPicker({ pin, stations, nearest, onPick }: Props) {
             url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <ZoomControl position="bottomleft" />
+          {layerCells && <ChillLayer grid={layerCells} />}
           <ClickToPick onPick={onPick} />
           <MapFlight pin={pin} showAll={showAll} />
           {stations.map((s) => (
@@ -125,15 +134,21 @@ export default function MapPicker({ pin, stations, nearest, onPick }: Props) {
         </MapContainer>
 
         <div className="map-controls">
-          {pin && (
-            <button type="button" className="chip" onClick={() => setShowAllFor(showAll ? null : pinKey)}>
-              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-                <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                <circle cx="7" cy="7" r="1.6" fill="currentColor" />
-              </svg>
-              {showAll ? 'Fly to pin' : 'Show all stations'}
+          <div className="map-chips">
+            {pin && (
+              <button type="button" className="chip" onClick={() => setShowAllFor(showAll ? null : pinKey)}>
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+                  <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  <circle cx="7" cy="7" r="1.6" fill="currentColor" />
+                </svg>
+                {showAll ? 'Fly to pin' : 'Show all stations'}
+              </button>
+            )}
+            <button type="button" className="chip" aria-pressed={showLayer} onClick={() => setShowLayer((on) => !on)}>
+              <i className="chill-swatch" aria-hidden="true" />
+              Chill layer
             </button>
-          )}
+          </div>
           {nearest && !nearest.active && (
             <span className="closed-badge">
               <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
@@ -144,6 +159,33 @@ export default function MapPicker({ pin, stations, nearest, onPick }: Props) {
             </span>
           )}
         </div>
+
+        {showLayer && (
+          <div className="chill-legend" role="status">
+            {layerCells ? (
+              <>
+                <span className="lbl">
+                  Chill portions · {layerCells.season}
+                </span>
+                <i
+                  className="chill-bar"
+                  aria-hidden="true"
+                  style={{ background: `linear-gradient(90deg, ${CHILL_RAMP.map((c) => `rgb(${c.join(',')})`).join(', ')})` }}
+                />
+                <span className="chill-range">
+                  <span>{Math.round(layerMin)}</span>
+                  <span>{Math.round(layerMax)} {layerCells.unit}</span>
+                </span>
+              </>
+            ) : gridLoading ? (
+              <span>Loading the statewide layer…</span>
+            ) : gridFailed ? (
+              <span>Couldn't load the statewide layer.</span>
+            ) : (
+              <span>The statewide layer hasn't been built yet.</span>
+            )}
+          </div>
+        )}
 
         <div className="map-legend">
           <span>

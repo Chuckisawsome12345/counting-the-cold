@@ -77,6 +77,7 @@ export default function App() {
               pin={pin}
               stations={stations}
               nearest={insideCalifornia && !loading ? (data?.nearest_station ?? null) : null}
+              season={settings.season}
               onPick={pick}
             />
           </aside>

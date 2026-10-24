@@ -1,4 +1,5 @@
-import type { Crop, PointResponse, StationsResponse, ValidationResponse } from './types'
+import type { Crop, Metric, PointResponse, StationsResponse, ValidationResponse } from './types'
+import { mockGrid } from './mock/grid'
 import { MOCK_STATIONS } from './mock/stations'
 import { MOCK_VALIDATION } from './mock/validation'
 import mockCompleteUrl from './mock/point.json?url'
@@ -76,4 +77,25 @@ export const FALLBACK_CROPS: Crop[] = [
 export async function fetchCrops(): Promise<Crop[]> {
   if (USE_MOCK) return FALLBACK_CROPS
   return (await getJson<{ crops: Crop[] }>(`${API_BASE}/api/crops`)).crops
+}
+
+// Mirrors GET /api/grid in docs/api-contract.md. Not in types.ts: that file changes only through a contract PR.
+export interface GridCell {
+  lat: number
+  lon: number
+  value: number
+}
+
+export interface GridResponse {
+  season: string // "2025-26"
+  metric: Metric
+  unit: string
+  step_deg: number
+  built_at: string | null // null before the grid is built, with no cells
+  cells: GridCell[]
+}
+
+export function fetchGrid(season: number, metric: Metric = 'chill_portions'): Promise<GridResponse> {
+  if (USE_MOCK) return Promise.resolve(mockGrid(season))
+  return getJson(`${API_BASE}/api/grid?season=${season}&metric=${metric}`)
 }
