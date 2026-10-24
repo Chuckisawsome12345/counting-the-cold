@@ -1,6 +1,10 @@
 import { ApiError } from '../api/client'
 import { formatDate } from '../geo'
+import { useSingleOpen } from '../hooks/useSingleOpen'
+import { METRICS } from '../metrics'
 import { ClockIcon, OfflineIcon, WarnIcon } from './icons'
+import InfoButton from './InfoButton'
+import { metricCopy } from './metricInfo'
 
 // Data older than its normal refresh: served from an expired cache entry (quality.stale). The contract has no
 // timestamp for it, so the wording is generic.
@@ -87,15 +91,26 @@ export function LastNumbersBanner({ onRetry }: { onRetry: () => void }) {
 // First load, nothing to show yet: shimmer blocks shaped like the cards and the chart. No spinners.
 export function LoadingSkeleton({ lat, lon }: { lat: number; lon: number }) {
   const heights = [43, 52, 62, 36, 49, 58, 66, 38, 55, 48, 60]
+  const { openId, toggle, close } = useSingleOpen()
   return (
     <div className="skeleton-page" aria-busy="true">
-      <div className="cards" aria-hidden="true">
-        {[0, 1, 2, 3].map((i) => (
-          <div className="card skel-card" key={i}>
-            <div className="skeleton" style={{ width: '42%', height: 10 }} />
-            <div className="skeleton" style={{ width: '70%', height: 48, margin: '14px 0' }} />
-            <div className="skeleton" style={{ width: '100%', height: 8 }} />
-            <div className="skeleton" style={{ width: '55%', height: 8, marginTop: 10 }} />
+      <div className="cards">
+        {METRICS.map((m) => (
+          <div className={`card skel-card ${m.accent}`} key={m.metric}>
+            <div className="skel-head">
+              <span className="lbl">{m.label}</span>
+              <InfoButton
+                title={m.label}
+                copy={metricCopy(m.metric)}
+                accent={m.accent}
+                open={openId === m.metric}
+                onToggle={() => toggle(m.metric)}
+                onClose={close}
+              />
+            </div>
+            <div className="skeleton" aria-hidden="true" style={{ width: '70%', height: 48, margin: '14px 0' }} />
+            <div className="skeleton" aria-hidden="true" style={{ width: '100%', height: 8 }} />
+            <div className="skeleton" aria-hidden="true" style={{ width: '55%', height: 8, marginTop: 10 }} />
           </div>
         ))}
       </div>
