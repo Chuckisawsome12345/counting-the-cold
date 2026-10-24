@@ -115,18 +115,20 @@ def build_point(
     gdd_start: str,
     corrected: bool,
     today: date | None = None,
+    history_seasons: int = HISTORY_SEASONS,
 ) -> dict:
     """Return a dict matching schemas.PointResponse.
 
     Raises NotImplementedError (before any network call) while B's required calc functions are
-    stubs, and KeyError for an unknown crop.
+    stubs, and KeyError for an unknown crop. history_seasons=0 skips history (used by the
+    statewide grid, which only needs one season per cell).
     """
     _require_calc()
     today = today or date.today()
     preset = CROPS[crop]
     settings = Settings(crop, preset["base_f"], preset["upper_f"], portions_start, hours_start, gdd_start)
 
-    frame = load_hourly(lat, lon, season, today)
+    frame = load_hourly(lat, lon, season, today, history_seasons)
     temps, filled_mask, report = _fill(frame["temp_f"])
 
     station_list = _stations(lat, lon)
@@ -143,7 +145,7 @@ def build_point(
     work = pd.DataFrame({"temp_f": temps, "source": frame["source"], "filled": filled_mask})
     target = _season_daily(work, season, settings)
     history = []
-    for s in range(season - HISTORY_SEASONS, season):
+    for s in range(season - history_seasons, season):
         daily = _season_daily(work, s, settings)
         if daily.empty:
             continue

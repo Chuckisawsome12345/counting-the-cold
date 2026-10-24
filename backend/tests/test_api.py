@@ -99,3 +99,34 @@ def test_outage_without_snapshot_is_clear_503(monkeypatch):
     monkeypatch.setattr(point_route, "build_point", outage)
     r = client.get("/api/point", params=DURHAM_PIN)
     assert r.status_code == 503 and "unavailable" in r.json()["detail"]
+
+
+def test_public_models_api_describes_every_model():
+    body = client.get("/api/v1/models", params=DURHAM_PIN).json()
+    assert set(body["models"]) == {"chill_portions", "chill_hours", "utah_units", "gdd"}
+    assert body["models"]["chill_portions"]["model"].startswith("Dynamic Model")
+    assert body["models"]["gdd"]["unit"] == "°F-days" and "base 55" in body["models"]["gdd"]["model"]
+    assert body["season"] == "2025-26" and body["nearest_station"]["name"] == "Durham"
+
+
+def test_grid_empty_until_built(monkeypatch, tmp_path):
+    from app.routes import grid as grid_route
+
+    monkeypatch.setattr(grid_route, "GRID_DIR", tmp_path)
+    body = client.get("/api/grid").json()
+    assert body["built_at"] is None and body["cells"] == []
+
+
+def test_grid_serves_one_metric(monkeypatch, tmp_path):
+    import json
+
+    from app.routes import grid as grid_route
+
+    monkeypatch.setattr(grid_route, "GRID_DIR", tmp_path)
+    (tmp_path / "2025.json").write_text(json.dumps({
+        "season": "2025-26", "step_deg": 0.25, "built_at": "2026-10-24T02:00:00+00:00",
+        "cells": [{"lat": 39.5, "lon": -121.75, "chill_portions": 61.8, "chill_hours": 980, "utah_units": 1300, "gdd": 2400}],
+    }))
+    body = client.get("/api/grid", params={"metric": "gdd"}).json()
+    assert body["unit"] == "°F-days" and body["cells"] == [{"lat": 39.5, "lon": -121.75, "value": 2400}]
+    assert client.get("/api/grid", params={"metric": "rainfall"}).status_code == 422
