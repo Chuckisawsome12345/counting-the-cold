@@ -431,30 +431,261 @@ select {
 
 /* ---------- Existing component markup, restyled with the tokens until its slice replaces it ---------- */
 
-.map {
+/* ---------- Map ---------- */
+
+.map-card {
+  position: relative;
   height: 560px;
-  border-radius: var(--radius-lg);
   border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
   overflow: hidden;
+  background: var(--land);
+}
+
+.map {
+  height: 100%;
+  background: var(--land);
+  font-family: var(--font-body);
 }
 
 .map .leaflet-tile-pane {
   filter: var(--map-tiles);
 }
 
+.map .leaflet-bottom.leaflet-left {
+  margin-bottom: 4px;
+}
+
+.map-controls {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.map-controls .chip {
+  box-shadow: var(--shadow);
+}
+
+.closed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border: 1px solid var(--heatink);
+  border-radius: var(--radius-sm);
+  background: var(--solid);
+  color: var(--heatink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.map-legend {
+  position: absolute;
+  right: var(--space-3);
+  bottom: 28px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.map-legend span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lg-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--cold4);
+  border-radius: 50%;
+  background: var(--cold3);
+}
+
+.lg-dot.closed {
+  border: 2px dashed var(--heatink);
+  background: transparent;
+}
+
+/* Leaflet divIcon markers: our own class replaces Leaflet's default white box. */
+.ctc-station {
+  position: relative;
+}
+
+.st-dot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border: 2px solid var(--cold4);
+  border-radius: 50%;
+  background: var(--cold3);
+  box-shadow: var(--glowc);
+}
+
+.ctc-station.closed .st-dot {
+  border: 2px dashed var(--heatink);
+  background: transparent;
+  box-shadow: none;
+}
+
+.st-name {
+  position: absolute;
+  left: calc(100% + 5px);
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink2);
+  text-shadow:
+    0 0 3px var(--solid),
+    0 0 3px var(--solid),
+    0 0 3px var(--solid);
+  pointer-events: none;
+}
+
+.ctc-station.closed .st-name {
+  color: var(--heatink);
+}
+
+.ctc-pin {
+  position: relative;
+}
+
+.pin-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--cold4);
+  border-radius: 50%;
+  animation: pin-pulse var(--dur-pulse) ease-out infinite;
+}
+
+.pin-svg {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  margin-left: -14px;
+  overflow: visible;
+  animation: pin-drop var(--dur-pin-drop) var(--ease-drop) both;
+}
+
+.pin-svg path {
+  fill: var(--cold4);
+  stroke: var(--cold3);
+  stroke-width: 2;
+}
+
+.pin-svg circle {
+  fill: var(--bg);
+}
+
+@keyframes pin-drop {
+  from {
+    transform: translateY(-48px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pin-pulse {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.9;
+  }
+  80%,
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.leaflet-tooltip.pin-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: 150px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--solid);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.leaflet-tooltip.pin-info::before {
+  display: none;
+}
+
+.pin-coords {
+  font-family: var(--font-mono);
+  color: var(--coldink);
+}
+
+.pin-near {
+  color: var(--ink2);
+}
+
+.leaflet-tooltip {
+  border-color: var(--line);
+  background: var(--solid);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
 .demo-pins {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-3);
 }
 
-.demo-pins button {
-  min-height: 44px;
-  padding: 0 var(--space-4);
-  border: 1px solid var(--line2);
-  border-radius: var(--radius-pill);
+.demo-pins .lbl {
+  margin-right: var(--space-1);
+}
+
+/* Notice: dashed card for "nothing to show here" messages */
+.notice-dashed {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-4);
+  border: 1px dashed var(--cold3);
+  border-radius: var(--radius-lg);
   background: var(--panel);
+  color: var(--ink2);
+}
+
+.notice-dashed strong {
+  color: var(--ink);
+}
+
+@media (max-width: 900px) {
+  .map-card {
+    height: 320px;
+  }
 }
 
 .settings {

@@ -5,11 +5,13 @@ import CorrectionInfo from './components/CorrectionInfo'
 import DataQualityBadge from './components/DataQualityBadge'
 import ForecastChart from './components/ForecastChart'
 import Header, { type Tab } from './components/Header'
-import MapPicker, { DEMO_PINS } from './components/MapPicker'
+import MapPicker from './components/MapPicker'
 import SeasonChart from './components/SeasonChart'
 import SettingsBar from './components/SettingsBar'
 import SummaryCards from './components/SummaryCards'
 import ValidationPanel from './components/ValidationPanel'
+import { DEMO_PINS } from './demoPins'
+import { inCalifornia } from './geo'
 import { usePoint } from './hooks/usePoint'
 import { useTheme } from './hooks/useTheme'
 import { DEFAULT_SETTINGS, type Settings } from './settings'
@@ -20,7 +22,9 @@ export default function App() {
   const [pin, setPin] = useState<[number, number]>([DEMO_PINS[0].lat, DEMO_PINS[0].lon])
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [stations, setStations] = useState<Station[]>([])
-  const { data, error, loading } = usePoint({ lat: pin[0], lon: pin[1], ...settings })
+  const insideCalifornia = inCalifornia(pin[0], pin[1])
+  // No request for pins outside California: the API would answer 422.
+  const { data, error, loading } = usePoint(insideCalifornia ? { lat: pin[0], lon: pin[1], ...settings } : null)
 
   useEffect(() => {
     fetchStations()
@@ -39,20 +43,24 @@ export default function App() {
       ) : (
         <main className="layout">
           <aside className="left">
-            <MapPicker pin={pin} stations={stations} onPick={(lat, lon) => setPin([lat, lon])} />
-            <div className="demo-pins">
-              {DEMO_PINS.map((p) => (
-                <button key={p.id} onClick={() => setPin([p.lat, p.lon])}>
-                  {p.label}
-                </button>
-              ))}
-            </div>
+            <MapPicker
+              pin={pin}
+              stations={stations}
+              nearest={insideCalifornia && !loading ? (data?.nearest_station ?? null) : null}
+              onPick={(lat, lon) => setPin([lat, lon])}
+            />
           </aside>
           <section className="right">
             <SettingsBar season={settings.season} onSeason={(season) => setSettings((s) => ({ ...s, season }))} />
-            {error && <div className="banner error">Couldn't load data: {error}</div>}
-            {loading && !data && <div className="banner">Loading…</div>}
-            {data && (
+            {!insideCalifornia && (
+              <div className="notice-dashed" role="status">
+                <strong>Pin outside California</strong>
+                <span>We only cover California orchards. Move the pin inside the state outline.</span>
+              </div>
+            )}
+            {insideCalifornia && error && <div className="banner error">Couldn't load data: {error}</div>}
+            {insideCalifornia && loading && !data && <div className="banner">Loading…</div>}
+            {insideCalifornia && data && (
               <>
                 <SummaryCards data={data} />
                 <SeasonChart data={data} />
