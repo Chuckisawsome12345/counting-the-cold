@@ -5,7 +5,7 @@ import { buildSeries, type Series } from '../chartData'
 import { formatFixed, formatMonthDay, formatNumber } from '../format'
 import { NARROW_QUERY, useMediaQuery } from '../hooks/useMediaQuery'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
-import { METRICS, type MetricInfo } from '../metrics'
+import { METRICS, isUnavailable, type MetricInfo } from '../metrics'
 import ForecastChart from './ForecastChart'
 
 const DRAW_MS = 1400
@@ -151,6 +151,12 @@ export default function SeasonChart({ data, metric, onMetric }: Props) {
       </div>
 
       <div id="chart-panel" role="tabpanel" aria-labelledby={`tab-${metric}`}>
+        {isUnavailable(data, metric) ? (
+          <div className="unavailable" role="status">
+            <strong>{info.label} isn't available yet.</strong>
+            <span>The data service hasn't calculated it, so there is nothing to chart. The other measures are unaffected.</span>
+          </div>
+        ) : (
         <div className="chart-fade" key={metric} role="img" aria-label={summarize(data, info, series)}>
           <ResponsiveContainer width="100%" height={narrow ? 240 : 300}>
             <ComposedChart accessibilityLayer={false} data={series.rows} margin={{ top: 26, right: narrow ? 16 : 30, bottom: 4, left: 0 }}>
@@ -249,6 +255,7 @@ export default function SeasonChart({ data, metric, onMetric }: Props) {
             </ComposedChart>
           </ResponsiveContainer>
         </div>
+        )}
       </div>
     </section>
   )

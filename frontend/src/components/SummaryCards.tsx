@@ -1,7 +1,7 @@
 import type { PointResponse } from '../api/types'
 import { dayOfSeason, formatFixed, formatMonthDay, formatNumber, median } from '../format'
 import { useCountUp } from '../hooks/useCountUp'
-import { METRICS, type MetricInfo } from '../metrics'
+import { METRICS, isUnavailable, type MetricInfo } from '../metrics'
 
 const STAGGER_MS = 80
 
@@ -21,6 +21,7 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
   const runKey = `${season.label}|${settings.crop}|${settings.corrected}|${data.location.lat},${data.location.lon}`
   const shown = useCountUp(value, runKey, index * STAGGER_MS)
 
+  const unavailable = isUnavailable(data, metric)
   const noneYet = inProgress && (value === 0 || !med)
   const pct = med ? ((value - med) / med) * 100 : null
   const arrow = pct === null || Math.abs(pct) < 0.05 ? '◦' : pct > 0 ? '▲' : '▼'
@@ -55,9 +56,11 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
         <span className="lbl">{label}</span>
         <span className="metric-unit">{unit}</span>
       </div>
-      <div className="metric-value">{value === 0 ? '0' : formatFixed(shown, digits)}</div>
+      <div className="metric-value">{unavailable ? '—' : value === 0 ? '0' : formatFixed(shown, digits)}</div>
       <div className="metric-delta">
-        {noneYet ? (
+        {unavailable ? (
+          <strong>◦ Not available yet</strong>
+        ) : noneYet ? (
           <>
             <strong>◦ None yet</strong>
             <span>{startText(formatMonthDay(start))}</span>

@@ -2,7 +2,7 @@ import { Bar, BarChart, Cell, LabelList, ResponsiveContainer, XAxis, YAxis } fro
 import type { Metric, PointResponse } from '../api/types'
 import { formatFixed } from '../format'
 import { NARROW_QUERY, useMediaQuery } from '../hooks/useMediaQuery'
-import { METRICS } from '../metrics'
+import { METRICS, isUnavailable } from '../metrics'
 
 interface BarItem {
   season: string // "2025-26"
@@ -38,6 +38,12 @@ export default function SeasonTotals({ data, metric }: { data: PointResponse; me
     <section className={`card totals-card ${info.accent}`}>
       <h2 className="sr-only">Season totals</h2>
       <span className="lbl">Season totals · this season and the 10 before</span>
+      {isUnavailable(data, metric) ? (
+        <div className="unavailable" role="status">
+          <strong>{info.label} isn't available yet.</strong>
+          <span>Nothing to compare until the data service calculates it.</span>
+        </div>
+      ) : (
       <div role="img" aria-label={summary} className="chart-fade" key={metric}>
         <ResponsiveContainer width="100%" height={220}>
           <BarChart accessibilityLayer={false} data={bars} margin={{ top: 22, right: 4, bottom: 0, left: 4 }}>
@@ -84,6 +90,7 @@ export default function SeasonTotals({ data, metric }: { data: PointResponse; me
           </BarChart>
         </ResponsiveContainer>
       </div>
+      )}
     </section>
   )
 }
