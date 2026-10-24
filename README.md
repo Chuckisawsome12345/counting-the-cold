@@ -48,6 +48,8 @@ No backend handy? Run the frontend on synthetic data: `VITE_USE_MOCK=1 npm run d
 3. Open `https://counting-the-cold.vercel.app/api/telegram/setup` once. It should answer `{"ok": true, ...}`.
 4. Message the bot `/start`, then `/durham`, or share a location.
 
+No Telegram? `GET /api/telegram/preview?text=durham` returns the bot's exact reply (and `bot_url`, the link to the real bot), for the website's "Try the bot" box.
+
 ## Checks
 
 ```bash

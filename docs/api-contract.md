@@ -164,4 +164,19 @@ Each cell's `lat`/`lon` is the cell **centre**; the cell spans ±`step_deg`/2 ar
 
 Before the grid is built: `"built_at": null, "cells": []`.
 
+## GET /api/telegram/preview
+
+The Telegram bot's reply to one message, computed by the same code the bot uses, so the website can show the bot without Telegram (a "Try the bot" box). Plain text with line breaks (render with `white-space: pre-wrap`).
+
+| Param | Default | Notes |
+|---|---|---|
+| `text` | `""` | What the user would send: `durham`, `davis`, `parlier`, `39.64,-121.79`, `/suggest durham`, `/help`. At most 200 characters. Empty gives the help text. |
+
+```json
+{"text": "Durham · 2026-27 season (as of Oct 24)\n\nChill (winter cold)\n• Chill portions: 3 so far (since Sep 1; ▼12% vs the 10-season median)\n...",
+ "bot_url": "https://t.me/ExampleBot"}
+```
+
+`bot_url` opens the real bot in Telegram; `null` when the bot isn't configured or Telegram can't be reached.
+
 All numbers on this page are illustrative.
