@@ -1,45 +1,96 @@
-import type { Metric, PointResponse } from '../api/types'
+import type { PointResponse } from '../api/types'
+import { dayOfSeason, formatFixed, formatMonthDay, formatNumber, median } from '../format'
+import { useCountUp } from '../hooks/useCountUp'
+import { METRICS, type MetricInfo } from '../metrics'
 
-const CARDS: { metric: Metric; label: string; unit: string }[] = [
-  { metric: 'chill_portions', label: 'Chill portions', unit: 'CP' },
-  { metric: 'chill_hours', label: 'Chill hours', unit: 'h' },
-  { metric: 'utah_units', label: 'Utah units', unit: 'CU' },
-  { metric: 'gdd', label: 'Growing degree days', unit: '°F-days' },
-]
+const STAGGER_MS = 80
 
-function median(values: number[]) {
-  const s = [...values].sort((a, b) => a - b)
-  const mid = Math.floor(s.length / 2)
-  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2
+function MetricCard({ data, info, index }: { data: PointResponse; info: MetricInfo; index: number }) {
+  const { metric, label, unit, footUnit, digits, accent, startField, startText } = info
+  const { season, forecast, correction, history, settings } = data
+  const value = data.totals[metric]
+  const inProgress = !season.complete
+
+  // Median of the previous 10 seasons: end-of-season totals for a finished season, the same day of season otherwise.
+  const day = inProgress ? dayOfSeason(season.label, season.as_of) : null
+  const pastValues = history
+    .map((h) => (day === null ? h.totals[metric] : h.cumulative.find((c) => c.day === day)?.[metric]))
+    .filter((v): v is number => v != null)
+  const med = median(pastValues)
+
+  const runKey = `${season.label}|${settings.crop}|${settings.corrected}|${data.location.lat},${data.location.lon}`
+  const shown = useCountUp(value, runKey, index * STAGGER_MS)
+
+  const noneYet = inProgress && (value === 0 || !med)
+  const pct = med ? ((value - med) / med) * 100 : null
+  const arrow = pct === null || Math.abs(pct) < 0.05 ? '◦' : pct > 0 ? '▲' : '▼'
+
+  const biggest = Math.max(value, ...history.map((h) => h.totals[metric]))
+  const barWidth = biggest > 0 ? Math.min(100, (shown / (biggest * 1.1)) * 100) : 0
+
+  const start = season[startField]
+  const plus14 = forecast?.plus14[metric] ?? 0
+  const err = correction.expected_error?.[metric]
+
+  let footLeft: string
+  if (!inProgress) {
+    footLeft =
+      metric === 'gdd'
+        ? `Base ${settings.gdd_base_f}°F · ${settings.gdd_upper_f == null ? 'no upper cutoff' : `upper ${settings.gdd_upper_f}°F`}`
+        : 'Season complete'
+  } else if (plus14 > 0) {
+    footLeft = `+14 d: +${formatNumber(plus14, digits)} ${footUnit}`
+  } else if (start > season.as_of) {
+    footLeft = `Starts ${formatMonthDay(start)}`
+  } else {
+    footLeft = `+14 d: +0 ${footUnit}`
+  }
+
+  return (
+    <div className={`card metric ${accent}`}>
+      <div className="metric-head">
+        <span className="lbl">{label}</span>
+        <span className="metric-unit">{unit}</span>
+      </div>
+      <div className="metric-value">{value === 0 ? '0' : formatFixed(shown, digits)}</div>
+      <div className="metric-delta">
+        {noneYet ? (
+          <>
+            <strong>◦ None yet</strong>
+            <span>{startText(formatMonthDay(start))}</span>
+          </>
+        ) : pct === null ? (
+          <strong>◦ No 10-season median</strong>
+        ) : (
+          <>
+            <strong>
+              {arrow} {Math.abs(pct).toFixed(1)}%
+            </strong>
+            <span>vs 10-season median</span>
+          </>
+        )}
+      </div>
+      <div className="metric-bar" aria-hidden="true">
+        <i style={{ width: `${barWidth}%` }} />
+      </div>
+      <div className="metric-foot">
+        <span>{footLeft}</span>
+        {err != null && (
+          <span>
+            ± {formatNumber(err, 1)} {footUnit} expected
+          </span>
+        )}
+      </div>
+    </div>
+  )
 }
 
-// TODO(C): compare against the median at the same day of season (not season totals) for the current season.
 export default function SummaryCards({ data }: { data: PointResponse }) {
   return (
     <div className="cards">
-      {CARDS.map(({ metric, label, unit }) => {
-        const value = data.totals[metric]
-        const med = median(data.history.map((h) => h.totals[metric]))
-        const pct = med ? Math.round(((value - med) / med) * 100) : 0
-        const err = data.correction.expected_error?.[metric]
-        return (
-          <div className="card" key={metric}>
-            <div className="card-label">{label}</div>
-            <div className="card-value">
-              {Math.round(value).toLocaleString()} <span className="card-unit">{unit}</span>
-            </div>
-            {err != null && <div className="card-sub">± {Math.round(err)} expected error</div>}
-            {data.season.complete && (
-              <div className={pct >= 0 ? 'card-sub up' : 'card-sub down'}>
-                {pct >= 0 ? '▲' : '▼'} {Math.abs(pct)}% vs 10-season median
-              </div>
-            )}
-            {data.forecast && (
-              <div className="card-sub">+14 days: {Math.round(data.forecast.plus14[metric]).toLocaleString()}</div>
-            )}
-          </div>
-        )
-      })}
+      {METRICS.map((info, i) => (
+        <MetricCard key={info.metric} data={data} info={info} index={i} />
+      ))}
     </div>
   )
 }

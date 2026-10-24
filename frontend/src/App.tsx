@@ -51,7 +51,7 @@ export default function App() {
             />
           </aside>
           <section className="right">
-            <SettingsBar season={settings.season} onSeason={(season) => setSettings((s) => ({ ...s, season }))} />
+            <SettingsBar settings={settings} onChange={(patch) => setSettings((s) => ({ ...s, ...patch }))} />
             {!insideCalifornia && (
               <div className="notice-dashed" role="status">
                 <strong>Pin outside California</strong>
