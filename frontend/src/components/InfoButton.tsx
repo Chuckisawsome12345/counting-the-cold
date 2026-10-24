@@ -1,7 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { NARROW_QUERY, useMediaQuery } from '../hooks/useMediaQuery'
-import type { InfoCopy } from './metricInfo'
 
 const PANEL_WIDTH = 320
 const EDGE = 12 // keep this far from the screen edge
@@ -9,7 +8,7 @@ const GAP = 8 // between the button and the popover
 
 interface Props {
   title: string // "Chill portions"
-  copy: InfoCopy
+  text: string // the explanation, one short body from metricInfo.ts
   live?: string // one line from the card's own values; left out when there is none
   accent: 'cold' | 'heat'
   open: boolean
@@ -19,7 +18,7 @@ interface Props {
 
 // A small "i" that opens a short explanation. A popover under the button on desktop, a bottom sheet on phones. Opens by
 // click, tap, Enter or Space (never hover); closes on Escape, a second click, or a click outside.
-export default function InfoButton({ title, copy, live, accent, open, onToggle, onClose }: Props) {
+export default function InfoButton({ title, text, live, accent, open, onToggle, onClose }: Props) {
   const id = useId()
   const panelId = `info-panel-${id}`
   const titleId = `info-title-${id}`
@@ -41,7 +40,7 @@ export default function InfoButton({ title, copy, live, accent, open, onToggle, 
       const below = window.innerHeight - r.bottom - GAP - EDGE
       const above = r.top - GAP - EDGE
       setPlace(
-        below >= 260 || below >= above
+        below >= 230 || below >= above
           ? { left, width, top: r.bottom + GAP, maxHeight: Math.max(below, 160) }
           : { left, width, bottom: window.innerHeight - r.top + GAP, maxHeight: Math.max(above, 160) },
       )
@@ -135,12 +134,7 @@ export default function InfoButton({ title, copy, live, accent, open, onToggle, 
               </div>
               <div className="info-body">
                 {live && <p className="info-live">{live}</p>}
-                <h4 className="lbl">What it is</h4>
-                <p>{copy.what}</p>
-                <h4 className="lbl">Why it matters for the crop</h4>
-                <p>{copy.why}</p>
-                <h4 className="lbl">How to read it</h4>
-                <p>{copy.how}</p>
+                <p>{text}</p>
               </div>
             </div>
           </>,

@@ -80,7 +80,7 @@ function MetricCard({ data, info, index, open, onToggle, onClose }: CardProps) {
           <span className="lbl">{label}</span>
           <InfoButton
             title={label}
-            copy={metricCopy(metric, { gddBaseF: settings.gdd_base_f, gddUpperF: settings.gdd_upper_f })}
+            text={metricCopy(metric, { gddBaseF: settings.gdd_base_f, gddUpperF: settings.gdd_upper_f })}
             live={live}
             accent={accent}
             open={open}

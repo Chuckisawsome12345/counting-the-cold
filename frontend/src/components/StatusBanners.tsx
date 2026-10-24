@@ -101,7 +101,7 @@ export function LoadingSkeleton({ lat, lon }: { lat: number; lon: number }) {
               <span className="lbl">{m.label}</span>
               <InfoButton
                 title={m.label}
-                copy={metricCopy(m.metric)}
+                text={metricCopy(m.metric)}
                 accent={m.accent}
                 open={openId === m.metric}
                 onToggle={() => toggle(m.metric)}
