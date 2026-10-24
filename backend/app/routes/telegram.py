@@ -54,8 +54,13 @@ async def telegram(request: Request) -> dict:
     update = await request.json()
     message = update.get("message") or update.get("edited_message")
     if not message:
+        log.info("telegram update ignored: %s", ", ".join(k for k in update if k != "update_id"))
         return {}  # other update types: acknowledge and ignore
-    return {"method": "sendMessage", "chat_id": message["chat"]["id"], "text": reply_for_message(message, date.today())}
+    reply = reply_for_message(message, date.today())
+    # Just the kind of message, never its text or location.
+    kind = "location" if "location" in message else (message.get("text") or "").split(" ")[0].split("@")[0][:20] or "other"
+    log.info("telegram update answered: %s -> %d chars", kind if kind.startswith("/") or kind == "location" else "text", len(reply))
+    return {"method": "sendMessage", "chat_id": message["chat"]["id"], "text": reply}
 
 
 def reply_for_message(message: dict, today: date) -> str:
