@@ -36,6 +36,13 @@ cd backend && pytest
 cd frontend && npm run build
 ```
 
+## Deploy
+
+- **Backend (Render):** `render.yaml` is a Render Blueprint. In Render: New → Blueprint → this repo, paste `CIMIS_KEY` when asked, Apply. Pushes to `main` redeploy. After the frontend is live, add its URL to `ALLOWED_ORIGINS` in the service's Environment tab.
+- **Frontend (Vercel):** root `frontend`, Vite preset, `VITE_API_URL` = the Render URL (issue #24).
+
+The free Render tier sleeps after about 15 minutes idle and takes about 50 s to wake: hit `/api/health` before a demo.
+
 ## Status
 
 Scaffold only. `/api/point` serves synthetic mock data (`"mock": true`) until the real pipeline lands; see the milestones in the plan.
