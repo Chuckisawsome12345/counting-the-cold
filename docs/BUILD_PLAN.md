@@ -146,7 +146,7 @@ counting-the-cold/
 │   │   ├── cimis/                # station-season JSON.gz (B)
 │   │   ├── snapshots/            # demo-pin responses for DEMO_MODE (A)
 │   │   └── validation.json       # (B)
-│   └── tests/                    # calc + validation tests, helpers.py (B); test_api, test_sources (A)
+│   └── tests/                    # calc + validation tests, helpers.py (B); test_api, test_sources, test_pipeline (A)
 │       └── fixtures/             # fnric_reference.json, cimis_sample.json (B)
 └── frontend/                     # everything here is (C)
     ├── vite.config.ts            # proxy /api -> localhost:8000
