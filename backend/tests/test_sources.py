@@ -12,6 +12,7 @@ def isolated_cache(tmp_path, monkeypatch):
     """Each test gets its own empty SQLite cache and L2."""
     monkeypatch.setattr(cache, "DB_PATH", tmp_path / "http.sqlite")
     cache.clear_results()
+    monkeypatch.setattr(openmeteo, "RETRY_DELAYS", (0, 0, 0))
 
 # Trimmed from a real archive response (Durham, 2025-11-01, timezone=GMT).
 ARCHIVE_PAYLOAD = {
@@ -158,3 +159,23 @@ def test_remember_reuses_result_until_ttl(monkeypatch):
     assert cache.remember("p", compute) == 1
     clock.t += cache.RESULT_TTL_SECONDS + 1
     assert cache.remember("p", compute) == 2
+
+
+def test_retries_rate_limit_then_succeeds():
+    responses = [httpx.Response(429, json={"error": True, "reason": "Too many concurrent requests"}),
+                 httpx.Response(200, json=ARCHIVE_PAYLOAD)]
+    client = httpx.Client(transport=httpx.MockTransport(lambda request: responses.pop(0)))
+    s = openmeteo.fetch_forecast_hourly(39.6, -121.8, client=client)
+    assert len(s) == 4 and responses == []
+
+
+def test_gives_up_after_retries():
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        return httpx.Response(429, json={"error": True, "reason": "Too many concurrent requests"})
+
+    with pytest.raises(openmeteo.OpenMeteoError, match="429"):
+        openmeteo.fetch_forecast_hourly(39.6, -121.8, client=httpx.Client(transport=httpx.MockTransport(handler)))
+    assert len(calls) == len(openmeteo.RETRY_DELAYS) + 1

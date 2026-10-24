@@ -2,6 +2,7 @@
 
 Every call goes through sources.cache so the demo doesn't hammer the API.
 """
+import time
 from datetime import date, timedelta
 
 import httpx
@@ -15,6 +16,9 @@ FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 # The reanalysis archive trails real time by about 5 days; the forecast API covers the gap.
 ARCHIVE_LAG_DAYS = 6
 TIMEOUT_SECONDS = 30.0
+# Waits before retrying a 429 (rate or concurrency limit) or 5xx; then give up.
+RETRY_DELAYS = (1.0, 2.0, 4.0)
+RETRY_STATUSES = {429, 500, 502, 503, 504}
 
 BASE_PARAMS = {"hourly": "temperature_2m", "temperature_unit": "fahrenheit", "timezone": "GMT"}
 
@@ -89,9 +93,16 @@ def _get(url: str, params: dict, client: httpx.Client | None) -> dict:
     owned = client is None
     client = client or httpx.Client(timeout=TIMEOUT_SECONDS)
     try:
-        response = client.get(url, params=params)
-    except httpx.HTTPError as e:
-        raise OpenMeteoError(f"Open-Meteo request failed: {e}") from e
+        for delay in (*RETRY_DELAYS, None):
+            try:
+                response = client.get(url, params=params)
+            except httpx.HTTPError as e:
+                if delay is None:
+                    raise OpenMeteoError(f"Open-Meteo request failed: {e}") from e
+            else:
+                if response.status_code not in RETRY_STATUSES or delay is None:
+                    break
+            time.sleep(delay)
     finally:
         if owned:
             client.close()
