@@ -2,6 +2,8 @@
 
 **Your orchard's chill and heat, not a station's.**
 
+**Live:** [counting-the-cold-jfm3.vercel.app](https://counting-the-cold-jfm3.vercel.app) · API [counting-the-cold.vercel.app](https://counting-the-cold.vercel.app) ([docs](https://counting-the-cold.vercel.app/docs))
+
 Drop a pin on any California orchard and see its chill (chill hours, Utah units, Dynamic Model chill portions) and growing degree days for the season so far, compared with the last 10 seasons, plus a 14-day projection. Estimates come from gridded weather data (Open-Meteo), bias-corrected and validated against CIMIS stations, so they work where there is no station, including near the Durham #12 station that closed in July 2025.
 
 Built at Reboot Earth (UC Davis, Oct 23–24 2026) for the FNRIC "Counting the Cold" challenge.
@@ -38,8 +40,8 @@ cd frontend && npm run build
 
 ## Deploy
 
-- **Backend (Vercel):** a Vercel project with root `backend` (Python function `api/index.py`, routing in `backend/vercel.json`). Pushes to `main` redeploy. Env: `ALLOWED_ORIGINS` = the frontend URL; `CIMIS_KEY` is optional (only the offline CIMIS scripts use it). The cache lives in `/tmp` there and resets on cold starts; committed snapshots cover the demo pins.
-- **Frontend (Vercel):** root `frontend`, Vite preset, `VITE_API_URL` = the backend URL (no trailing slash).
+- **Backend (Vercel project `counting-the-cold`, https://counting-the-cold.vercel.app):** root `backend` (Python function `api/index.py`, routing in `backend/vercel.json`). Pushes to `main` redeploy. Env: `ALLOWED_ORIGINS` = the frontend URL; `CIMIS_KEY` is optional (only the offline CIMIS scripts use it). The cache lives in `/tmp` there and resets on cold starts; committed snapshots cover the demo pins.
+- **Frontend (Vercel project `counting-the-cold-jfm3`, https://counting-the-cold-jfm3.vercel.app):** root `frontend`, Vite preset, `VITE_API_URL` = the backend URL (no trailing slash).
 - **Backup:** `render.yaml` still describes a Render deploy if we ever need it.
 
 Hit `/api/health` on the backend a minute before a demo so the first click isn't a cold start.
