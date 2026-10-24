@@ -10,7 +10,7 @@ import SeasonChart from './components/SeasonChart'
 import SeasonTotals from './components/SeasonTotals'
 import SettingsBar from './components/SettingsBar'
 import SummaryCards from './components/SummaryCards'
-import { ErrorCard, LastNumbersBanner, LoadingSkeleton, StaleBanner } from './components/StatusBanners'
+import { ErrorCard, LastNumbersBanner, LoadingSkeleton, OfflineBanner, StaleBanner } from './components/StatusBanners'
 import ValidationPanel from './components/ValidationPanel'
 import { DEMO_PINS } from './demoPins'
 import { inCalifornia } from './geo'
@@ -28,7 +28,7 @@ export default function App() {
   const [locateMessage, setLocateMessage] = useState<string | null>(null)
   const insideCalifornia = inCalifornia(pin[0], pin[1])
   // No request for pins outside California: the API would answer 422.
-  const { data, error, loading, reload, requestId } = usePoint(insideCalifornia ? { lat: pin[0], lon: pin[1], ...settings } : null)
+  const { data, error, loading, offline, reload, requestId } = usePoint(insideCalifornia ? { lat: pin[0], lon: pin[1], ...settings } : null)
   // "Show last saved numbers" applies to one failed request; a new request shows the error card again if it fails.
   const [showLastFor, setShowLastFor] = useState<string | null>(null)
   const showLast = showLastFor === requestId
@@ -66,6 +66,12 @@ export default function App() {
       </a>
       <Header tab={tab} onTab={setTab} mock={data?.mock === true} onToggleTheme={toggleTheme} onLocate={locate} />
 
+      {tab === 'orchard' && insideCalifornia && offline && data && (
+        <div className="top-banner">
+          <OfflineBanner asOf={data.season.as_of} onRetry={reload} />
+        </div>
+      )}
+
       {tab === 'accuracy' ? (
         <main className="page" id="main">
           <ValidationPanel stations={stations} />
@@ -94,7 +100,7 @@ export default function App() {
                 <span>We only cover California orchards. Move the pin inside the state outline.</span>
               </div>
             )}
-            {insideCalifornia && stale && <StaleBanner onRefresh={reload} />}
+            {insideCalifornia && stale && !offline && <StaleBanner onRefresh={reload} />}
             {insideCalifornia && showErrorCard && error && (
               <ErrorCard error={error} hasLast={data !== null} onRetry={reload} onShowLast={() => setShowLastFor(requestId)} />
             )}

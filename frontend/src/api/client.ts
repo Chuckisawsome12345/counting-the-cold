@@ -31,6 +31,10 @@ export class ApiError extends Error {
   }
 }
 
+// Responses the service worker answered from its saved copy because the network failed (header x-ctc-offline).
+// Tracked by object, so the types in types.ts stay untouched.
+export const servedOffline = new WeakSet<object>()
+
 async function getJson<T>(url: string): Promise<T> {
   let res: Response
   try {
@@ -39,7 +43,9 @@ async function getJson<T>(url: string): Promise<T> {
     throw new ApiError(`${url} could not be reached`)
   }
   if (!res.ok) throw new ApiError(`${url} failed: ${res.status}`, res.status)
-  return (await res.json()) as T
+  const data = (await res.json()) as T
+  if (res.headers.get('x-ctc-offline') === '1' && typeof data === 'object' && data !== null) servedOffline.add(data)
+  return data
 }
 
 export function fetchPoint(params: PointParams): Promise<PointResponse> {

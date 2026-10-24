@@ -413,6 +413,17 @@ select {
   padding: 28px 40px 0;
 }
 
+/* Offline notice: above both columns so it is the first thing seen on a phone */
+.top-banner {
+  padding: var(--space-4) 40px 0;
+}
+
+@media (max-width: 900px) {
+  .top-banner {
+    padding: var(--space-3) var(--space-4) 0;
+  }
+}
+
 @media (max-width: 900px) {
   .header {
     padding: var(--space-3) var(--space-4);

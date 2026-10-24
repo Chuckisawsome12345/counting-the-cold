@@ -21,6 +21,15 @@ export function CheckIcon({ size = 16 }: IconProps) {
   )
 }
 
+export function OfflineIcon({ size = 20 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" aria-hidden="true">
+      <path d="M5.5 15.5h9a3.2 3.2 0 0 0 .5-6.36A4.8 4.8 0 0 0 5.8 8.2 3.7 3.7 0 0 0 5.5 15.5z" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M3 3l14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export function ClockIcon({ size = 16 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true">
