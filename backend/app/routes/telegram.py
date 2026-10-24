@@ -29,6 +29,12 @@ HELP = (
     "(e.g. 39.64,-121.79), or send DURHAM, DAVIS or PARLIER.\n\n"
     "For what to watch for, send /suggest with a place: /suggest durham or /suggest 39.64,-121.79"
 )
+# The website's chat box shows the bot's replies without Telegram, so it gets its own help text.
+WEB_HELP = (
+    "Ask about any California orchard: type its location as lat,lon (e.g. 39.64,-121.79), "
+    "or DURHAM, DAVIS or PARLIER.\n\n"
+    "For what to watch for, add /suggest: /suggest durham or /suggest 39.64,-121.79"
+)
 SUGGEST_USAGE = "Add a place after /suggest, e.g. /suggest durham or /suggest 39.64,-121.79"
 DISCLAIMER = ("General pointers from this data, not a farming recommendation. "
               "For decisions, check with your UC Cooperative Extension farm advisor.")
@@ -234,9 +240,15 @@ def _day(iso: str) -> str:
 
 
 @router.get("/preview", response_model=BotPreviewResponse,
-            summary="The bot's reply to a message, without Telegram (the website's Try the bot box)")
+            summary="The bot's reply to a message, worded for the website's chat box")
 def preview(text: str = Query("", max_length=200, description="What the user would send, e.g. durham, 39.64,-121.79, /suggest davis")) -> dict:
-    return {"text": reply_for_message({"text": text}, date.today()), "bot_url": bot_url()}
+    return {"text": for_web(reply_for_message({"text": text}, date.today())), "bot_url": bot_url()}
+
+
+def for_web(reply: str) -> str:
+    """The bot's reply as the website shows it: web help instead of Telegram's, and no link back to the site."""
+    reply = reply.replace(HELP, WEB_HELP)
+    return "\n".join(line for line in reply.split("\n") if not line.startswith("Charts and details: "))
 
 
 _bot_url: str | None = None

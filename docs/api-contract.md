@@ -166,7 +166,7 @@ Before the grid is built: `"built_at": null, "cells": []`.
 
 ## GET /api/telegram/preview
 
-The Telegram bot's reply to one message, computed by the same code the bot uses, so the website can show the bot without Telegram (a "Try the bot" box). Plain text with line breaks (render with `white-space: pre-wrap`).
+The Telegram bot's reply to one message, computed by the same code the bot uses, for the website's chat box. Worded for the web: the help text has no Telegram instructions, and the "Charts and details" link back to the site is left out. Plain text with line breaks (render with `white-space: pre-wrap`).
 
 | Param | Default | Notes |
 |---|---|---|
