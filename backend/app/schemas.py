@@ -229,3 +229,10 @@ class GridResponse(BaseModel):
     step_deg: float
     built_at: str | None
     cells: list[GridCell]
+
+
+class BotPreviewResponse(BaseModel):
+    """GET /api/telegram/preview: the Telegram bot's reply to a message, for the website's "Try the bot" box."""
+
+    text: str
+    bot_url: str | None
