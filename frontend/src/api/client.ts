@@ -1,5 +1,6 @@
 import type { Crop, PointResponse, StationsResponse, ValidationResponse } from './types'
 import { MOCK_STATIONS } from './mock/stations'
+import { MOCK_VALIDATION } from './mock/validation'
 import mockCompleteUrl from './mock/point.json?url'
 import mockCurrentUrl from './mock/point_current.json?url'
 
@@ -38,6 +39,7 @@ export function fetchStations(): Promise<StationsResponse> {
 }
 
 export function fetchValidation(): Promise<ValidationResponse> {
+  if (USE_MOCK) return Promise.resolve(MOCK_VALIDATION)
   return getJson(`${API_BASE}/api/validation`)
 }
 
