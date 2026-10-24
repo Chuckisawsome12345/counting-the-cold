@@ -117,6 +117,7 @@ counting-the-cold/
 ├── README.md  CLAUDE.md          # setup + run; rules for AI assistants (A)
 ├── .gitignore  .env.example      # CIMIS_KEY=, DEMO_MODE=0, ALLOWED_ORIGINS= (A)
 ├── .claude/launch.json           # dev servers for the Claude desktop app (A)
+├── render.yaml                   # Render Blueprint for the backend deploy (A)
 ├── .github/
 │   ├── workflows/ci.yml          # backend-tests + frontend-build, always run
 │   └── pull_request_template.md
@@ -310,7 +311,7 @@ The demo survives any single upstream outage because demo pins are cached and sn
 
 The backend goes on Render and the frontend on Vercel. Deploy the skeleton at H4, not at the end.
 
-- **Backend on Render** (free web service, issue [#5](https://github.com/Chuckisawsome12345/counting-the-cold/issues/5)): root directory `backend`, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Env vars: `PYTHON_VERSION=3.12.x`, `CIMIS_KEY`, `ALLOWED_ORIGINS=<vercel url>`, `DEMO_MODE`. The disk is ephemeral, so committed snapshots and a startup prewarm cover the demo.
+- **Backend on Render** (free web service, issue [#5](https://github.com/Chuckisawsome12345/counting-the-cold/issues/5)), configured by the Blueprint in `render.yaml`: root directory `backend`, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Env vars: `PYTHON_VERSION=3.12.x`, `CIMIS_KEY`, `ALLOWED_ORIGINS=<vercel url>`, `DEMO_MODE`. The disk is ephemeral, so committed snapshots and a startup prewarm cover the demo.
 - **Frontend on Vercel** (issue [#24](https://github.com/Chuckisawsome12345/counting-the-cold/issues/24)): root `frontend`, Vite preset, `VITE_API_URL=<render url>`. Every PR gets a preview URL.
 - **Schedule:** pushes to main auto-deploy both. Final tagged deploy at H21.
 - **Backups:** Railway for the backend, a laptop running `uvicorn` and `npm run preview`, and the recorded video.
