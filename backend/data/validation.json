@@ -1,0 +1,2935 @@
+{
+ "built_at": "2026-10-24T08:14:09+00:00",
+ "summary": {
+  "chill_portions": {
+   "raw_mae": 4.02,
+   "corrected_mae": 4.02
+  },
+  "chill_hours": {
+   "raw_mae": 116.06,
+   "corrected_mae": 116.06
+  },
+  "utah_units": {
+   "raw_mae": 96.66,
+   "corrected_mae": 96.66
+  },
+  "gdd": {
+   "raw_mae": 498.32,
+   "corrected_mae": 233.19
+  }
+ },
+ "stations": [
+  {
+   "id": 6,
+   "name": "Davis",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 2.07,
+     "corrected_mae": 2.07
+    },
+    "chill_hours": {
+     "raw_mae": 29.09,
+     "corrected_mae": 29.09
+    },
+    "utah_units": {
+     "raw_mae": 56.32,
+     "corrected_mae": 56.32
+    },
+    "gdd": {
+     "raw_mae": 211.72,
+     "corrected_mae": 388.49
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 80.5,
+      "chill_hours": 780.0,
+      "utah_units": 1380.5,
+      "gdd": 2367.0
+     },
+     "raw": {
+      "chill_portions": 79.3,
+      "chill_hours": 727.0,
+      "utah_units": 1338.5,
+      "gdd": 2533.4
+     },
+     "corrected": {
+      "chill_portions": 79.3,
+      "chill_hours": 727.0,
+      "utah_units": 1338.5,
+      "gdd": 1886.0
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 82.7,
+      "chill_hours": 850.0,
+      "utah_units": 1403.5,
+      "gdd": 2371.1
+     },
+     "raw": {
+      "chill_portions": 86.7,
+      "chill_hours": 810.0,
+      "utah_units": 1436.5,
+      "gdd": 2454.5
+     },
+     "corrected": {
+      "chill_portions": 86.7,
+      "chill_hours": 810.0,
+      "utah_units": 1436.5,
+      "gdd": 1868.0
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 84.5,
+      "chill_hours": 778.0,
+      "utah_units": 1140.0,
+      "gdd": 2274.8
+     },
+     "raw": {
+      "chill_portions": 83.3,
+      "chill_hours": 745.0,
+      "utah_units": 1183.0,
+      "gdd": 2554.1
+     },
+     "corrected": {
+      "chill_portions": 83.3,
+      "chill_hours": 745.0,
+      "utah_units": 1183.0,
+      "gdd": 1956.7
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 95.3,
+      "chill_hours": 763.0,
+      "utah_units": 1429.0,
+      "gdd": 2214.8
+     },
+     "raw": {
+      "chill_portions": 94.9,
+      "chill_hours": 763.0,
+      "utah_units": 1475.0,
+      "gdd": 2347.9
+     },
+     "corrected": {
+      "chill_portions": 94.9,
+      "chill_hours": 763.0,
+      "utah_units": 1475.0,
+      "gdd": 1755.2
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 84.6,
+      "chill_hours": 780.0,
+      "utah_units": 1260.0,
+      "gdd": 2353.6
+     },
+     "raw": {
+      "chill_portions": 83.5,
+      "chill_hours": 731.0,
+      "utah_units": 1233.5,
+      "gdd": 2618.2
+     },
+     "corrected": {
+      "chill_portions": 83.5,
+      "chill_hours": 731.0,
+      "utah_units": 1233.5,
+      "gdd": 2033.4
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 83.7,
+      "chill_hours": 742.0,
+      "utah_units": 1258.5,
+      "gdd": 2330.0
+     },
+     "raw": {
+      "chill_portions": 82.9,
+      "chill_hours": 733.0,
+      "utah_units": 1345.0,
+      "gdd": 2687.8
+     },
+     "corrected": {
+      "chill_portions": 82.9,
+      "chill_hours": 733.0,
+      "utah_units": 1345.0,
+      "gdd": 2088.0
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 82.8,
+      "chill_hours": 921.0,
+      "utah_units": 1409.5,
+      "gdd": 2390.6
+     },
+     "raw": {
+      "chill_portions": 88.0,
+      "chill_hours": 910.0,
+      "utah_units": 1483.5,
+      "gdd": 2654.8
+     },
+     "corrected": {
+      "chill_portions": 88.0,
+      "chill_hours": 910.0,
+      "utah_units": 1483.5,
+      "gdd": 2070.3
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 115.3,
+      "chill_hours": 1186.0,
+      "utah_units": 1729.5,
+      "gdd": 1999.2
+     },
+     "raw": {
+      "chill_portions": 116.1,
+      "chill_hours": 1158.0,
+      "utah_units": 1775.5,
+      "gdd": 2172.1
+     },
+     "corrected": {
+      "chill_portions": 116.1,
+      "chill_hours": 1158.0,
+      "utah_units": 1775.5,
+      "gdd": 1598.6
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 90.1,
+      "chill_hours": 623.0,
+      "utah_units": 1173.5,
+      "gdd": 2331.9
+     },
+     "raw": {
+      "chill_portions": 92.3,
+      "chill_hours": 663.0,
+      "utah_units": 1261.5,
+      "gdd": 2500.1
+     },
+     "corrected": {
+      "chill_portions": 92.3,
+      "chill_hours": 663.0,
+      "utah_units": 1261.5,
+      "gdd": 1942.8
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 91.9,
+      "chill_hours": 769.0,
+      "utah_units": 1290.0,
+      "gdd": 2188.4
+     },
+     "raw": {
+      "chill_portions": 93.7,
+      "chill_hours": 820.0,
+      "utah_units": 1354.0,
+      "gdd": 2452.2
+     },
+     "corrected": {
+      "chill_portions": 93.7,
+      "chill_hours": 820.0,
+      "utah_units": 1354.0,
+      "gdd": 1805.5
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 69.0,
+      "chill_hours": 904.0,
+      "utah_units": 1336.5,
+      "gdd": 2528.2
+     },
+     "raw": {
+      "chill_portions": 73.1,
+      "chill_hours": 910.0,
+      "utah_units": 1407.0,
+      "gdd": 2703.4
+     },
+     "corrected": {
+      "chill_portions": 73.1,
+      "chill_hours": 910.0,
+      "utah_units": 1407.0,
+      "gdd": 2071.7
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 250,
+     "name": "Williams",
+     "distance_km": 82.4,
+     "weight": 0.279
+    },
+    {
+     "id": 70,
+     "name": "Manteca",
+     "distance_km": 91.7,
+     "weight": 0.225
+    },
+    {
+     "id": 244,
+     "name": "Biggs",
+     "distance_km": 94.8,
+     "weight": 0.211
+    },
+    {
+     "id": 71,
+     "name": "Modesto",
+     "distance_km": 111.6,
+     "weight": 0.152
+    },
+    {
+     "id": 12,
+     "name": "Durham",
+     "distance_km": 119.4,
+     "weight": 0.133
+    }
+   ]
+  },
+  {
+   "id": 70,
+   "name": "Manteca",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 3.8,
+     "corrected_mae": 3.8
+    },
+    "chill_hours": {
+     "raw_mae": 105.0,
+     "corrected_mae": 105.0
+    },
+    "utah_units": {
+     "raw_mae": 129.18,
+     "corrected_mae": 129.18
+    },
+    "gdd": {
+     "raw_mae": 383.81,
+     "corrected_mae": 206.49
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 80.8,
+      "chill_hours": 909.0,
+      "utah_units": 1307.5,
+      "gdd": 2244.2
+     },
+     "raw": {
+      "chill_portions": 80.8,
+      "chill_hours": 746.0,
+      "utah_units": 1318.5,
+      "gdd": 2556.3
+     },
+     "corrected": {
+      "chill_portions": 80.8,
+      "chill_hours": 746.0,
+      "utah_units": 1318.5,
+      "gdd": 1893.7
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 75.6,
+      "chill_hours": 816.0,
+      "utah_units": 1220.5,
+      "gdd": 2297.4
+     },
+     "raw": {
+      "chill_portions": 80.8,
+      "chill_hours": 854.0,
+      "utah_units": 1402.5,
+      "gdd": 2671.5
+     },
+     "corrected": {
+      "chill_portions": 80.8,
+      "chill_hours": 854.0,
+      "utah_units": 1402.5,
+      "gdd": 2078.4
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 83.2,
+      "chill_hours": 896.0,
+      "utah_units": 1076.0,
+      "gdd": 2073.9
+     },
+     "raw": {
+      "chill_portions": 80.9,
+      "chill_hours": 818.0,
+      "utah_units": 1173.5,
+      "gdd": 2643.7
+     },
+     "corrected": {
+      "chill_portions": 80.9,
+      "chill_hours": 818.0,
+      "utah_units": 1173.5,
+      "gdd": 2033.8
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 83.5,
+      "chill_hours": 817.0,
+      "utah_units": 1275.5,
+      "gdd": 2360.3
+     },
+     "raw": {
+      "chill_portions": 92.9,
+      "chill_hours": 790.0,
+      "utah_units": 1482.0,
+      "gdd": 2507.9
+     },
+     "corrected": {
+      "chill_portions": 92.9,
+      "chill_hours": 790.0,
+      "utah_units": 1482.0,
+      "gdd": 1915.8
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 79.6,
+      "chill_hours": 1006.0,
+      "utah_units": 1259.0,
+      "gdd": 2372.4
+     },
+     "raw": {
+      "chill_portions": 81.5,
+      "chill_hours": 734.0,
+      "utah_units": 1209.0,
+      "gdd": 2867.5
+     },
+     "corrected": {
+      "chill_portions": 81.5,
+      "chill_hours": 734.0,
+      "utah_units": 1209.0,
+      "gdd": 2312.9
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 82.0,
+      "chill_hours": 1064.0,
+      "utah_units": 1296.5,
+      "gdd": 2460.5
+     },
+     "raw": {
+      "chill_portions": 88.1,
+      "chill_hours": 842.0,
+      "utah_units": 1458.5,
+      "gdd": 2851.1
+     },
+     "corrected": {
+      "chill_portions": 88.1,
+      "chill_hours": 842.0,
+      "utah_units": 1458.5,
+      "gdd": 2287.4
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 85.8,
+      "chill_hours": 1007.0,
+      "utah_units": 1368.5,
+      "gdd": 2379.0
+     },
+     "raw": {
+      "chill_portions": 85.0,
+      "chill_hours": 958.0,
+      "utah_units": 1536.5,
+      "gdd": 2878.8
+     },
+     "corrected": {
+      "chill_portions": 85.0,
+      "chill_hours": 958.0,
+      "utah_units": 1536.5,
+      "gdd": 2294.6
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 108.8,
+      "chill_hours": 1174.0,
+      "utah_units": 1641.0,
+      "gdd": 2069.9
+     },
+     "raw": {
+      "chill_portions": 118.1,
+      "chill_hours": 1202.0,
+      "utah_units": 1822.5,
+      "gdd": 2432.4
+     },
+     "corrected": {
+      "chill_portions": 118.1,
+      "chill_hours": 1202.0,
+      "utah_units": 1822.5,
+      "gdd": 1898.7
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 86.5,
+      "chill_hours": 694.0,
+      "utah_units": 1141.0,
+      "gdd": 2456.7
+     },
+     "raw": {
+      "chill_portions": 87.2,
+      "chill_hours": 638.0,
+      "utah_units": 1232.5,
+      "gdd": 2773.8
+     },
+     "corrected": {
+      "chill_portions": 87.2,
+      "chill_hours": 638.0,
+      "utah_units": 1232.5,
+      "gdd": 2234.2
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 88.7,
+      "chill_hours": 906.0,
+      "utah_units": 1241.0,
+      "gdd": 2313.5
+     },
+     "raw": {
+      "chill_portions": 86.6,
+      "chill_hours": 742.0,
+      "utah_units": 1366.5,
+      "gdd": 2703.6
+     },
+     "corrected": {
+      "chill_portions": 86.6,
+      "chill_hours": 742.0,
+      "utah_units": 1366.5,
+      "gdd": 2075.5
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 65.9,
+      "chill_hours": 773.0,
+      "utah_units": 1218.0,
+      "gdd": 2631.3
+     },
+     "raw": {
+      "chill_portions": 69.9,
+      "chill_hours": 831.0,
+      "utah_units": 1363.5,
+      "gdd": 2994.4
+     },
+     "corrected": {
+      "chill_portions": 69.9,
+      "chill_hours": 831.0,
+      "utah_units": 1363.5,
+      "gdd": 2362.7
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 71,
+     "name": "Modesto",
+     "distance_km": 21.3,
+     "weight": 0.949
+    },
+    {
+     "id": 6,
+     "name": "Davis",
+     "distance_km": 91.7,
+     "weight": 0.051
+    }
+   ]
+  },
+  {
+   "id": 71,
+   "name": "Modesto",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 4.58,
+     "corrected_mae": 4.58
+    },
+    "chill_hours": {
+     "raw_mae": 265.91,
+     "corrected_mae": 265.91
+    },
+    "utah_units": {
+     "raw_mae": 117.64,
+     "corrected_mae": 117.64
+    },
+    "gdd": {
+     "raw_mae": 599.3,
+     "corrected_mae": 249.81
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 82.7,
+      "chill_hours": 991.0,
+      "utah_units": 1428.5,
+      "gdd": 2183.7
+     },
+     "raw": {
+      "chill_portions": 74.2,
+      "chill_hours": 734.0,
+      "utah_units": 1231.5,
+      "gdd": 2792.2
+     },
+     "corrected": {
+      "chill_portions": 74.2,
+      "chill_hours": 734.0,
+      "utah_units": 1231.5,
+      "gdd": 2418.6
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 74.5,
+      "chill_hours": 819.0,
+      "utah_units": 1240.0,
+      "gdd": 2194.6
+     },
+     "raw": {
+      "chill_portions": 81.5,
+      "chill_hours": 795.0,
+      "utah_units": 1418.0,
+      "gdd": 2596.9
+     },
+     "corrected": {
+      "chill_portions": 81.5,
+      "chill_hours": 795.0,
+      "utah_units": 1418.0,
+      "gdd": 2253.2
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 84.4,
+      "chill_hours": 795.0,
+      "utah_units": 1086.0,
+      "gdd": 2101.8
+     },
+     "raw": {
+      "chill_portions": 78.4,
+      "chill_hours": 521.0,
+      "utah_units": 1057.0,
+      "gdd": 2742.8
+     },
+     "corrected": {
+      "chill_portions": 78.4,
+      "chill_hours": 521.0,
+      "utah_units": 1057.0,
+      "gdd": 2375.1
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 89.6,
+      "chill_hours": 848.0,
+      "utah_units": 1343.0,
+      "gdd": 2143.4
+     },
+     "raw": {
+      "chill_portions": 92.6,
+      "chill_hours": 646.0,
+      "utah_units": 1455.5,
+      "gdd": 2639.1
+     },
+     "corrected": {
+      "chill_portions": 92.6,
+      "chill_hours": 646.0,
+      "utah_units": 1455.5,
+      "gdd": 2269.5
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 84.6,
+      "chill_hours": 971.0,
+      "utah_units": 1294.0,
+      "gdd": 2405.9
+     },
+     "raw": {
+      "chill_portions": 76.8,
+      "chill_hours": 564.0,
+      "utah_units": 1104.5,
+      "gdd": 2885.2
+     },
+     "corrected": {
+      "chill_portions": 76.8,
+      "chill_hours": 564.0,
+      "utah_units": 1104.5,
+      "gdd": 2569.4
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 85.1,
+      "chill_hours": 990.0,
+      "utah_units": 1288.0,
+      "gdd": 2473.2
+     },
+     "raw": {
+      "chill_portions": 85.6,
+      "chill_hours": 571.0,
+      "utah_units": 1309.0,
+      "gdd": 2980.2
+     },
+     "corrected": {
+      "chill_portions": 85.6,
+      "chill_hours": 571.0,
+      "utah_units": 1309.0,
+      "gdd": 2644.9
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 84.4,
+      "chill_hours": 1000.0,
+      "utah_units": 1292.5,
+      "gdd": 2075.7
+     },
+     "raw": {
+      "chill_portions": 80.5,
+      "chill_hours": 662.0,
+      "utah_units": 1390.0,
+      "gdd": 2931.0
+     },
+     "corrected": {
+      "chill_portions": 80.5,
+      "chill_hours": 662.0,
+      "utah_units": 1390.0,
+      "gdd": 2579.2
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 113.9,
+      "chill_hours": 1254.0,
+      "utah_units": 1619.5,
+      "gdd": 1924.2
+     },
+     "raw": {
+      "chill_portions": 118.3,
+      "chill_hours": 1021.0,
+      "utah_units": 1866.5,
+      "gdd": 2447.4
+     },
+     "corrected": {
+      "chill_portions": 118.3,
+      "chill_hours": 1021.0,
+      "utah_units": 1866.5,
+      "gdd": 2115.1
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 92.7,
+      "chill_hours": 835.0,
+      "utah_units": 1267.5,
+      "gdd": 2158.7
+     },
+     "raw": {
+      "chill_portions": 88.5,
+      "chill_hours": 504.0,
+      "utah_units": 1186.0,
+      "gdd": 2866.8
+     },
+     "corrected": {
+      "chill_portions": 88.5,
+      "chill_hours": 504.0,
+      "utah_units": 1186.0,
+      "gdd": 2543.4
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 90.0,
+      "chill_hours": 959.0,
+      "utah_units": 1210.0,
+      "gdd": 1959.1
+     },
+     "raw": {
+      "chill_portions": 87.1,
+      "chill_hours": 635.0,
+      "utah_units": 1319.5,
+      "gdd": 2670.3
+     },
+     "corrected": {
+      "chill_portions": 87.1,
+      "chill_hours": 635.0,
+      "utah_units": 1319.5,
+      "gdd": 2296.2
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 70.2,
+      "chill_hours": 991.0,
+      "utah_units": 1373.0,
+      "gdd": 2352.5
+     },
+     "raw": {
+      "chill_portions": 72.4,
+      "chill_hours": 875.0,
+      "utah_units": 1404.5,
+      "gdd": 3013.2
+     },
+     "corrected": {
+      "chill_portions": 72.4,
+      "chill_hours": 875.0,
+      "utah_units": 1404.5,
+      "gdd": 2656.1
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 70,
+     "name": "Manteca",
+     "distance_km": 21.3,
+     "weight": 0.965
+    },
+    {
+     "id": 6,
+     "name": "Davis",
+     "distance_km": 111.6,
+     "weight": 0.035
+    }
+   ]
+  },
+  {
+   "id": 39,
+   "name": "Parlier",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 2.62,
+     "corrected_mae": 2.62
+    },
+    "chill_hours": {
+     "raw_mae": 144.55,
+     "corrected_mae": 144.55
+    },
+    "utah_units": {
+     "raw_mae": 70.09,
+     "corrected_mae": 70.09
+    },
+    "gdd": {
+     "raw_mae": 420.25,
+     "corrected_mae": 173.85
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 76.1,
+      "chill_hours": 997.0,
+      "utah_units": 1366.0,
+      "gdd": 2915.3
+     },
+     "raw": {
+      "chill_portions": 75.2,
+      "chill_hours": 828.0,
+      "utah_units": 1344.5,
+      "gdd": 3432.3
+     },
+     "corrected": {
+      "chill_portions": 75.2,
+      "chill_hours": 828.0,
+      "utah_units": 1344.5,
+      "gdd": 2873.1
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 73.1,
+      "chill_hours": 806.0,
+      "utah_units": 1130.5,
+      "gdd": 2967.2
+     },
+     "raw": {
+      "chill_portions": 76.1,
+      "chill_hours": 733.0,
+      "utah_units": 1281.0,
+      "gdd": 3270.3
+     },
+     "corrected": {
+      "chill_portions": 76.1,
+      "chill_hours": 733.0,
+      "utah_units": 1281.0,
+      "gdd": 2700.7
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 76.2,
+      "chill_hours": 919.0,
+      "utah_units": 1019.0,
+      "gdd": 2888.7
+     },
+     "raw": {
+      "chill_portions": 71.6,
+      "chill_hours": 730.0,
+      "utah_units": 1079.5,
+      "gdd": 3296.6
+     },
+     "corrected": {
+      "chill_portions": 71.6,
+      "chill_hours": 730.0,
+      "utah_units": 1079.5,
+      "gdd": 2699.8
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 80.2,
+      "chill_hours": 805.0,
+      "utah_units": 1157.5,
+      "gdd": 2824.1
+     },
+     "raw": {
+      "chill_portions": 82.4,
+      "chill_hours": 762.0,
+      "utah_units": 1283.5,
+      "gdd": 3162.5
+     },
+     "corrected": {
+      "chill_portions": 82.4,
+      "chill_hours": 762.0,
+      "utah_units": 1283.5,
+      "gdd": 2552.4
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 80.5,
+      "chill_hours": 1024.0,
+      "utah_units": 1241.0,
+      "gdd": 2842.0
+     },
+     "raw": {
+      "chill_portions": 80.6,
+      "chill_hours": 762.0,
+      "utah_units": 1190.0,
+      "gdd": 3317.0
+     },
+     "corrected": {
+      "chill_portions": 80.6,
+      "chill_hours": 762.0,
+      "utah_units": 1190.0,
+      "gdd": 2751.8
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 82.2,
+      "chill_hours": 1116.0,
+      "utah_units": 1354.0,
+      "gdd": 2937.7
+     },
+     "raw": {
+      "chill_portions": 82.7,
+      "chill_hours": 865.0,
+      "utah_units": 1409.5,
+      "gdd": 3548.1
+     },
+     "corrected": {
+      "chill_portions": 82.7,
+      "chill_hours": 865.0,
+      "utah_units": 1409.5,
+      "gdd": 2955.3
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 80.1,
+      "chill_hours": 1105.0,
+      "utah_units": 1362.0,
+      "gdd": 2817.8
+     },
+     "raw": {
+      "chill_portions": 75.9,
+      "chill_hours": 905.0,
+      "utah_units": 1341.0,
+      "gdd": 3506.5
+     },
+     "corrected": {
+      "chill_portions": 75.9,
+      "chill_hours": 905.0,
+      "utah_units": 1341.0,
+      "gdd": 2896.3
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 99.9,
+      "chill_hours": 1294.0,
+      "utah_units": 1593.5,
+      "gdd": 2478.7
+     },
+     "raw": {
+      "chill_portions": 102.4,
+      "chill_hours": 1156.0,
+      "utah_units": 1687.0,
+      "gdd": 2801.7
+     },
+     "corrected": {
+      "chill_portions": 102.4,
+      "chill_hours": 1156.0,
+      "utah_units": 1687.0,
+      "gdd": 2222.0
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 77.6,
+      "chill_hours": 772.0,
+      "utah_units": 1039.0,
+      "gdd": 2880.5
+     },
+     "raw": {
+      "chill_portions": 85.3,
+      "chill_hours": 681.0,
+      "utah_units": 1134.0,
+      "gdd": 3263.6
+     },
+     "corrected": {
+      "chill_portions": 85.3,
+      "chill_hours": 681.0,
+      "utah_units": 1134.0,
+      "gdd": 2752.1
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 87.3,
+      "chill_hours": 951.0,
+      "utah_units": 1299.0,
+      "gdd": 2851.6
+     },
+     "raw": {
+      "chill_portions": 88.0,
+      "chill_hours": 855.0,
+      "utah_units": 1355.5,
+      "gdd": 3115.4
+     },
+     "corrected": {
+      "chill_portions": 88.0,
+      "chill_hours": 855.0,
+      "utah_units": 1355.5,
+      "gdd": 2545.1
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 69.2,
+      "chill_hours": 848.0,
+      "utah_units": 1325.0,
+      "gdd": 3160.0
+     },
+     "raw": {
+      "chill_portions": 71.6,
+      "chill_hours": 926.0,
+      "utah_units": 1365.0,
+      "gdd": 3472.4
+     },
+     "corrected": {
+      "chill_portions": 71.6,
+      "chill_hours": 926.0,
+      "utah_units": 1365.0,
+      "gdd": 2894.8
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 5,
+     "name": "Shafter",
+     "distance_km": 120.1,
+     "weight": 1.0
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": "Shafter",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 5.06,
+     "corrected_mae": 5.06
+    },
+    "chill_hours": {
+     "raw_mae": 91.91,
+     "corrected_mae": 91.91
+    },
+    "utah_units": {
+     "raw_mae": 85.55,
+     "corrected_mae": 85.55
+    },
+    "gdd": {
+     "raw_mae": 570.8,
+     "corrected_mae": 158.58
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 72.2,
+      "chill_hours": 1006.0,
+      "utah_units": 1239.0,
+      "gdd": 2800.3
+     },
+     "raw": {
+      "chill_portions": 66.3,
+      "chill_hours": 660.0,
+      "utah_units": 1013.5,
+      "gdd": 3722.8
+     },
+     "corrected": {
+      "chill_portions": 66.3,
+      "chill_hours": 660.0,
+      "utah_units": 1013.5,
+      "gdd": 3355.0
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 60.6,
+      "chill_hours": 702.0,
+      "utah_units": 926.0,
+      "gdd": 3005.0
+     },
+     "raw": {
+      "chill_portions": 59.1,
+      "chill_hours": 563.0,
+      "utah_units": 938.5,
+      "gdd": 3690.5
+     },
+     "corrected": {
+      "chill_portions": 59.1,
+      "chill_hours": 563.0,
+      "utah_units": 938.5,
+      "gdd": 3275.1
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 69.9,
+      "chill_hours": 857.0,
+      "utah_units": 872.5,
+      "gdd": 2936.1
+     },
+     "raw": {
+      "chill_portions": 56.4,
+      "chill_hours": 726.0,
+      "utah_units": 793.5,
+      "gdd": 3536.5
+     },
+     "corrected": {
+      "chill_portions": 56.4,
+      "chill_hours": 726.0,
+      "utah_units": 793.5,
+      "gdd": 3097.1
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 74.6,
+      "chill_hours": 786.0,
+      "utah_units": 1068.0,
+      "gdd": 3002.8
+     },
+     "raw": {
+      "chill_portions": 63.1,
+      "chill_hours": 745.0,
+      "utah_units": 945.5,
+      "gdd": 3477.9
+     },
+     "corrected": {
+      "chill_portions": 63.1,
+      "chill_hours": 745.0,
+      "utah_units": 945.5,
+      "gdd": 3024.5
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 70.8,
+      "chill_hours": 880.0,
+      "utah_units": 1035.0,
+      "gdd": 2979.7
+     },
+     "raw": {
+      "chill_portions": 61.5,
+      "chill_hours": 759.0,
+      "utah_units": 937.0,
+      "gdd": 3417.5
+     },
+     "corrected": {
+      "chill_portions": 61.5,
+      "chill_hours": 759.0,
+      "utah_units": 937.0,
+      "gdd": 2993.6
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 70.1,
+      "chill_hours": 959.0,
+      "utah_units": 1117.5,
+      "gdd": 3191.7
+     },
+     "raw": {
+      "chill_portions": 71.0,
+      "chill_hours": 993.0,
+      "utah_units": 1191.0,
+      "gdd": 3598.1
+     },
+     "corrected": {
+      "chill_portions": 71.0,
+      "chill_hours": 993.0,
+      "utah_units": 1191.0,
+      "gdd": 3168.8
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 70.3,
+      "chill_hours": 943.0,
+      "utah_units": 1217.5,
+      "gdd": 3004.4
+     },
+     "raw": {
+      "chill_portions": 62.3,
+      "chill_hours": 957.0,
+      "utah_units": 1134.5,
+      "gdd": 3580.0
+     },
+     "corrected": {
+      "chill_portions": 62.3,
+      "chill_hours": 957.0,
+      "utah_units": 1134.5,
+      "gdd": 3148.3
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 94.9,
+      "chill_hours": 1228.0,
+      "utah_units": 1434.0,
+      "gdd": 2666.1
+     },
+     "raw": {
+      "chill_portions": 91.6,
+      "chill_hours": 1164.0,
+      "utah_units": 1446.0,
+      "gdd": 3214.1
+     },
+     "corrected": {
+      "chill_portions": 91.6,
+      "chill_hours": 1164.0,
+      "utah_units": 1446.0,
+      "gdd": 2737.9
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 74.0,
+      "chill_hours": 702.0,
+      "utah_units": 911.5,
+      "gdd": 2789.4
+     },
+     "raw": {
+      "chill_portions": 73.5,
+      "chill_hours": 703.0,
+      "utah_units": 1016.5,
+      "gdd": 3198.2
+     },
+     "corrected": {
+      "chill_portions": 73.5,
+      "chill_hours": 703.0,
+      "utah_units": 1016.5,
+      "gdd": 2850.9
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 76.9,
+      "chill_hours": 983.0,
+      "utah_units": 1183.0,
+      "gdd": 2920.7
+     },
+     "raw": {
+      "chill_portions": 76.5,
+      "chill_hours": 910.0,
+      "utah_units": 1221.0,
+      "gdd": 3537.3
+     },
+     "corrected": {
+      "chill_portions": 76.5,
+      "chill_hours": 910.0,
+      "utah_units": 1221.0,
+      "gdd": 3153.7
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 66.4,
+      "chill_hours": 906.0,
+      "utah_units": 1304.0,
+      "gdd": 3200.3
+     },
+     "raw": {
+      "chill_portions": 65.5,
+      "chill_hours": 859.0,
+      "utah_units": 1212.0,
+      "gdd": 3802.4
+     },
+     "corrected": {
+      "chill_portions": 65.5,
+      "chill_hours": 859.0,
+      "utah_units": 1212.0,
+      "gdd": 3390.2
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 39,
+     "name": "Parlier",
+     "distance_km": 120.1,
+     "weight": 1.0
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "name": "Durham",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 3.2,
+     "corrected_mae": 3.2
+    },
+    "chill_hours": {
+     "raw_mae": 38.5,
+     "corrected_mae": 38.5
+    },
+    "utah_units": {
+     "raw_mae": 127.75,
+     "corrected_mae": 127.75
+    },
+    "gdd": {
+     "raw_mae": 615.66,
+     "corrected_mae": 193.62
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 80.6,
+      "chill_hours": 894.0,
+      "utah_units": 1387.0,
+      "gdd": 2375.2
+     },
+     "raw": {
+      "chill_portions": 85.7,
+      "chill_hours": 871.0,
+      "utah_units": 1426.5,
+      "gdd": 2967.7
+     },
+     "corrected": {
+      "chill_portions": 85.7,
+      "chill_hours": 871.0,
+      "utah_units": 1426.5,
+      "gdd": 2507.8
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 86.5,
+      "chill_hours": 883.0,
+      "utah_units": 1342.5,
+      "gdd": 2523.2
+     },
+     "raw": {
+      "chill_portions": 90.4,
+      "chill_hours": 926.0,
+      "utah_units": 1473.5,
+      "gdd": 2965.4
+     },
+     "corrected": {
+      "chill_portions": 90.4,
+      "chill_hours": 926.0,
+      "utah_units": 1473.5,
+      "gdd": 2525.1
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 90.2,
+      "chill_hours": 872.0,
+      "utah_units": 1203.0,
+      "gdd": 2394.4
+     },
+     "raw": {
+      "chill_portions": 92.3,
+      "chill_hours": 870.0,
+      "utah_units": 1403.5,
+      "gdd": 2979.7
+     },
+     "corrected": {
+      "chill_portions": 92.3,
+      "chill_hours": 870.0,
+      "utah_units": 1403.5,
+      "gdd": 2492.5
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 99.7,
+      "chill_hours": 920.0,
+      "utah_units": 1490.5,
+      "gdd": 2340.6
+     },
+     "raw": {
+      "chill_portions": 99.7,
+      "chill_hours": 940.0,
+      "utah_units": 1601.0,
+      "gdd": 2840.1
+     },
+     "corrected": {
+      "chill_portions": 99.7,
+      "chill_hours": 940.0,
+      "utah_units": 1601.0,
+      "gdd": 2372.3
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 83.4,
+      "chill_hours": 1002.0,
+      "utah_units": 1313.5,
+      "gdd": 2463.1
+     },
+     "raw": {
+      "chill_portions": 86.4,
+      "chill_hours": 879.0,
+      "utah_units": 1382.0,
+      "gdd": 3179.9
+     },
+     "corrected": {
+      "chill_portions": 86.4,
+      "chill_hours": 879.0,
+      "utah_units": 1382.0,
+      "gdd": 2778.0
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 87.7,
+      "chill_hours": 935.0,
+      "utah_units": 1365.0,
+      "gdd": 2486.7
+     },
+     "raw": {
+      "chill_portions": 87.8,
+      "chill_hours": 937.0,
+      "utah_units": 1485.5,
+      "gdd": 3369.7
+     },
+     "corrected": {
+      "chill_portions": 87.8,
+      "chill_hours": 937.0,
+      "utah_units": 1485.5,
+      "gdd": 2961.2
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 87.4,
+      "chill_hours": 1044.0,
+      "utah_units": 1344.0,
+      "gdd": 2431.6
+     },
+     "raw": {
+      "chill_portions": 87.4,
+      "chill_hours": 999.0,
+      "utah_units": 1421.0,
+      "gdd": 3208.2
+     },
+     "corrected": {
+      "chill_portions": 87.4,
+      "chill_hours": 999.0,
+      "utah_units": 1421.0,
+      "gdd": 2785.8
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 111.4,
+      "chill_hours": 1229.0,
+      "utah_units": 1606.5,
+      "gdd": 2194.5
+     },
+     "raw": {
+      "chill_portions": 116.7,
+      "chill_hours": 1281.0,
+      "utah_units": 1815.0,
+      "gdd": 2909.6
+     },
+     "corrected": {
+      "chill_portions": 116.7,
+      "chill_hours": 1281.0,
+      "utah_units": 1815.0,
+      "gdd": 2459.7
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 92.5,
+      "chill_hours": 795.0,
+      "utah_units": 1212.0,
+      "gdd": 2517.8
+     },
+     "raw": {
+      "chill_portions": 96.8,
+      "chill_hours": 823.0,
+      "utah_units": 1352.5,
+      "gdd": 3042.3
+     },
+     "corrected": {
+      "chill_portions": 96.8,
+      "chill_hours": 823.0,
+      "utah_units": 1352.5,
+      "gdd": 2668.6
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 90.4,
+      "chill_hours": 891.0,
+      "utah_units": 1322.5,
+      "gdd": 1716.7
+     },
+     "raw": {
+      "chill_portions": 98.6,
+      "chill_hours": 938.0,
+      "utah_units": 1503.5,
+      "gdd": 2137.8
+     },
+     "corrected": {
+      "chill_portions": 98.6,
+      "chill_hours": 938.0,
+      "utah_units": 1503.5,
+      "gdd": 1829.0
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 244,
+     "name": "Biggs",
+     "distance_km": 24.7,
+     "weight": 0.687
+    },
+    {
+     "id": 250,
+     "name": "Williams",
+     "distance_km": 53.2,
+     "weight": 0.148
+    },
+    {
+     "id": 222,
+     "name": "Gerber South",
+     "distance_km": 55.6,
+     "weight": 0.135
+    },
+    {
+     "id": 6,
+     "name": "Davis",
+     "distance_km": 119.4,
+     "weight": 0.029
+    }
+   ]
+  },
+  {
+   "id": 244,
+   "name": "Biggs",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 4.08,
+     "corrected_mae": 4.08
+    },
+    "chill_hours": {
+     "raw_mae": 62.27,
+     "corrected_mae": 62.27
+    },
+    "utah_units": {
+     "raw_mae": 72.32,
+     "corrected_mae": 72.32
+    },
+    "gdd": {
+     "raw_mae": 382.78,
+     "corrected_mae": 284.42
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 79.0,
+      "chill_hours": 759.0,
+      "utah_units": 1364.0,
+      "gdd": 2844.1
+     },
+     "raw": {
+      "chill_portions": 79.6,
+      "chill_hours": 753.0,
+      "utah_units": 1326.5,
+      "gdd": 3102.5
+     },
+     "corrected": {
+      "chill_portions": 79.6,
+      "chill_hours": 753.0,
+      "utah_units": 1326.5,
+      "gdd": 2423.8
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 77.9,
+      "chill_hours": 765.0,
+      "utah_units": 1370.5,
+      "gdd": 2747.2
+     },
+     "raw": {
+      "chill_portions": 89.9,
+      "chill_hours": 885.0,
+      "utah_units": 1465.5,
+      "gdd": 2691.3
+     },
+     "corrected": {
+      "chill_portions": 89.9,
+      "chill_hours": 885.0,
+      "utah_units": 1465.5,
+      "gdd": 2081.4
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 75.4,
+      "chill_hours": 655.0,
+      "utah_units": 974.5,
+      "gdd": 2978.2
+     },
+     "raw": {
+      "chill_portions": 87.9,
+      "chill_hours": 794.0,
+      "utah_units": 1295.5,
+      "gdd": 3012.2
+     },
+     "corrected": {
+      "chill_portions": 87.9,
+      "chill_hours": 794.0,
+      "utah_units": 1295.5,
+      "gdd": 2312.9
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 94.1,
+      "chill_hours": 838.0,
+      "utah_units": 1573.0,
+      "gdd": 2467.6
+     },
+     "raw": {
+      "chill_portions": 95.8,
+      "chill_hours": 867.0,
+      "utah_units": 1551.0,
+      "gdd": 2827.9
+     },
+     "corrected": {
+      "chill_portions": 95.8,
+      "chill_hours": 867.0,
+      "utah_units": 1551.0,
+      "gdd": 2161.8
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 81.6,
+      "chill_hours": 909.0,
+      "utah_units": 1346.0,
+      "gdd": 2674.5
+     },
+     "raw": {
+      "chill_portions": 81.8,
+      "chill_hours": 819.0,
+      "utah_units": 1323.0,
+      "gdd": 3181.2
+     },
+     "corrected": {
+      "chill_portions": 81.8,
+      "chill_hours": 819.0,
+      "utah_units": 1323.0,
+      "gdd": 2569.6
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 85.9,
+      "chill_hours": 822.0,
+      "utah_units": 1403.0,
+      "gdd": 2635.3
+     },
+     "raw": {
+      "chill_portions": 84.5,
+      "chill_hours": 819.0,
+      "utah_units": 1388.0,
+      "gdd": 3320.1
+     },
+     "corrected": {
+      "chill_portions": 84.5,
+      "chill_hours": 819.0,
+      "utah_units": 1388.0,
+      "gdd": 2704.1
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 82.4,
+      "chill_hours": 986.0,
+      "utah_units": 1344.5,
+      "gdd": 2553.5
+     },
+     "raw": {
+      "chill_portions": 79.2,
+      "chill_hours": 874.0,
+      "utah_units": 1348.5,
+      "gdd": 3197.8
+     },
+     "corrected": {
+      "chill_portions": 79.2,
+      "chill_hours": 874.0,
+      "utah_units": 1348.5,
+      "gdd": 2560.8
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 111.0,
+      "chill_hours": 1203.0,
+      "utah_units": 1724.5,
+      "gdd": 2343.1
+     },
+     "raw": {
+      "chill_portions": 118.4,
+      "chill_hours": 1241.0,
+      "utah_units": 1812.0,
+      "gdd": 2879.7
+     },
+     "corrected": {
+      "chill_portions": 118.4,
+      "chill_hours": 1241.0,
+      "utah_units": 1812.0,
+      "gdd": 2231.6
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 93.0,
+      "chill_hours": 692.0,
+      "utah_units": 1245.0,
+      "gdd": 2690.8
+     },
+     "raw": {
+      "chill_portions": 95.1,
+      "chill_hours": 733.0,
+      "utah_units": 1330.0,
+      "gdd": 3034.0
+     },
+     "corrected": {
+      "chill_portions": 95.1,
+      "chill_hours": 733.0,
+      "utah_units": 1330.0,
+      "gdd": 2479.7
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 94.0,
+      "chill_hours": 826.0,
+      "utah_units": 1409.5,
+      "gdd": 2493.6
+     },
+     "raw": {
+      "chill_portions": 96.3,
+      "chill_hours": 882.0,
+      "utah_units": 1424.5,
+      "gdd": 2952.9
+     },
+     "corrected": {
+      "chill_portions": 96.3,
+      "chill_hours": 882.0,
+      "utah_units": 1424.5,
+      "gdd": 2298.9
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 74.2,
+      "chill_hours": 943.0,
+      "utah_units": 1410.0,
+      "gdd": 2790.4
+     },
+     "raw": {
+      "chill_portions": 72.7,
+      "chill_hours": 892.0,
+      "utah_units": 1319.5,
+      "gdd": 3117.5
+     },
+     "corrected": {
+      "chill_portions": 72.7,
+      "chill_hours": 892.0,
+      "utah_units": 1319.5,
+      "gdd": 2417.3
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 12,
+     "name": "Durham",
+     "distance_km": 24.7,
+     "weight": 0.597
+    },
+    {
+     "id": 250,
+     "name": "Williams",
+     "distance_km": 34.7,
+     "weight": 0.302
+    },
+    {
+     "id": 222,
+     "name": "Gerber South",
+     "distance_km": 77.6,
+     "weight": 0.06
+    },
+    {
+     "id": 6,
+     "name": "Davis",
+     "distance_km": 94.8,
+     "weight": 0.041
+    }
+   ]
+  },
+  {
+   "id": 250,
+   "name": "Williams",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 6.1,
+     "corrected_mae": 6.1
+    },
+    "chill_hours": {
+     "raw_mae": 161.8,
+     "corrected_mae": 161.8
+    },
+    "utah_units": {
+     "raw_mae": 129.2,
+     "corrected_mae": 129.2
+    },
+    "gdd": {
+     "raw_mae": 654.13,
+     "corrected_mae": 272.98
+    }
+   },
+   "seasons": [
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 83.8,
+      "chill_hours": 923.0,
+      "utah_units": 1369.5,
+      "gdd": 2622.3
+     },
+     "raw": {
+      "chill_portions": 85.2,
+      "chill_hours": 859.0,
+      "utah_units": 1427.5,
+      "gdd": 3131.2
+     },
+     "corrected": {
+      "chill_portions": 85.2,
+      "chill_hours": 859.0,
+      "utah_units": 1427.5,
+      "gdd": 2779.9
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 81.5,
+      "chill_hours": 818.0,
+      "utah_units": 1079.5,
+      "gdd": 2495.7
+     },
+     "raw": {
+      "chill_portions": 72.4,
+      "chill_hours": 529.0,
+      "utah_units": 883.0,
+      "gdd": 3292.3
+     },
+     "corrected": {
+      "chill_portions": 72.4,
+      "chill_hours": 529.0,
+      "utah_units": 883.0,
+      "gdd": 2876.6
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 93.7,
+      "chill_hours": 899.0,
+      "utah_units": 1470.0,
+      "gdd": 2506.9
+     },
+     "raw": {
+      "chill_portions": 92.6,
+      "chill_hours": 766.0,
+      "utah_units": 1415.0,
+      "gdd": 3007.3
+     },
+     "corrected": {
+      "chill_portions": 92.6,
+      "chill_hours": 766.0,
+      "utah_units": 1415.0,
+      "gdd": 2598.8
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 78.2,
+      "chill_hours": 1000.0,
+      "utah_units": 1293.5,
+      "gdd": 2643.9
+     },
+     "raw": {
+      "chill_portions": 71.5,
+      "chill_hours": 726.0,
+      "utah_units": 1126.0,
+      "gdd": 3336.5
+     },
+     "corrected": {
+      "chill_portions": 71.5,
+      "chill_hours": 726.0,
+      "utah_units": 1126.0,
+      "gdd": 2975.9
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 81.9,
+      "chill_hours": 928.0,
+      "utah_units": 1194.5,
+      "gdd": 2652.7
+     },
+     "raw": {
+      "chill_portions": 73.2,
+      "chill_hours": 685.0,
+      "utah_units": 1130.5,
+      "gdd": 3482.5
+     },
+     "corrected": {
+      "chill_portions": 73.2,
+      "chill_hours": 685.0,
+      "utah_units": 1130.5,
+      "gdd": 3096.4
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 80.1,
+      "chill_hours": 989.0,
+      "utah_units": 1307.0,
+      "gdd": 2595.0
+     },
+     "raw": {
+      "chill_portions": 67.8,
+      "chill_hours": 695.0,
+      "utah_units": 1019.0,
+      "gdd": 3392.2
+     },
+     "corrected": {
+      "chill_portions": 67.8,
+      "chill_hours": 695.0,
+      "utah_units": 1019.0,
+      "gdd": 3004.7
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 105.5,
+      "chill_hours": 1169.0,
+      "utah_units": 1538.5,
+      "gdd": 2313.5
+     },
+     "raw": {
+      "chill_portions": 110.2,
+      "chill_hours": 1135.0,
+      "utah_units": 1671.0,
+      "gdd": 2916.0
+     },
+     "corrected": {
+      "chill_portions": 110.2,
+      "chill_hours": 1135.0,
+      "utah_units": 1671.0,
+      "gdd": 2507.1
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 88.4,
+      "chill_hours": 671.0,
+      "utah_units": 1171.5,
+      "gdd": 2646.9
+     },
+     "raw": {
+      "chill_portions": 88.9,
+      "chill_hours": 671.0,
+      "utah_units": 1199.0,
+      "gdd": 3117.2
+     },
+     "corrected": {
+      "chill_portions": 88.9,
+      "chill_hours": 671.0,
+      "utah_units": 1199.0,
+      "gdd": 2768.2
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 90.0,
+      "chill_hours": 835.0,
+      "utah_units": 1320.5,
+      "gdd": 2527.9
+     },
+     "raw": {
+      "chill_portions": 84.4,
+      "chill_hours": 685.0,
+      "utah_units": 1214.5,
+      "gdd": 3213.7
+     },
+     "corrected": {
+      "chill_portions": 84.4,
+      "chill_hours": 685.0,
+      "utah_units": 1214.5,
+      "gdd": 2844.4
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 71.9,
+      "chill_hours": 877.0,
+      "utah_units": 1318.0,
+      "gdd": 2818.9
+     },
+     "raw": {
+      "chill_portions": 61.0,
+      "chill_hours": 740.0,
+      "utah_units": 1121.0,
+      "gdd": 3476.1
+     },
+     "corrected": {
+      "chill_portions": 61.0,
+      "chill_hours": 740.0,
+      "utah_units": 1121.0,
+      "gdd": 3101.5
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 244,
+     "name": "Biggs",
+     "distance_km": 34.7,
+     "weight": 0.573
+    },
+    {
+     "id": 12,
+     "name": "Durham",
+     "distance_km": 53.2,
+     "weight": 0.244
+    },
+    {
+     "id": 6,
+     "name": "Davis",
+     "distance_km": 82.4,
+     "weight": 0.102
+    },
+    {
+     "id": 222,
+     "name": "Gerber South",
+     "distance_km": 92.2,
+     "weight": 0.081
+    }
+   ]
+  },
+  {
+   "id": 222,
+   "name": "Gerber South",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 4.8,
+     "corrected_mae": 4.8
+    },
+    "chill_hours": {
+     "raw_mae": 142.64,
+     "corrected_mae": 142.64
+    },
+    "utah_units": {
+     "raw_mae": 87.68,
+     "corrected_mae": 87.68
+    },
+    "gdd": {
+     "raw_mae": 671.25,
+     "corrected_mae": 170.5
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 83.2,
+      "chill_hours": 867.0,
+      "utah_units": 1468.5,
+      "gdd": 2630.2
+     },
+     "raw": {
+      "chill_portions": 97.1,
+      "chill_hours": 974.0,
+      "utah_units": 1596.0,
+      "gdd": 2984.9
+     },
+     "corrected": {
+      "chill_portions": 97.1,
+      "chill_hours": 974.0,
+      "utah_units": 1596.0,
+      "gdd": 2360.2
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 88.7,
+      "chill_hours": 1016.0,
+      "utah_units": 1462.5,
+      "gdd": 2616.8
+     },
+     "raw": {
+      "chill_portions": 94.1,
+      "chill_hours": 1047.0,
+      "utah_units": 1609.5,
+      "gdd": 3136.6
+     },
+     "corrected": {
+      "chill_portions": 94.1,
+      "chill_hours": 1047.0,
+      "utah_units": 1609.5,
+      "gdd": 2590.4
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 88.7,
+      "chill_hours": 843.0,
+      "utah_units": 1204.5,
+      "gdd": 2506.8
+     },
+     "raw": {
+      "chill_portions": 95.0,
+      "chill_hours": 724.0,
+      "utah_units": 1321.5,
+      "gdd": 3220.8
+     },
+     "corrected": {
+      "chill_portions": 95.0,
+      "chill_hours": 724.0,
+      "utah_units": 1321.5,
+      "gdd": 2614.6
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 99.2,
+      "chill_hours": 960.0,
+      "utah_units": 1526.5,
+      "gdd": 2438.6
+     },
+     "raw": {
+      "chill_portions": 100.0,
+      "chill_hours": 889.0,
+      "utah_units": 1622.0,
+      "gdd": 3004.6
+     },
+     "corrected": {
+      "chill_portions": 100.0,
+      "chill_hours": 889.0,
+      "utah_units": 1622.0,
+      "gdd": 2387.9
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 86.5,
+      "chill_hours": 1000.0,
+      "utah_units": 1300.5,
+      "gdd": 2518.8
+     },
+     "raw": {
+      "chill_portions": 82.7,
+      "chill_hours": 721.0,
+      "utah_units": 1291.5,
+      "gdd": 3339.1
+     },
+     "corrected": {
+      "chill_portions": 82.7,
+      "chill_hours": 721.0,
+      "utah_units": 1291.5,
+      "gdd": 2813.2
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 86.8,
+      "chill_hours": 1057.0,
+      "utah_units": 1472.5,
+      "gdd": 2555.1
+     },
+     "raw": {
+      "chill_portions": 88.7,
+      "chill_hours": 826.0,
+      "utah_units": 1503.5,
+      "gdd": 3489.2
+     },
+     "corrected": {
+      "chill_portions": 88.7,
+      "chill_hours": 826.0,
+      "utah_units": 1503.5,
+      "gdd": 2954.5
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 88.5,
+      "chill_hours": 1037.0,
+      "utah_units": 1303.0,
+      "gdd": 2450.2
+     },
+     "raw": {
+      "chill_portions": 79.8,
+      "chill_hours": 812.0,
+      "utah_units": 1263.5,
+      "gdd": 3357.2
+     },
+     "corrected": {
+      "chill_portions": 79.8,
+      "chill_hours": 812.0,
+      "utah_units": 1263.5,
+      "gdd": 2802.2
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 115.4,
+      "chill_hours": 1249.0,
+      "utah_units": 1692.5,
+      "gdd": 2322.0
+     },
+     "raw": {
+      "chill_portions": 115.7,
+      "chill_hours": 1169.0,
+      "utah_units": 1863.0,
+      "gdd": 3037.3
+     },
+     "corrected": {
+      "chill_portions": 115.7,
+      "chill_hours": 1169.0,
+      "utah_units": 1863.0,
+      "gdd": 2444.8
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 93.9,
+      "chill_hours": 835.0,
+      "utah_units": 1312.5,
+      "gdd": 2571.9
+     },
+     "raw": {
+      "chill_portions": 98.0,
+      "chill_hours": 728.0,
+      "utah_units": 1407.0,
+      "gdd": 3185.1
+     },
+     "corrected": {
+      "chill_portions": 98.0,
+      "chill_hours": 728.0,
+      "utah_units": 1407.0,
+      "gdd": 2699.7
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 92.6,
+      "chill_hours": 866.0,
+      "utah_units": 1387.0,
+      "gdd": 2534.0
+     },
+     "raw": {
+      "chill_portions": 99.5,
+      "chill_hours": 766.0,
+      "utah_units": 1517.0,
+      "gdd": 3199.6
+     },
+     "corrected": {
+      "chill_portions": 99.5,
+      "chill_hours": 766.0,
+      "utah_units": 1517.0,
+      "gdd": 2655.5
+     }
+    },
+    {
+     "season": "2025-26",
+     "cimis": {
+      "chill_portions": 76.9,
+      "chill_hours": 963.0,
+      "utah_units": 1323.0,
+      "gdd": 2757.0
+     },
+     "raw": {
+      "chill_portions": 77.6,
+      "chill_hours": 744.0,
+      "utah_units": 1320.0,
+      "gdd": 3330.7
+     },
+     "corrected": {
+      "chill_portions": 77.6,
+      "chill_hours": 744.0,
+      "utah_units": 1320.0,
+      "gdd": 2754.3
+     }
+    }
+   ],
+   "corrected_with": [
+    {
+     "id": 12,
+     "name": "Durham",
+     "distance_km": 55.6,
+     "weight": 0.533
+    },
+    {
+     "id": 244,
+     "name": "Biggs",
+     "distance_km": 77.6,
+     "weight": 0.274
+    },
+    {
+     "id": 250,
+     "name": "Williams",
+     "distance_km": 92.2,
+     "weight": 0.194
+    }
+   ]
+  }
+ ],
+ "method": {
+  "gridded": "Open-Meteo archive, model best_match, at each station's 0.1-degree cell",
+  "correction": "leave-one-station-out: each station corrected only from the other stations' 12x24 tables (IDW, 150 km, closed-station rule)",
+  "corrected_metrics": [
+   "gdd"
+  ],
+  "why": "Correcting every metric made chill worse (see mae_if_every_metric_corrected); GDD error roughly halves. So the app corrects heat only and chill uses the raw gridded temperatures.",
+  "mae_if_every_metric_corrected": {
+   "chill_portions": {
+    "raw_mae": 4.02,
+    "corrected_mae": 6.82
+   },
+   "chill_hours": {
+    "raw_mae": 116.06,
+    "corrected_mae": 121.68
+   },
+   "utah_units": {
+    "raw_mae": 96.66,
+    "corrected_mae": 125.61
+   },
+   "gdd": {
+    "raw_mae": 498.32,
+    "corrected_mae": 233.19
+   }
+  },
+  "settings": {
+   "crop": "almond",
+   "portions_start": "09-01",
+   "hours_start": "11-01",
+   "gdd_start": "01-01"
+  },
+  "seasons": [
+   "2015-16",
+   "2016-17",
+   "2017-18",
+   "2018-19",
+   "2019-20",
+   "2020-21",
+   "2021-22",
+   "2022-23",
+   "2023-24",
+   "2024-25",
+   "2025-26"
+  ],
+  "min_coverage": 0.85,
+  "station_seasons": 97,
+  "skipped": [
+   {
+    "station": 250,
+    "season": "2015-16",
+    "coverage": 0.061
+   }
+  ]
+ },
+ "durham": {
+  "own_table_held_out": {
+   "about": "Durham corrected with its own table fit on its other seasons: the live app's setup near Durham.",
+   "mae": {
+    "chill_portions": {
+     "raw_mae": 3.2,
+     "corrected_mae": 3.2
+    },
+    "chill_hours": {
+     "raw_mae": 38.5,
+     "corrected_mae": 38.5
+    },
+    "utah_units": {
+     "raw_mae": 127.75,
+     "corrected_mae": 127.75
+    },
+    "gdd": {
+     "raw_mae": 615.66,
+     "corrected_mae": 141.86
+    }
+   },
+   "mae_if_every_metric_corrected": {
+    "chill_portions": {
+     "raw_mae": 3.2,
+     "corrected_mae": 6.83
+    },
+    "chill_hours": {
+     "raw_mae": 38.5,
+     "corrected_mae": 59.9
+    },
+    "utah_units": {
+     "raw_mae": 127.75,
+     "corrected_mae": 114.0
+    },
+    "gdd": {
+     "raw_mae": 615.66,
+     "corrected_mae": 141.86
+    }
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "cimis": {
+      "chill_portions": 80.6,
+      "chill_hours": 894.0,
+      "utah_units": 1387.0,
+      "gdd": 2375.2
+     },
+     "raw": {
+      "chill_portions": 85.7,
+      "chill_hours": 871.0,
+      "utah_units": 1426.5,
+      "gdd": 2967.7
+     },
+     "corrected": {
+      "chill_portions": 85.7,
+      "chill_hours": 871.0,
+      "utah_units": 1426.5,
+      "gdd": 2281.0
+     }
+    },
+    {
+     "season": "2016-17",
+     "cimis": {
+      "chill_portions": 86.5,
+      "chill_hours": 883.0,
+      "utah_units": 1342.5,
+      "gdd": 2523.2
+     },
+     "raw": {
+      "chill_portions": 90.4,
+      "chill_hours": 926.0,
+      "utah_units": 1473.5,
+      "gdd": 2965.4
+     },
+     "corrected": {
+      "chill_portions": 90.4,
+      "chill_hours": 926.0,
+      "utah_units": 1473.5,
+      "gdd": 2297.1
+     }
+    },
+    {
+     "season": "2017-18",
+     "cimis": {
+      "chill_portions": 90.2,
+      "chill_hours": 872.0,
+      "utah_units": 1203.0,
+      "gdd": 2394.4
+     },
+     "raw": {
+      "chill_portions": 92.3,
+      "chill_hours": 870.0,
+      "utah_units": 1403.5,
+      "gdd": 2979.7
+     },
+     "corrected": {
+      "chill_portions": 92.3,
+      "chill_hours": 870.0,
+      "utah_units": 1403.5,
+      "gdd": 2259.6
+     }
+    },
+    {
+     "season": "2018-19",
+     "cimis": {
+      "chill_portions": 99.7,
+      "chill_hours": 920.0,
+      "utah_units": 1490.5,
+      "gdd": 2340.6
+     },
+     "raw": {
+      "chill_portions": 99.7,
+      "chill_hours": 940.0,
+      "utah_units": 1601.0,
+      "gdd": 2840.1
+     },
+     "corrected": {
+      "chill_portions": 99.7,
+      "chill_hours": 940.0,
+      "utah_units": 1601.0,
+      "gdd": 2139.1
+     }
+    },
+    {
+     "season": "2019-20",
+     "cimis": {
+      "chill_portions": 83.4,
+      "chill_hours": 1002.0,
+      "utah_units": 1313.5,
+      "gdd": 2463.1
+     },
+     "raw": {
+      "chill_portions": 86.4,
+      "chill_hours": 879.0,
+      "utah_units": 1382.0,
+      "gdd": 3179.9
+     },
+     "corrected": {
+      "chill_portions": 86.4,
+      "chill_hours": 879.0,
+      "utah_units": 1382.0,
+      "gdd": 2590.4
+     }
+    },
+    {
+     "season": "2020-21",
+     "cimis": {
+      "chill_portions": 87.7,
+      "chill_hours": 935.0,
+      "utah_units": 1365.0,
+      "gdd": 2486.7
+     },
+     "raw": {
+      "chill_portions": 87.8,
+      "chill_hours": 937.0,
+      "utah_units": 1485.5,
+      "gdd": 3369.7
+     },
+     "corrected": {
+      "chill_portions": 87.8,
+      "chill_hours": 937.0,
+      "utah_units": 1485.5,
+      "gdd": 2798.0
+     }
+    },
+    {
+     "season": "2021-22",
+     "cimis": {
+      "chill_portions": 87.4,
+      "chill_hours": 1044.0,
+      "utah_units": 1344.0,
+      "gdd": 2431.6
+     },
+     "raw": {
+      "chill_portions": 87.4,
+      "chill_hours": 999.0,
+      "utah_units": 1421.0,
+      "gdd": 3208.2
+     },
+     "corrected": {
+      "chill_portions": 87.4,
+      "chill_hours": 999.0,
+      "utah_units": 1421.0,
+      "gdd": 2612.2
+     }
+    },
+    {
+     "season": "2022-23",
+     "cimis": {
+      "chill_portions": 111.4,
+      "chill_hours": 1229.0,
+      "utah_units": 1606.5,
+      "gdd": 2194.5
+     },
+     "raw": {
+      "chill_portions": 116.7,
+      "chill_hours": 1281.0,
+      "utah_units": 1815.0,
+      "gdd": 2909.6
+     },
+     "corrected": {
+      "chill_portions": 116.7,
+      "chill_hours": 1281.0,
+      "utah_units": 1815.0,
+      "gdd": 2243.2
+     }
+    },
+    {
+     "season": "2023-24",
+     "cimis": {
+      "chill_portions": 92.5,
+      "chill_hours": 795.0,
+      "utah_units": 1212.0,
+      "gdd": 2517.8
+     },
+     "raw": {
+      "chill_portions": 96.8,
+      "chill_hours": 823.0,
+      "utah_units": 1352.5,
+      "gdd": 3042.3
+     },
+     "corrected": {
+      "chill_portions": 96.8,
+      "chill_hours": 823.0,
+      "utah_units": 1352.5,
+      "gdd": 2473.7
+     }
+    },
+    {
+     "season": "2024-25",
+     "cimis": {
+      "chill_portions": 90.4,
+      "chill_hours": 891.0,
+      "utah_units": 1322.5,
+      "gdd": 1716.7
+     },
+     "raw": {
+      "chill_portions": 98.6,
+      "chill_hours": 938.0,
+      "utah_units": 1503.5,
+      "gdd": 2137.8
+     },
+     "corrected": {
+      "chill_portions": 98.6,
+      "chill_hours": 938.0,
+      "utah_units": 1503.5,
+      "gdd": 1666.7
+     }
+    }
+   ]
+  },
+  "nearest_station_baseline": {
+   "about": "Biggs #244 CIMIS readings (25 km away) used as Durham's: a grower's alternative when Durham closed.",
+   "mae": {
+    "chill_portions": 4.56,
+    "chill_hours": 101.0,
+    "utah_units": 70.0,
+    "gdd": 256.17
+   },
+   "seasons": [
+    {
+     "season": "2015-16",
+     "durham": {
+      "chill_portions": 80.6,
+      "chill_hours": 894.0,
+      "utah_units": 1387.0,
+      "gdd": 2375.2
+     },
+     "biggs": {
+      "chill_portions": 79.0,
+      "chill_hours": 759.0,
+      "utah_units": 1366.0,
+      "gdd": 2844.1
+     }
+    },
+    {
+     "season": "2016-17",
+     "durham": {
+      "chill_portions": 86.5,
+      "chill_hours": 883.0,
+      "utah_units": 1342.5,
+      "gdd": 2260.0
+     },
+     "biggs": {
+      "chill_portions": 77.9,
+      "chill_hours": 765.0,
+      "utah_units": 1370.5,
+      "gdd": 2747.2
+     }
+    },
+    {
+     "season": "2017-18",
+     "durham": {
+      "chill_portions": 92.1,
+      "chill_hours": 872.0,
+      "utah_units": 1228.0,
+      "gdd": 2394.9
+     },
+     "biggs": {
+      "chill_portions": 75.4,
+      "chill_hours": 655.0,
+      "utah_units": 974.5,
+      "gdd": 2978.2
+     }
+    },
+    {
+     "season": "2018-19",
+     "durham": {
+      "chill_portions": 99.7,
+      "chill_hours": 920.0,
+      "utah_units": 1490.5,
+      "gdd": 2340.6
+     },
+     "biggs": {
+      "chill_portions": 94.1,
+      "chill_hours": 838.0,
+      "utah_units": 1573.0,
+      "gdd": 2467.6
+     }
+    },
+    {
+     "season": "2019-20",
+     "durham": {
+      "chill_portions": 83.4,
+      "chill_hours": 1002.0,
+      "utah_units": 1313.5,
+      "gdd": 2463.1
+     },
+     "biggs": {
+      "chill_portions": 81.6,
+      "chill_hours": 909.0,
+      "utah_units": 1346.0,
+      "gdd": 2674.6
+     }
+    },
+    {
+     "season": "2020-21",
+     "durham": {
+      "chill_portions": 87.7,
+      "chill_hours": 935.0,
+      "utah_units": 1365.0,
+      "gdd": 2486.7
+     },
+     "biggs": {
+      "chill_portions": 85.9,
+      "chill_hours": 822.0,
+      "utah_units": 1403.0,
+      "gdd": 2635.3
+     }
+    },
+    {
+     "season": "2021-22",
+     "durham": {
+      "chill_portions": 87.4,
+      "chill_hours": 1044.0,
+      "utah_units": 1351.0,
+      "gdd": 2420.4
+     },
+     "biggs": {
+      "chill_portions": 82.4,
+      "chill_hours": 986.0,
+      "utah_units": 1344.5,
+      "gdd": 2553.5
+     }
+    },
+    {
+     "season": "2022-23",
+     "durham": {
+      "chill_portions": 111.4,
+      "chill_hours": 1229.0,
+      "utah_units": 1606.5,
+      "gdd": 2194.5
+     },
+     "biggs": {
+      "chill_portions": 111.0,
+      "chill_hours": 1203.0,
+      "utah_units": 1724.5,
+      "gdd": 2313.3
+     }
+    },
+    {
+     "season": "2023-24",
+     "durham": {
+      "chill_portions": 92.5,
+      "chill_hours": 795.0,
+      "utah_units": 1212.0,
+      "gdd": 2517.2
+     },
+     "biggs": {
+      "chill_portions": 93.0,
+      "chill_hours": 692.0,
+      "utah_units": 1245.0,
+      "gdd": 2690.8
+     }
+    },
+    {
+     "season": "2024-25",
+     "durham": {
+      "chill_portions": 90.4,
+      "chill_hours": 891.0,
+      "utah_units": 1322.5,
+      "gdd": 1716.7
+     },
+     "biggs": {
+      "chill_portions": 94.0,
+      "chill_hours": 826.0,
+      "utah_units": 1409.5,
+      "gdd": 1826.4
+     }
+    }
+   ]
+  }
+ },
+ "models": {
+  "best_match": {
+   "hourly_temp_mae_f": 3.85,
+   "chill_portions_mae": 3.18,
+   "station_seasons": 18
+  },
+  "era5_land": {
+   "hourly_temp_mae_f": 4.13,
+   "chill_portions_mae": 5.46,
+   "station_seasons": 18
+  },
+  "ecmwf_ifs": {
+   "hourly_temp_mae_f": 3.85,
+   "chill_portions_mae": 3.18,
+   "station_seasons": 18
+  }
+ }
+}
