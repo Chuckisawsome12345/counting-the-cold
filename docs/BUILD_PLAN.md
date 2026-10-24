@@ -74,10 +74,14 @@ The app works end to end by H4 (H = hours from kickoff), and features freeze at 
 | H4–H8 | [M2 Core science](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/3) | Utah and Dynamic Model with golden tests, gap filling, cache, 10-season history, forecast merge. Season chart and settings bar. |
 | H8–H13 | [M3 Differentiator](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/4) | CIMIS pulled for all 9 stations, `validation.json` built, correction wired in. Validation tab, station markers, Durham preset. |
 | H13–H17 | [M4 Projection and polish](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/5) | p10/p50/p90 projection, prewarm and snapshots with `DEMO_MODE`, error and stale handling, responsive layout. |
-| H17–H20 | [M5 Stretch](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/6) | Standout features in priority order (accuracy map, statewide chill map, ML correction, % of chill requirement met), then pin vs station compare, hull split, public `/api/v1` docs. Start only after M4 is done. |
+| H17–H20 | [M5 Stretch](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/6) | Standout features in priority order (accuracy map, statewide chill map, % of chill requirement met, ML correction), then pin vs station compare, hull split, public `/api/v1` docs. Start only after M4 is done. |
 | H20–H24 | [M6 Freeze and demo](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/7) | Feature freeze at H20. Final deploy and snapshot at H21. Rehearse 3 times, record a backup video, write Devpost and README. |
 
 Suggested sleep shifts, about 3 hours each so someone can always merge: C sleeps H11–H14, B H14–H17, A H17–H20.
+
+**Critical path:** M3 depends on CIMIS data, and the CIMIS API was down for part of Oct 23. B starts `scripts/fetch_cimis.py` running in the background by H1, not at H8, so the data is committed before M3 needs it.
+
+**Load balancing:** B has the longest list and gates M3. If B is behind at H8, A takes `calc/projection.py` (its ownership moves to A in `CONTRIBUTING.md` and `CODEOWNERS`), and C finds the per-variety chill requirements listed under Sources.
 
 ## Roles and conflict prevention
 
@@ -192,6 +196,8 @@ Every pin is served from Open-Meteo through a three-layer cache. CIMIS is used o
 
 **Rate budget:** Open-Meteo's free tier allows about 600 calls/min, 5,000/hour, and 10,000/day, and counts long multi-week requests as several calls (confirm on their terms page). Ten years of hourly data for a new pin is expensive, so we snap, cache forever, and prewarm demo pins at startup.
 
+Rough budget, assuming one call per 2 weeks of hourly data for one variable (confirm): a new pin's 10 seasons is about 260 calls, validation across 9 stations × 3 models × 10 seasons about 7,000, and the statewide grid (about 150 cells × 1 season) about 3,900. Together that's over 10,000/day, and free-tier limits are likely per IP, so other teams on the venue Wi-Fi share ours. Run the validation and grid fetches early, on separate days or networks if possible, commit what they produce, and score the 3 models on 3–5 seasons before fetching all 10.
+
 ## Calculation module (B)
 
 All chill and GDD math lives in pure functions with no I/O. Inputs are pandas Series indexed by PST timestamps, in °F, with NaN meaning missing. The stubs in `backend/app/calc/` already have these signatures, and tests marked `@stub` are waiting for them.
@@ -252,6 +258,8 @@ We correct gridded temperatures with station offsets and prove it works with lea
 - **Correcting an orchard pin:** blend station tables by inverse-distance weighting (power 2, stations within 150 km). If a closed station within 10 km has at least 3 seasons of history, weight its own table heavily. The response lists the stations used and their weights.
 - **The Durham line:** *"The station closed, but its decade of records still calibrates our estimate."*
 - **Honest validation** (`build_validation.py` → `validation.json`): for each station and season, compute every metric from CIMIS (truth), raw gridded data, and corrected gridded data. Station X is corrected using only the other stations' tables, which is the situation a real orchard pin is in. Report MAE per metric, raw vs corrected. Durham through 2024-25 is the headline case.
+- **Nearest-station baseline:** when a station closes, a grower's real alternative is the nearest active station, not raw gridded data. For each station with an active neighbor over the same seasons, also score the neighbor's readings used in its place (Biggs #244 for Durham, about 10 overlapping seasons since 2015). That's the number to beat, and it uses CIMIS data we already fetch. Reporting it in `/api/validation` needs a `nearest` value next to `raw` and `corrected` (a follow-up `contract` PR).
+- **Durham's own table, tested on held-out seasons:** leave-one-out scores Durham as if it never existed, but the live app weights Durham's own table about 97%. Score that setup too: fit Durham's table on seasons through 2021-22 and test it on 2022-23 to 2024-25. Report it separately, so the error we quote for a Durham pin matches what the app actually does.
 - **Model check:** the script also scores Open-Meteo's `best_match`, `era5_land`, and `ecmwf_ifs` models, and we use whichever has the lowest error.
 
 ## UI (C): one-page dashboard
@@ -278,15 +286,15 @@ These four additions make the demo land harder with judges, honestly: each one s
 | --- | --- | --- | --- |
 | 1 | **Accuracy map** | The validation tab becomes a map: each station is a bubble whose error shrinks from raw to corrected. Our proof of accuracy, visible at a glance. | C (data already in `/api/validation`) |
 | 2 | **Statewide chill map** | A layer coloring the Central Valley by this season's chill, from a grid computed ahead of time. Says "every orchard, not 9 stations" in one picture. | A builds the grid and `/api/grid`; C draws the layer |
-| 3 | **ML bias correction** | A machine-learning model competes with the simple 12 × 24 table on the same leave-one-station-out test. We use whichever wins and show both scores. | B (A adds the dependency) |
-| 4 | **% of chill requirement met** | Pick a variety (e.g. Nonpareil almond) and see how close the orchard is to its chill requirement. Turns a number into a decision. | B (requirements + math), A (API field), C (card) |
+| 3 | **% of chill requirement met** | Pick a variety (e.g. Nonpareil almond) and see how close the orchard is to its chill requirement. Turns a number into a decision, and it's cheap. | B (requirements + math), A (API field), C (card) |
+| 4 | **ML bias correction** | A machine-learning model competes with the simple 12 × 24 table on the same leave-one-station-out test. We use whichever wins and show both scores. Last because it's the riskiest and lands on B, who gates M3. | B (A adds the dependency) |
 
 **Details:**
 
 - **Accuracy map:** stations from `/api/stations`, errors from `/api/validation`. A toggle or animation goes from raw to corrected MAE per station; Durham gets a callout.
-- **Statewide chill map:** `scripts/build_grid.py` (A) computes one season's corrected chill portions on a coarse grid (about 0.25°, Central Valley only, roughly 150 cells) and commits `data/grid/<season>.json`. It runs offline once, so it costs nothing at demo time and stays inside Open-Meteo's rate budget. `/api/grid` serves it; the shape goes in `docs/api-contract.md` first.
-- **ML bias correction:** gradient-boosted trees (scikit-learn) predicting the hourly CIMIS − gridded offset from month, hour, gridded temperature, elevation, and distance to the coast. Same leave-one-station-out split as the table, so the comparison is fair. `validation.json` reports both MAEs. If ML doesn't beat the table, we say so; the honest comparison is itself a good demo moment.
+- **Statewide chill map:** `scripts/build_grid.py` (A) computes one season's corrected chill portions on a coarse grid (about 0.25°, Central Valley only, roughly 150 cells) and commits `data/grid/<season>.json`. It runs offline once, so it costs nothing at demo time, but the fetch is about 3,900 calls, so schedule it apart from the validation fetch (see Rate budget). `/api/grid` serves it; the shape goes in `docs/api-contract.md` first.
 - **% of chill requirement met:** chill-portion requirements per variety from published UC sources, cited in `calc/cultivars.py` (B). `/api/point` gains a requirement field through a `contract` PR (A); C adds a variety picker and a progress card. No requirement goes in without a source.
+- **ML bias correction:** gradient-boosted trees (scikit-learn) predicting the hourly CIMIS − gridded offset from month, hour, gridded temperature, elevation, and distance to the coast. Same leave-one-station-out split as the table, so the comparison is fair. `validation.json` reports both MAEs. If ML doesn't beat the table, we say so; the honest comparison is itself a good demo moment.
 
 ## Risks and fallbacks
 
@@ -317,13 +325,13 @@ The backend goes on Render and the frontend on Vercel. Deploy the skeleton at H4
 
 ## Demo script (about 2:30)
 
-The story is the closed Durham station: a grower loses their station, and we still give them numbers they can trust. C owns the working copy in `docs/demo-script.md`; fill in X and Y from `validation.json`.
+The story is the closed Durham station: a grower loses their station, and we still give them numbers they can trust. C owns the working copy in `docs/demo-script.md`; fill in X, Y and Z from `validation.json`.
 
 1. **0:00 Hook.** "In July 2025, CIMIS station 12 in Durham, Butte County, shut down. Every almond grower who used it lost their chill count for last winter."
 2. **0:20 Drop a pin** on a Butte orchard near Durham. The 2025-26 cards appear: portions, hours, Utah, GDD. "No station, no hardware. Your orchard's chill and heat, not a station's."
 3. **0:50 History chart.** This season vs the last 10 and the median. "Chill finished X% above normal."
 4. **1:10 Toggle to 2026-27.** Portions have been accumulating since Sep 1. The 14-day forecast runs into November with an end-of-season range.
-5. **1:30 Trust: the validation tab.** "We checked ourselves against 9 CIMIS stations. Raw gridded data was off by X portions; corrected, by Y. And Durham's decade of records still calibrates the estimate after the station closed."
+5. **1:30 Trust: the validation tab.** "We checked ourselves against 9 CIMIS stations. Raw gridded data was off by X portions, and using Biggs in place of Durham by Z; corrected, by Y. And Durham's decade of records still calibrates the estimate after the station closed."
 6. **2:00 Microclimate.** Pin vs nearest station side by side (stretch), or move the pin and watch the numbers change.
 7. **2:15 Open and free.** Show `/docs`, the open API. Close on the one-liner.
 
