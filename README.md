@@ -6,7 +6,7 @@ Drop a pin on any California orchard and see its chill (chill hours, Utah units,
 
 Built at Reboot Earth (UC Davis, Oct 23–24 2026) for the FNRIC "Counting the Cold" challenge.
 
-- **Plan (live, editable):** https://claude.ai/artifact/RircwznHknoxj1voHwgYpK · snapshot in [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md)
+- **Plan:** [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) (change it with a `plan` PR) · **Progress:** [milestones](https://github.com/Chuckisawsome12345/counting-the-cold/milestones)
 - **How we work:** [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) · **API shapes:** [`docs/api-contract.md`](docs/api-contract.md)
 
 ## Run it locally

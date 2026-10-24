@@ -22,6 +22,7 @@ Three people, three roles, separate folders. If you only follow one rule: **edit
 | `frontend/**` | C: Frontend & Demo |
 | `docs/demo-script.md` | C |
 | `docs/api-contract.md` | Shared: change only via a `contract` PR |
+| `docs/BUILD_PLAN.md` (+ `.pdf`) | Shared: change only via a `plan` PR |
 
 Need something in a folder you don't own? Comment on the owner's issue or ping them.
 
@@ -55,6 +56,14 @@ Need something in a folder you don't own? Comment on the owner's issue or ping t
 1. Open a PR labeled `contract` that edits `docs/api-contract.md`, and @mention the other two.
 2. A mirrors the change in `backend/app/schemas.py` (and re-runs `python scripts/make_mock.py`).
 3. C mirrors it in `frontend/src/api/types.ts`.
+
+## Plan changes
+
+`docs/BUILD_PLAN.md` is the team plan and the source of truth (it replaced the Claude Doc). To change it:
+
+1. Open a small PR labeled `plan` that edits only that file, and @mention the other two.
+2. Stick to your own role's sections unless the team agreed; say what changed in the PR description.
+3. Track progress on the GitHub milestones and issues, not by editing the plan.
 
 ## Dependencies
 
