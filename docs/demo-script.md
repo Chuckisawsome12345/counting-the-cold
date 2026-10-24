@@ -13,7 +13,7 @@ The script only works if these have landed. Check each one before rehearsing; if
 | 10-season history and the 14-day forecast | #7, #20 | Beats 3 and 4 lose their lines; show cards only. |
 | Bias correction wired in | #8, #18 | Beat 6 has nothing to toggle. |
 | `validation.json` built | #19 | The accuracy tab says "hasn't been built yet". Skip beat 5. |
-| Backend on Render, frontend on Vercel | #5, #24 | Run locally (see "Before judging"). |
+| Backend and frontend both on Vercel (the backend moved off Render) | #5, #24 | Run locally (see "Before judging"). |
 
 ## Pitch essentials (say these, in this order)
 
@@ -43,7 +43,7 @@ Use the **light** theme (it projects better) at normal browser zoom. Start on th
 
 ## Before judging
 
-- [ ] Ping `/api/health` on Render 2 minutes before (cold start is about 50 s).
+- [ ] Ping `/api/health` on the deployed backend 2 minutes before, so the first click is not a cold start (the cache lives in `/tmp` there and resets on cold starts; the committed snapshots cover the demo pins).
 - [ ] No "SYNTHETIC MOCK DATA" badge in the header on the live URL.
 - [ ] Click through both seasons, all four chart tabs, the accuracy tab and the bias toggle once on the live URL.
 - [ ] `DEMO_MODE=1` ready as a fallback; the three demo pins (Butte, Davis, Parlier) are prewarmed.
