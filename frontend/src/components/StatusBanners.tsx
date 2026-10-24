@@ -4,7 +4,7 @@ import { useSingleOpen } from '../hooks/useSingleOpen'
 import { METRICS } from '../metrics'
 import { ClockIcon, OfflineIcon, WarnIcon } from './icons'
 import InfoButton from './InfoButton'
-import { metricCopy } from './metricInfo'
+import { metricCopy, metricExtras } from './metricInfo'
 
 // Data older than its normal refresh: served from an expired cache entry (quality.stale). The contract has no
 // timestamp for it, so the wording is generic.
@@ -102,6 +102,7 @@ export function LoadingSkeleton({ lat, lon }: { lat: number; lon: number }) {
               <InfoButton
                 title={m.label}
                 text={metricCopy(m.metric)}
+                {...metricExtras(m.metric)}
                 accent={m.accent}
                 open={openId === m.metric}
                 onToggle={() => toggle(m.metric)}

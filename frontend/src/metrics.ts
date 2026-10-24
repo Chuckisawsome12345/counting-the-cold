@@ -38,8 +38,8 @@ export const METRICS: MetricInfo[] = [
   },
   {
     metric: 'utah_units',
-    label: 'Utah Units',
-    short: 'Utah',
+    label: 'Chill Units',
+    short: 'CU',
     unit: 'CU',
     footUnit: 'CU',
     digits: 0,
