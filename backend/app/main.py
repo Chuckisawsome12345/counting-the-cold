@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import ALLOWED_ORIGINS
-from app.routes import meta, point, stations, validation
+from app.routes import grid, meta, point, public, stations, validation
 
 app = FastAPI(
     title="Counting the Cold API",
@@ -21,3 +21,5 @@ app.include_router(meta.router)
 app.include_router(point.router)
 app.include_router(stations.router)
 app.include_router(validation.router)
+app.include_router(grid.router)
+app.include_router(public.router)

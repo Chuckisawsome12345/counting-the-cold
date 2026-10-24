@@ -255,3 +255,27 @@ def test_unknown_crop_rejected(pipeline):
 def test_floored_cumsum_never_negative():
     out = build_point._floored_cumsum(pd.Series([1.0, -3.0, 2.0, -1.0]))
     assert out.tolist() == [1.0, 0.0, 2.0, 1.0]
+
+
+# --- statewide grid (scripts/build_grid.py) ---
+
+from scripts import build_grid  # noqa: E402
+
+
+def test_valley_outline_includes_orchards_not_coast_or_mountains():
+    assert build_grid.inside(39.64, -121.79)  # Durham
+    assert build_grid.inside(36.74, -119.79)  # Fresno
+    assert build_grid.inside(35.37, -119.02)  # Bakersfield
+    assert not build_grid.inside(37.77, -122.42)  # San Francisco
+    assert not build_grid.inside(39.10, -120.03)  # Lake Tahoe
+    assert 80 <= len(build_grid.grid_points()) <= 250
+
+
+def test_grid_build_collects_totals_per_cell():
+    def fake_build(lat, lon, season, *args, history_seasons, **kwargs):
+        assert history_seasons == 0
+        return {"totals": {"chill_portions": 60.0, "chill_hours": 900.0, "utah_units": 1200.0, "gdd": 2400.0}}
+
+    doc = build_grid.build(2025, step=1.0, pause=0, build=fake_build)
+    assert doc["season"] == "2025-26" and doc["cells"]
+    assert set(doc["cells"][0]) == {"lat", "lon", "chill_portions", "chill_hours", "utah_units", "gdd"}

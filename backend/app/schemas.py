@@ -190,3 +190,42 @@ class HealthResponse(BaseModel):
     ok: bool
     demo_mode: bool
     cache_entries: int
+
+
+class ModelValue(BaseModel):
+    value: float
+    unit: str
+    model: str
+    window_start: str
+
+
+class ModelsResponse(BaseModel):
+    """GET /api/v1/models: the public, embeddable summary for one location."""
+
+    mock: bool = False
+    location: Location
+    season: str
+    as_of: str
+    complete: bool
+    corrected: bool
+    models: dict[Metric, ModelValue]
+    expected_error: Totals | None
+    nearest_station: StationRef
+    attribution: str
+
+
+class GridCell(BaseModel):
+    lat: float
+    lon: float
+    value: float
+
+
+class GridResponse(BaseModel):
+    """GET /api/grid: one metric on the precomputed statewide grid."""
+
+    season: str
+    metric: Metric
+    unit: str
+    step_deg: float
+    built_at: str | None
+    cells: list[GridCell]
