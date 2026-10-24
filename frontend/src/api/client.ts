@@ -20,9 +20,25 @@ export interface PointParams {
   corrected?: boolean
 }
 
+// An answer that was not a success. `status` is the HTTP status (503, 502, ...); it is undefined when there was
+// no answer at all (network down).
+export class ApiError extends Error {
+  status?: number
+  constructor(message: string, status?: number) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+  }
+}
+
 async function getJson<T>(url: string): Promise<T> {
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`${url} failed: ${res.status}`)
+  let res: Response
+  try {
+    res = await fetch(url)
+  } catch {
+    throw new ApiError(`${url} could not be reached`)
+  }
+  if (!res.ok) throw new ApiError(`${url} failed: ${res.status}`, res.status)
   return (await res.json()) as T
 }
 
