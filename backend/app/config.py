@@ -15,6 +15,10 @@ load_dotenv(REPO_ROOT / ".env")
 CACHE_DIR = Path(os.getenv("CACHE_DIR") or ("/tmp/counting-the-cold-cache" if os.getenv("VERCEL") else BACKEND_DIR / ".cache"))
 
 CIMIS_KEY = os.getenv("CIMIS_KEY", "")
+# Text-message access (/api/sms): Twilio's auth token turns on signature checks; the webhook URL
+# overrides the URL used for them if the proxy hides the one Twilio called.
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
+SMS_WEBHOOK_URL = os.getenv("SMS_WEBHOOK_URL", "")
 DEMO_MODE = os.getenv("DEMO_MODE", "0") == "1"
 ALLOWED_ORIGINS = [
     o.strip()

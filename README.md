@@ -31,6 +31,14 @@ cd frontend && npm install && npm run dev
 
 No backend handy? Run the frontend on synthetic data: `VITE_USE_MOCK=1 npm run dev`.
 
+## Text-message access
+
+`POST /api/sms` is a Twilio webhook: text a location (`39.64,-121.79`) or `DURHAM`, `DAVIS`, `PARLIER` and get a one-text summary back (plain ASCII, at most 160 characters). Setup, once the Twilio check (#55) passes:
+
+1. In Twilio, set the number's "A message comes in" webhook to `https://counting-the-cold.vercel.app/api/sms` (HTTP POST).
+2. In the Vercel backend project, set `TWILIO_AUTH_TOKEN` to the account's auth token, so only signed Twilio requests are answered, and redeploy.
+3. Open `/api/health` a minute before demoing so the first text isn't a cold start (Twilio waits about 15 s).
+
 ## Checks
 
 ```bash
