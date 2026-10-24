@@ -258,3 +258,59 @@ def test_telegram_status_reports_webhook_info_without_token(monkeypatch):
     body = client.get("/api/telegram/status").json()
     assert body["pending_update_count"] == 2 and "403" in body["last_error_message"]
     assert TOKEN not in str(body)
+
+
+def test_telegram_describe_is_fuller_than_sms():
+    p = point_route._mock(2026)  # as of 2026-10-23: chill hours start Nov 1, GDD Jan 1
+    msg = tg_route.describe(p, "Durham")
+    assert msg.startswith("Durham · 2026-27 season (as of Oct 23)")
+    assert "Chill (winter cold)" in msg and "\nHeat\n" in msg
+    assert "• Chill hours: not counting yet (starts Nov 1)" in msg
+    assert "• Growing degree days: not counting yet (starts Jan 1; almond, base 55°F)" in msg
+    assert "Nearest CIMIS station: Durham #12 (closed)" in msg
+    assert "\nCharts and details: https://counting-the-cold-jfm3.vercel.app\n" in msg
+    assert len(msg) < 4096  # Telegram's message limit
+
+
+def test_telegram_describe_compares_finished_season_with_normal():
+    p = point_route._mock(2025)
+    msg = tg_route.describe(p, None)
+    assert "(complete)" in msg and "vs the 10-season median" in msg or "about normal" in msg
+    p["totals"]["chill_portions"] = 0
+    for h in p["history"]:
+        h["totals"]["chill_portions"] = 0
+    assert "• Chill portions: not calculated yet" in tg_route.describe(p, None)
+
+
+def test_telegram_suggest_command(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    assert tg(tg_text("/suggest")).json()["text"].startswith("Add a place after /suggest")
+    reply = tg(tg_text("/suggest durham")).json()["text"]
+    assert reply.startswith("Suggestions for Durham ") and tg_route.DISCLAIMER in reply
+    assert tg(tg_text("/suggest@CountingTheColdBot 39.64,-121.79")).json()["text"].startswith("Suggestions for Orchard near Durham ")
+
+
+def test_suggest_before_chill_starts_points_at_last_winter():
+    p = point_route._mock(2026)  # as of Oct 23, chill hours start Nov 1
+    msg = tg_route.suggest(p, "Durham")
+    last = p["history"][-1]
+    assert f"Chill hours start counting Nov 1. Last winter ({last['season']})" in msg
+
+
+def test_suggest_flags_slow_chill_bloom_frost_and_heat():
+    p = point_route._mock(2026)
+    p["season"]["as_of"] = "2027-02-10"
+    p["season"]["hours_start"] = "2026-11-01"
+    p["daily"] = p["daily"] * 4  # about 160 days in, so past winters have real chill to compare with
+    day = len(p["daily"]) - 1
+    p["totals"]["chill_portions"] = 0.5 * sorted(h["cumulative"][day]["chill_portions"] for h in p["history"])[5]
+    p["forecast"]["daily"][0].update(date="2027-02-12", tmin=29.0, tmax=55.0)
+    p["forecast"]["daily"][1].update(date="2027-02-13", tmin=40.0, tmax=101.0)
+    msg = tg_route.suggest(p, "Durham")
+    assert "behind a typical year" in msg
+    assert "Freezing nights in the forecast during bloom season: Feb 12 (29°F)" in msg
+    assert "Hot days ahead: Feb 13 (101°F)" in msg
+
+
+def test_place_reply_ends_with_suggest_hint():
+    assert tg_route.describe(point_route._mock(2026), "Durham").rstrip().endswith("What to watch for: /suggest durham")

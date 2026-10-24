@@ -51,25 +51,33 @@ def signature(url: str, params: dict[str, str], token: str) -> str:
     return base64.b64encode(hmac.new(token.encode(), data.encode(), hashlib.sha1).digest()).decode()
 
 
-def reply_for(body: str, today: date) -> str | None:
+def reply_for(body: str, today: date, render=None) -> str | None:
     text = " ".join(body.split())
     key = text.lower()
     if not text or key in {"help", "info", "?", "hi", "hello", "start"}:
         return HELP
     if key in OPT_OUT:
         return None
+    place = parse_place(text)
+    if place is None:
+        return NOT_UNDERSTOOD
+    return reply_for_spot(*place, today, render)
+
+
+def parse_place(text: str) -> tuple[str | None, float, float] | None:
+    """A demo place name or "lat,lon" -> (name, lat, lon); None if it's neither."""
+    key = " ".join(text.split()).lower()
     if key in PLACES:
-        name, lat, lon = PLACES[key]
-    else:
-        m = LATLON.match(text)
-        if not m:
-            return NOT_UNDERSTOOD
-        name, lat, lon = None, float(m.group(1)), float(m.group(2))
-    return reply_for_spot(name, lat, lon, today)
+        return PLACES[key]
+    m = LATLON.match(" ".join(text.split()))
+    return (None, float(m.group(1)), float(m.group(2))) if m else None
 
 
-def reply_for_spot(name: str | None, lat: float, lon: float, today: date) -> str:
-    """The summary for one spot this season, or a friendly reason there isn't one."""
+def reply_for_spot(name: str | None, lat: float, lon: float, today: date, render=None) -> str:
+    """The summary for one spot this season, or a friendly reason there isn't one.
+
+    `render(point_response, name)` writes the summary; the default is the one-text SMS version.
+    """
     if not (32.0 <= lat <= 42.1 and -124.5 <= lon <= -114.0):
         return OUTSIDE_CA
     season = today.year if today.month >= 9 else today.year - 1
@@ -77,7 +85,7 @@ def reply_for_spot(name: str | None, lat: float, lon: float, today: date) -> str
         p = point(lat, lon, season, "almond", "09-01", "11-01", "01-01", True)
     except HTTPException:
         return UNAVAILABLE
-    return summarize(p, name)
+    return (render or summarize)(p, name)
 
 
 def summarize(p: dict, name: str | None) -> str:
@@ -110,23 +118,30 @@ def summarize(p: dict, name: str | None) -> str:
 
 def _vs_normal(p: dict) -> float | None:
     """Percent vs the 10-season median, for chill portions if there is a median, else chill hours."""
+    for metric in ("chill_portions", "chill_hours"):
+        pct = vs_normal(p, metric)
+        if pct is not None:
+            return pct
+    return None
+
+
+def vs_normal(p: dict, metric: str) -> float | None:
+    """Percent vs the 10-season median: season totals once a season is over, the same day of season
+    while it runs. None when there's nothing to compare yet."""
     in_progress = not p["season"]["complete"]
     day = len(p["daily"]) - 1
-    for metric in ("chill_portions", "chill_hours"):
-        value = p["totals"][metric]
-        if in_progress and value == 0:
-            continue
-        past = sorted(
-            h["cumulative"][day][metric] if in_progress and day < len(h["cumulative"]) else h["totals"][metric]
-            for h in p["history"]
-        )
-        if not past:
-            continue
-        mid = len(past) // 2
-        median = past[mid] if len(past) % 2 else (past[mid - 1] + past[mid]) / 2
-        if median > 0:
-            return (value - median) / median * 100
-    return None
+    value = p["totals"][metric]
+    if in_progress and value == 0:
+        return None
+    past = sorted(
+        h["cumulative"][day][metric] if in_progress and day < len(h["cumulative"]) else h["totals"][metric]
+        for h in p["history"]
+    )
+    if not past:
+        return None
+    mid = len(past) // 2
+    median = past[mid] if len(past) % 2 else (past[mid - 1] + past[mid]) / 2
+    return (value - median) / median * 100 if median > 0 else None
 
 
 def _public_url(request: Request) -> str:
