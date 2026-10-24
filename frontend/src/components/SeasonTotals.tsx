@@ -1,6 +1,7 @@
 import { Bar, BarChart, Cell, LabelList, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import type { Metric, PointResponse } from '../api/types'
 import { formatFixed } from '../format'
+import { NARROW_QUERY, useMediaQuery } from '../hooks/useMediaQuery'
 import { METRICS } from '../metrics'
 
 interface BarItem {
@@ -23,6 +24,7 @@ function buildBars(data: PointResponse, metric: Metric): BarItem[] {
 }
 
 export default function SeasonTotals({ data, metric }: { data: PointResponse; metric: Metric }) {
+  const narrow = useMediaQuery(NARROW_QUERY)
   const info = METRICS.find((m) => m.metric === metric) ?? METRICS[0]
   const bars = buildBars(data, metric)
   const complete = data.season.complete
@@ -34,10 +36,11 @@ export default function SeasonTotals({ data, metric }: { data: PointResponse; me
 
   return (
     <section className={`card totals-card ${info.accent}`}>
+      <h2 className="sr-only">Season totals</h2>
       <span className="lbl">Season totals · this season and the 10 before</span>
       <div role="img" aria-label={summary} className="chart-fade" key={metric}>
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={bars} margin={{ top: 22, right: 4, bottom: 0, left: 4 }}>
+          <BarChart accessibilityLayer={false} data={bars} margin={{ top: 22, right: 4, bottom: 0, left: 4 }}>
             <defs>
               <linearGradient id="ctc-bar-past" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" style={{ stopColor: 'var(--cold2)' }} />
@@ -52,7 +55,7 @@ export default function SeasonTotals({ data, metric }: { data: PointResponse; me
                 <rect width="4" height="8" style={{ fill: 'var(--acc2)' }} />
               </pattern>
             </defs>
-            <XAxis dataKey="short" tickLine={false} axisLine={false} interval={0} tick={{ fontSize: 10, fill: 'var(--ink3)' }} />
+            <XAxis dataKey="short" tickLine={false} axisLine={false} interval={narrow ? 1 : 0} tick={{ fontSize: narrow ? 9 : 10, fill: 'var(--ink3)' }} />
             <YAxis hide domain={[0, (max: number) => max * 1.08]} />
             <Bar dataKey="value" radius={[5, 5, 0, 0]} isAnimationActive={false}>
               {bars.map((b) => (

@@ -139,7 +139,8 @@ export default function MapPicker({ pin, stations, nearest, onPick }: Props) {
               <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
                 <path d="M2 2l6 6M8 2L2 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
               </svg>
-              {nearest.name} #{nearest.id} closed{closedStation?.disconnect_date ? ` ${formatDate(closedStation.disconnect_date)}` : ''}
+              {nearest.name} #{nearest.id} closed
+              {closedStation?.disconnect_date && <span className="t-long"> {formatDate(closedStation.disconnect_date)}</span>}
             </span>
           )}
         </div>
@@ -156,11 +157,19 @@ export default function MapPicker({ pin, stations, nearest, onPick }: Props) {
         </div>
       </div>
 
+      {pin && (
+        <p className="map-caption">
+          {pin[0].toFixed(2)}, {pin[1].toFixed(2)}
+          {nearest ? ` · ${nearest.distance_km} km` : ''}
+        </p>
+      )}
+
       <div className="demo-pins">
         <span className="lbl">Try</span>
         {DEMO_PINS.map((p) => (
           <button key={p.id} type="button" className="chip" aria-pressed={demo?.id === p.id} onClick={() => onPick(p.lat, p.lon)}>
-            {p.label}
+            <span className="t-long">{p.label}</span>
+            <span className="t-short">{p.short}</span>
           </button>
         ))}
       </div>
