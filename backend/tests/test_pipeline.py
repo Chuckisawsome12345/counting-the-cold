@@ -1,3 +1,4 @@
+import json
 from datetime import date, timedelta
 
 import numpy as np
@@ -286,3 +287,16 @@ def test_grid_build_collects_totals_per_cell():
     doc = build_grid.build(2025, step=1.0, pause=0, build=fake_build)
     assert doc["season"] == "2025-26" and doc["cells"]
     assert set(doc["cells"][0]) == {"lat", "lon", "chill_portions", "chill_hours", "utah_units", "gdd"}
+
+
+def test_correction_moves_heat_not_chill(pipeline, monkeypatch, tmp_path):
+    # B's validation: the station correction helps GDD but hurts chill, so it only touches heat.
+    tables = tmp_path / "bias_tables.json"
+    tables.write_text(json.dumps({"stations": {"12": {"table": [[10.0] * 24] * 12, "seasons": 10}}}))
+    monkeypatch.setattr(build_point, "BIAS_TABLES_PATH", tables)
+    on, off = run(2025, corrected=True), run(2025, corrected=False)
+    assert on["correction"]["applied"] and on["correction"]["stations"][0]["name"] == "Durham"
+    assert not off["correction"]["applied"]
+    for m in ("chill_portions", "chill_hours", "utah_units"):
+        assert on["totals"][m] == off["totals"][m]
+    assert on["totals"]["gdd"] > off["totals"]["gdd"]

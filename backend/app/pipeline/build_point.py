@@ -133,16 +133,20 @@ def build_point(
 
     station_list = _stations(lat, lon)
     correction = {"applied": False, "stations": [], "expected_error": None}
+    # The station correction applies to heat only. B's leave-one-station-out validation
+    # (validation.json "method") found it halves GDD error but makes the chill models worse,
+    # so chill is computed from the uncorrected temperatures.
+    heat = temps
     if corrected:
         blended = _blend_bias(station_list)
         if blended is not None:
             table, used = blended
-            temps = bias.apply_bias(temps, table)
+            heat = bias.apply_bias(temps, table)
             correction = {"applied": True, "stations": used, "expected_error": _expected_error(True)}
     if not correction["applied"]:
         correction["expected_error"] = _expected_error(False)
 
-    work = pd.DataFrame({"temp_f": temps, "source": frame["source"], "filled": filled_mask})
+    work = pd.DataFrame({"temp_f": temps, "heat_f": heat, "source": frame["source"], "filled": filled_mask})
     target = _season_daily(work, season, settings)
     history = []
     for s in range(season - history_seasons, season):
@@ -227,9 +231,10 @@ def _season_daily(work: pd.DataFrame, season: int, settings: Settings) -> pd.Dat
     sl = season_slice(work, season)
     if sl.empty:
         return pd.DataFrame()
-    t = sl["temp_f"]
+    t = sl["temp_f"]  # chill models
+    heat = sl["heat_f"] if "heat_f" in sl else t  # daily min/max and GDD (bias-corrected when on)
     day_of = sl.index.normalize().tz_localize(None)
-    daily = daily_min_max(t)[["tmin", "tmax"]]
+    daily = daily_min_max(heat)[["tmin", "tmax"]]
 
     def since(mmdd: str) -> pd.Series:
         start = pd.Timestamp(seasons.season_window(season, mmdd)[0]).tz_localize(PST)
