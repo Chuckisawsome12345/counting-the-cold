@@ -196,3 +196,56 @@ def test_sms_mentions_last_season_before_chill_starts():
     last = p["history"][-1]
     assert f"Last season ({last['season']}): {last['totals']['chill_hours']:.0f} chill hrs" in msg
     assert len(msg) <= 160
+
+
+# --- Telegram bot (/api/telegram) ---
+
+from app.routes import telegram as tg_route  # noqa: E402
+
+TOKEN = "123456:test-token"
+
+
+def tg(update, secret=None):
+    headers = {"X-Telegram-Bot-Api-Secret-Token": tg_route.webhook_secret(TOKEN) if secret is None else secret}
+    return client.post("/api/telegram", json=update, headers=headers)
+
+
+def tg_text(text):
+    return {"update_id": 1, "message": {"message_id": 7, "chat": {"id": 42, "type": "private"}, "text": text}}
+
+
+def test_telegram_needs_token(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", "")
+    assert tg(tg_text("/start")).status_code == 503
+
+
+def test_telegram_rejects_wrong_secret(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    assert tg(tg_text("/start"), secret="nope").status_code == 403
+
+
+def test_telegram_start_place_and_location(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    start = tg(tg_text("/start")).json()
+    assert start["method"] == "sendMessage" and start["chat_id"] == 42 and "Share your orchard's location" in start["text"]
+    assert tg(tg_text("/durham@CountingTheColdBot")).json()["text"].startswith("Durham ")
+    assert tg(tg_text("39.64, -121.79")).json()["text"].startswith("Orchard near Durham ")
+    shared = {"update_id": 2, "message": {"message_id": 8, "chat": {"id": 42}, "location": {"latitude": 36.6, "longitude": -119.5}}}
+    assert tg(shared).json()["text"].startswith("Orchard near Parlier ")
+    assert "outside California" in tg(tg_text("47.6,-122.3")).json()["text"]
+
+
+def test_telegram_ignores_non_message_updates(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    assert tg({"update_id": 3, "my_chat_member": {}}).json() == {}
+
+
+def test_telegram_setup_registers_webhook_with_secret(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    calls = []
+    monkeypatch.setattr(tg_route, "telegram_api", lambda token, method, payload: calls.append((method, payload)) or {"ok": True, "description": "Webhook was set"})
+    body = client.get("/api/telegram/setup").json()
+    assert body == {"ok": True, "webhook": "https://testserver/api/telegram", "telegram": "Webhook was set"}
+    method, payload = calls[0]
+    assert method == "setWebhook" and payload["secret_token"] == tg_route.webhook_secret(TOKEN)
+    assert TOKEN not in str(body)

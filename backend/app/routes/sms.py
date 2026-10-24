@@ -65,6 +65,11 @@ def reply_for(body: str, today: date) -> str | None:
         if not m:
             return NOT_UNDERSTOOD
         name, lat, lon = None, float(m.group(1)), float(m.group(2))
+    return reply_for_spot(name, lat, lon, today)
+
+
+def reply_for_spot(name: str | None, lat: float, lon: float, today: date) -> str:
+    """The summary for one spot this season, or a friendly reason there isn't one."""
     if not (32.0 <= lat <= 42.1 and -124.5 <= lon <= -114.0):
         return OUTSIDE_CA
     season = today.year if today.month >= 9 else today.year - 1
