@@ -220,7 +220,7 @@ def test_complete_season_matches_contract(pipeline):
     assert len(body["daily"]) == 365
     t = body["totals"]
     assert t["chill_hours"] > 300 and t["gdd"] > 1000 and t["utah_units"] > 0
-    assert t["chill_portions"] == 0  # Dynamic Model still a stub: degrades to 0
+    assert t["chill_portions"] > 0  # Dynamic Model landed (#16)
     assert body["nearest_station"]["name"] == "Durham"
     assert body["correction"] == {"applied": False, "stations": [], "expected_error": None}
     assert body["quality"]["interpolated_hours"] == 0  # fill_gaps still a stub
