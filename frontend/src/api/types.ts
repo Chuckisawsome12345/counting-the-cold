@@ -157,3 +157,9 @@ export interface Crop {
   base_f: number
   upper_f: number | null
 }
+
+// GET /api/telegram/preview: the Telegram bot's reply to one message.
+export interface BotPreviewResponse {
+  text: string // plain text with line breaks
+  bot_url: string | null // the real bot in Telegram; null when the bot isn't configured
+}
