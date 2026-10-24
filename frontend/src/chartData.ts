@@ -47,11 +47,12 @@ export function buildSeries(data: PointResponse, metric: Metric): Series {
     if (m != null) row.median = m
   }
 
-  // Current season (archive rows), and the forecast joined onto its last point.
+  // Current season, and the forecast joined onto its last point. `daily` holds the days up to today; the last few of
+  // them can be tagged source "forecast" (the archive lags about 5 days), but they are past days, so they stay on the
+  // solid line. Only `forecast.daily` is drawn dotted.
   let last: { day: number; value: number } | null = null
-  const forecastRows = [...(forecast?.daily ?? []), ...daily.filter((r) => r.source === 'forecast')]
+  const forecastRows = forecast?.daily ?? []
   for (const r of daily) {
-    if (r.source === 'forecast') continue
     const day = dayOfSeason(season.label, r.date)
     if (rows[day]) {
       rows[day].cur = r[metric]

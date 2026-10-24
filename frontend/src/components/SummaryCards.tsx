@@ -29,7 +29,10 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
   const barWidth = biggest > 0 ? Math.min(100, (shown / (biggest * 1.1)) * 100) : 0
 
   const start = season[startField]
-  const plus14 = forecast?.plus14[metric] ?? 0
+  // Gain over the next 14 days. forecast.daily is cumulative season-to-date (api-contract.md) and the backend's
+  // plus14 is the cumulative value on day 14, so the gain is that minus what has accumulated so far.
+  const day14 = forecast?.daily[Math.min(13, (forecast?.daily.length ?? 1) - 1)]
+  const plus14 = forecast ? Math.max(0, (day14?.[metric] ?? forecast.plus14[metric]) - value) : 0
   const err = correction.expected_error?.[metric]
 
   let footLeft: string
