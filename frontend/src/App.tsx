@@ -39,7 +39,7 @@ export default function App() {
 
       {tab === 'accuracy' ? (
         <main className="page">
-          <ValidationPanel />
+          <ValidationPanel stations={stations} />
         </main>
       ) : (
         <main className="layout">
