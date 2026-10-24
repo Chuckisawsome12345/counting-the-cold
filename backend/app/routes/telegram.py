@@ -13,9 +13,10 @@ import logging
 from datetime import date
 
 import httpx
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 
 from app import config
+from app.schemas import BotPreviewResponse
 from app.routes import sms
 
 router = APIRouter(prefix="/api/telegram", tags=["telegram"])
@@ -218,6 +219,28 @@ def _not_calculated(p: dict, metric: str) -> bool:
 def _day(iso: str) -> str:
     d = date.fromisoformat(iso)
     return f"{d:%b} {d.day}"
+
+
+@router.get("/preview", response_model=BotPreviewResponse,
+            summary="The bot's reply to a message, without Telegram (the website's Try the bot box)")
+def preview(text: str = Query("", max_length=200, description="What the user would send, e.g. durham, 39.64,-121.79, /suggest davis")) -> dict:
+    return {"text": reply_for_message({"text": text}, date.today()), "bot_url": bot_url()}
+
+
+_bot_url: str | None = None
+
+
+def bot_url() -> str | None:
+    """https://t.me/<username> for the real bot, looked up once; None if the bot isn't configured or Telegram is unreachable."""
+    global _bot_url
+    if _bot_url is None and config.TELEGRAM_BOT_TOKEN:
+        try:
+            username = telegram_api(config.TELEGRAM_BOT_TOKEN, "getMe", {}).get("result", {}).get("username")
+        except HTTPException:
+            username = None
+        if username:
+            _bot_url = f"https://t.me/{username}"
+    return _bot_url
 
 
 @router.get("/setup", summary="Register this backend as the bot's webhook (open once after deploying)")

@@ -267,6 +267,25 @@ def test_telegram_status_reports_webhook_info_without_token(monkeypatch):
     assert TOKEN not in str(body)
 
 
+def test_telegram_preview_matches_the_bot(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    monkeypatch.setattr(tg_route, "_bot_url", None)
+    monkeypatch.setattr(tg_route, "telegram_api", lambda token, method, payload: {"ok": True, "result": {"username": "CountingTheColdBot"}})
+    for text in ("/durham", "39.64,-121.79", "/suggest davis", "/start", "hello?"):
+        body = client.get("/api/telegram/preview", params={"text": text}).json()
+        assert body["text"] == tg(tg_text(text)).json()["text"]
+        assert body["bot_url"] == "https://t.me/CountingTheColdBot"
+    assert "Share your orchard's location" in client.get("/api/telegram/preview").json()["text"]
+    assert client.get("/api/telegram/preview", params={"text": "x" * 201}).status_code == 422
+
+
+def test_telegram_preview_works_without_the_bot(monkeypatch):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", "")
+    monkeypatch.setattr(tg_route, "_bot_url", None)
+    body = client.get("/api/telegram/preview", params={"text": "durham"}).json()
+    assert body["text"].startswith("Durham ") and body["bot_url"] is None
+
+
 def test_telegram_describe_is_fuller_than_sms():
     p = point_route._mock(2026)  # as of 2026-10-23: chill hours start Nov 1, GDD Jan 1
     msg = tg_route.describe(p, "Durham")
