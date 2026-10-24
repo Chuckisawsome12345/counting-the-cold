@@ -19,6 +19,9 @@ CIMIS_KEY = os.getenv("CIMIS_KEY", "")
 # overrides the URL used for them if the proxy hides the one Twilio called.
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
 SMS_WEBHOOK_URL = os.getenv("SMS_WEBHOOK_URL", "")
+# Telegram bot (/api/telegram): token from @BotFather; the webhook URL overrides the one setup registers.
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_WEBHOOK_URL = os.getenv("TELEGRAM_WEBHOOK_URL", "")
 DEMO_MODE = os.getenv("DEMO_MODE", "0") == "1"
 ALLOWED_ORIGINS = [
     o.strip()
