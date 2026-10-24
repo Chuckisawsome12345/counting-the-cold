@@ -1,11 +1,23 @@
 import type { PointResponse } from '../api/types'
 import { dayOfSeason, formatFixed, formatMonthDay, formatNumber, median } from '../format'
 import { useCountUp } from '../hooks/useCountUp'
+import { useSingleOpen } from '../hooks/useSingleOpen'
 import { METRICS, isUnavailable, type MetricInfo } from '../metrics'
+import InfoButton from './InfoButton'
+import { metricCopy } from './metricInfo'
 
 const STAGGER_MS = 80
 
-function MetricCard({ data, info, index }: { data: PointResponse; info: MetricInfo; index: number }) {
+interface CardProps {
+  data: PointResponse
+  info: MetricInfo
+  index: number
+  open: boolean
+  onToggle: () => void
+  onClose: () => void
+}
+
+function MetricCard({ data, info, index, open, onToggle, onClose }: CardProps) {
   const { metric, label, unit, footUnit, digits, accent, startField, startText } = info
   const { season, forecast, correction, history, settings } = data
   const value = data.totals[metric]
@@ -36,6 +48,17 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
   const plus14 = forecast ? Math.max(0, (day14?.[metric] ?? forecast.plus14[metric]) - value) : 0
   const err = correction.expected_error?.[metric]
 
+  // One line for the "i" panel, from the same values the card shows. Left out when the card has no number.
+  let live: string | undefined
+  if (!unavailable) {
+    const mine = `${formatFixed(value, digits)} ${footUnit}`
+    const forDate = inProgress ? ' for this date' : ''
+    if (noneYet) live = `Your pin: nothing counted yet, ${startText(formatMonthDay(start))}.`
+    else if (pct === null) live = `Your pin: ${mine}.`
+    else if (Math.abs(pct) < 0.05) live = `Your pin: ${mine}, in line with the 10-season median${forDate}.`
+    else live = `Your pin: ${mine}, ${Math.abs(pct).toFixed(1)}% ${pct > 0 ? 'above' : 'below'} the 10-season median${forDate}.`
+  }
+
   let footLeft: string
   if (!inProgress) {
     footLeft =
@@ -53,7 +76,18 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
   return (
     <div className={`card metric ${accent}`}>
       <div className="metric-head">
-        <span className="lbl">{label}</span>
+        <div className="metric-title">
+          <span className="lbl">{label}</span>
+          <InfoButton
+            title={label}
+            copy={metricCopy(metric, { gddBaseF: settings.gdd_base_f, gddUpperF: settings.gdd_upper_f })}
+            live={live}
+            accent={accent}
+            open={open}
+            onToggle={onToggle}
+            onClose={onClose}
+          />
+        </div>
         <span className="metric-unit">{unit}</span>
       </div>
       <div className="metric-value">{unavailable ? '—' : value === 0 ? '0' : formatFixed(shown, digits)}</div>
@@ -94,11 +128,20 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
 }
 
 export default function SummaryCards({ data }: { data: PointResponse }) {
+  const { openId, toggle, close } = useSingleOpen()
   return (
     <div className="cards" role="group" aria-label="Season summary">
       <h2 className="sr-only">Season summary</h2>
       {METRICS.map((info, i) => (
-        <MetricCard key={info.metric} data={data} info={info} index={i} />
+        <MetricCard
+          key={info.metric}
+          data={data}
+          info={info}
+          index={i}
+          open={openId === info.metric}
+          onToggle={() => toggle(info.metric)}
+          onClose={close}
+        />
       ))}
     </div>
   )

@@ -1302,6 +1302,194 @@ select {
   font-size: 16px;
 }
 
+/* ---------- Info buttons on the metric cards ---------- */
+
+.metric-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* A 44px tap target around a 20px circle; negative margins keep the card header the same height. */
+.info-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: -14px -16px -14px -8px; /* net width 20px: the 44px tap target overlaps empty space, not other controls */
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink3);
+}
+
+.info-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    background var(--dur-controls),
+    color var(--dur-controls);
+}
+
+.info-btn:hover,
+.info-btn[aria-expanded='true'] {
+  color: var(--acc, var(--coldink));
+}
+
+.info-btn[aria-expanded='true'] .info-dot {
+  background: var(--tab-active);
+}
+
+.info-panel {
+  position: fixed;
+  z-index: 4000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-lg);
+  background: var(--solid);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 19px;
+  animation: info-in 150ms var(--ease-out) both;
+}
+
+.info-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-2) var(--space-5);
+}
+
+.info-head h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 26px;
+}
+
+.info-close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink2);
+}
+
+.info-close:hover {
+  background: var(--tab-active);
+  color: var(--ink);
+}
+
+.info-body {
+  overflow-y: auto;
+  padding: 0 var(--space-5) var(--space-5);
+}
+
+.info-body h4 {
+  margin: var(--space-3) 0 1px;
+}
+
+.info-body > :first-child {
+  margin-top: 0;
+}
+
+.info-body p {
+  margin: 0;
+  color: var(--ink2);
+}
+
+.info-body .info-live {
+  margin: 0 0 var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--acc, var(--cold3));
+  border-radius: var(--radius-md);
+  background: var(--tab-active);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.info-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 3999;
+  background: rgba(5, 10, 20, 0.4);
+  animation: info-fade 150ms var(--ease-out) both;
+}
+
+@keyframes info-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes info-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Phones: a bottom sheet, pinned inside the screen, over a light backdrop */
+@media (max-width: 600px) {
+  .info-panel {
+    inset: auto 0 0 0;
+    max-height: 82vh;
+    border-width: 1px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    animation-name: info-sheet;
+  }
+
+  .info-body {
+    padding-bottom: var(--space-4);
+  }
+}
+
+@keyframes info-sheet {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.skel-head {
+  display: flex;
+  align-items: center;
+}
+
 /* ---------- Data quality, correction, and page states ---------- */
 
 .right-stack,
@@ -1725,11 +1913,13 @@ select {
   }
 
   .metric {
-    padding: var(--space-3) var(--space-3) 10px;
+    padding: var(--space-3) 10px 10px;
   }
 
-  .metric .lbl {
-    letter-spacing: 0.06em;
+  /* Tight enough that "GROWING DEGREE DAYS" and its "i" fit on one line in a 2-column card */
+  .metric .lbl,
+  .skel-card .lbl {
+    letter-spacing: 0.02em;
   }
 
   .metric-unit,
