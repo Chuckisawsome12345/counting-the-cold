@@ -9,6 +9,7 @@ GET /api/telegram/setup once to register the webhook.
 """
 import hashlib
 import hmac
+import logging
 from datetime import date
 
 import httpx
@@ -18,6 +19,7 @@ from app import config
 from app.routes import sms
 
 router = APIRouter(prefix="/api/telegram", tags=["telegram"])
+log = logging.getLogger("telegram")
 
 API = "https://api.telegram.org"
 HELP = (
@@ -37,6 +39,7 @@ async def telegram(request: Request) -> dict:
     token = _token()
     given = request.headers.get("x-telegram-bot-api-secret-token", "")
     if not hmac.compare_digest(given, webhook_secret(token)):
+        log.warning("telegram webhook rejected: %s secret", "wrong" if given else "missing")
         raise HTTPException(403, "invalid Telegram secret")
     update = await request.json()
     message = update.get("message") or update.get("edited_message")
@@ -76,6 +79,12 @@ def setup(request: Request) -> dict:
         {"command": "parlier", "description": "Parlier"},
     ]})
     return {"ok": bool(result.get("ok")), "webhook": url, "telegram": result.get("description", "")}
+
+
+@router.get("/status", summary="What Telegram reports about the webhook (last error, pending messages)")
+def status() -> dict:
+    info = telegram_api(_token(), "getWebhookInfo", {}).get("result", {})
+    return {k: info.get(k) for k in ("url", "pending_update_count", "last_error_date", "last_error_message", "max_connections", "ip_address")}
 
 
 def telegram_api(token: str, method: str, payload: dict) -> dict:
