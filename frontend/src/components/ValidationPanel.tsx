@@ -3,17 +3,19 @@ import { fetchValidation } from '../api/client'
 import type { Metric, Station, StationValidation, ValidationResponse } from '../api/types'
 import { formatDate } from '../geo'
 import { formatFixed } from '../format'
-import { useCountDown } from '../hooks/useCountDown'
+import { useRawToCorrected } from '../hooks/useRawToCorrected'
 import { METRICS, type MetricInfo } from '../metrics'
+import AccuracyMap, { type AccuracyRow } from './AccuracyMap'
 
 type Load = { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready'; data: ValidationResponse }
 
 // "Improvement" is how much smaller the corrected error is than the raw error, as a percent of the raw error.
 const improvement = (raw: number, corrected: number) => (raw > 0 ? ((raw - corrected) / raw) * 100 : 0)
 
-function Headline({ info, raw, corrected, count }: { info: MetricInfo; raw: number; corrected: number; count: number }) {
+// `progress` runs 0 (raw) to 1 (corrected); the corrected number counts down in step with the map's bubbles.
+function Headline({ info, raw, corrected, count, progress }: { info: MetricInfo; raw: number; corrected: number; count: number; progress: number }) {
   const gain = Math.round(improvement(raw, corrected))
-  const shown = useCountDown(raw, corrected, info.metric)
+  const shown = raw + (corrected - raw) * progress
   return (
     <section className="card v-headline">
       <div className="v-headline-text">
@@ -73,11 +75,116 @@ function StationRow({ s, info, closed }: { s: StationValidation; info: MetricInf
   )
 }
 
+function Results({ data, stations }: { data: ValidationResponse; stations: Station[] }) {
+  const [metric, setMetric] = useState<Metric>('chill_portions')
+  const info = METRICS.find((m) => m.metric === metric) ?? METRICS[0]
+
+  const summary = data.summary[metric]
+  const closedIds = new Set(stations.filter((s) => !s.active).map((s) => s.id))
+  const closed = stations.find((s) => !s.active && data.stations.some((v) => v.id === s.id))
+  // Closed stations first (Durham is the story), then the order the API gives.
+  const rows = [...data.stations]
+    .filter((s) => s.mae[metric])
+    .sort((a, b) => Number(closedIds.has(b.id)) - Number(closedIds.has(a.id)))
+
+  // The same rows as map bubbles, for the stations we have a position for.
+  const bubbles: AccuracyRow[] = rows.flatMap((v) => {
+    const station = stations.find((s) => s.id === v.id)
+    const e = v.mae[metric]
+    return station && e ? [{ validation: v, station, raw: e.raw_mae, corrected: e.corrected_mae }] : []
+  })
+  const { progress, overall, mode, play, show } = useRawToCorrected(bubbles.length)
+
+  return (
+    <div className="v-page">
+      {summary ? (
+        <Headline info={info} raw={summary.raw_mae} corrected={summary.corrected_mae} count={data.stations.length} progress={overall} />
+      ) : (
+        <section className="card v-empty">
+          <p>No overall error was calculated for {info.label}.</p>
+        </section>
+      )}
+
+      <div className="v-grid">
+        {bubbles.length > 0 && <AccuracyMap rows={bubbles} info={info} progress={progress} mode={mode} onShow={show} onPlay={play} />}
+
+        <section className="card v-table-card">
+          <div className="v-table-head">
+            <div>
+              <span className="lbl">Per-station results</span>
+              <p className="v-sub">
+                Average error in {info.footUnit}, raw vs corrected. Built {formatDate(data.built_at?.slice(0, 10) ?? '')}.
+              </p>
+            </div>
+            <div className="seg" role="group" aria-label="Measure">
+              {METRICS.map((m) => (
+                <button key={m.metric} type="button" aria-pressed={m.metric === metric} onClick={() => setMetric(m.metric)}>
+                  <span className="t-long">{m.label === 'Growing Degree Days' ? 'GDD' : m.label}</span>
+                  <span className="t-short">{m.short}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="table-scroll">
+            <table className="vtable">
+              <caption className="sr-only">Average error per station, raw and corrected, in {info.footUnit}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Station</th>
+                  <th scope="col">Seasons</th>
+                  <th scope="col">Raw</th>
+                  <th scope="col">Corrected</th>
+                  <th scope="col">Improvement</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((s) => (
+                  <StationRow key={s.id} s={s} info={info} closed={closedIds.has(s.id)} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <ul className="v-list">
+            {rows.map((s) => {
+              const e = s.mae[metric]
+              if (!e) return null
+              const pct = improvement(e.raw_mae, e.corrected_mae)
+              return (
+                <li key={s.id} className={closedIds.has(s.id) ? 'closed-row' : undefined}>
+                  <span>
+                    <strong>
+                      {s.name} #{s.id}
+                    </strong>
+                    {closedIds.has(s.id) && <span className="closed-tag">CLOSED</span>}
+                  </span>
+                  <span className="v-pair">
+                    <span className="raw">±{formatFixed(e.raw_mae, info.digits)}</span> → <span className="corr">±{formatFixed(e.corrected_mae, info.digits)}</span>{' '}
+                    <span className="impr-pct">
+                      {pct >= 0 ? '▼' : '▲'} {Math.abs(Math.round(pct))}%
+                    </span>
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      </div>
+
+      {closed && (
+        <section className="card v-callout">
+          <strong>
+            {closed.name} #{closed.id} closed{closed.disconnect_date ? ` ${formatDate(closed.disconnect_date)}` : ''}.
+          </strong>{' '}
+          Its decade of records still calibrates our estimate.
+        </section>
+      )}
+    </div>
+  )
+}
+
 export default function ValidationPanel({ stations }: { stations: Station[] }) {
   const [load, setLoad] = useState<Load>({ status: 'loading' })
   const [attempt, setAttempt] = useState(0)
-  const [metric, setMetric] = useState<Metric>('chill_portions')
-  const info = METRICS.find((m) => m.metric === metric) ?? METRICS[0]
 
   useEffect(() => {
     let cancelled = false
@@ -134,95 +241,5 @@ export default function ValidationPanel({ stations }: { stations: Station[] }) {
     )
   }
 
-  const summary = data.summary[metric]
-  const closedIds = new Set(stations.filter((s) => !s.active).map((s) => s.id))
-  const closed = stations.find((s) => !s.active && data.stations.some((v) => v.id === s.id))
-  // Closed stations first (Durham is the story), then the order the API gives.
-  const rows = [...data.stations]
-    .filter((s) => s.mae[metric])
-    .sort((a, b) => Number(closedIds.has(b.id)) - Number(closedIds.has(a.id)))
-
-  return (
-    <div className="v-page">
-      {summary ? (
-        <Headline info={info} raw={summary.raw_mae} corrected={summary.corrected_mae} count={data.stations.length} />
-      ) : (
-        <section className="card v-empty">
-          <p>No overall error was calculated for {info.label}.</p>
-        </section>
-      )}
-
-      <section className="card v-table-card">
-        <div className="v-table-head">
-          <div>
-            <span className="lbl">Per-station results</span>
-            <p className="v-sub">
-              Average error in {info.footUnit}, raw vs corrected. Built {formatDate(data.built_at.slice(0, 10))}.
-            </p>
-          </div>
-          <div className="seg" role="group" aria-label="Measure">
-            {METRICS.map((m) => (
-              <button key={m.metric} type="button" aria-pressed={m.metric === metric} onClick={() => setMetric(m.metric)}>
-                <span className="t-long">{m.label === 'Growing Degree Days' ? 'GDD' : m.label}</span>
-                <span className="t-short">{m.short}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="table-scroll">
-          <table className="vtable">
-            <caption className="sr-only">
-              Average error per station, raw and corrected, in {info.footUnit}
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Station</th>
-                <th scope="col">Seasons</th>
-                <th scope="col">Raw</th>
-                <th scope="col">Corrected</th>
-                <th scope="col">Improvement</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((s) => (
-                <StationRow key={s.id} s={s} info={info} closed={closedIds.has(s.id)} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <ul className="v-list">
-          {rows.map((s) => {
-            const e = s.mae[metric]
-            if (!e) return null
-            const pct = improvement(e.raw_mae, e.corrected_mae)
-            return (
-              <li key={s.id} className={closedIds.has(s.id) ? 'closed-row' : undefined}>
-                <span>
-                  <strong>
-                    {s.name} #{s.id}
-                  </strong>
-                  {closedIds.has(s.id) && <span className="closed-tag">CLOSED</span>}
-                </span>
-                <span className="v-pair">
-                  <span className="raw">±{formatFixed(e.raw_mae, info.digits)}</span> → <span className="corr">±{formatFixed(e.corrected_mae, info.digits)}</span>{' '}
-                  <span className="impr-pct">
-                    {pct >= 0 ? '▼' : '▲'} {Math.abs(Math.round(pct))}%
-                  </span>
-                </span>
-              </li>
-            )
-          })}
-        </ul>
-      </section>
-
-      {closed && (
-        <section className="card v-callout">
-          <strong>
-            {closed.name} #{closed.id} closed{closed.disconnect_date ? ` ${formatDate(closed.disconnect_date)}` : ''}.
-          </strong>{' '}
-          Its decade of records still calibrates our estimate.
-        </section>
-      )}
-    </div>
-  )
+  return <Results data={data} stations={stations} />
 }

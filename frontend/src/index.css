@@ -1739,3 +1739,119 @@ select {
 .brand svg {
   flex: none;
 }
+
+/* ---------- Accuracy map ---------- */
+
+.v-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: var(--space-4);
+  align-items: stretch;
+}
+
+.acc-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.acc-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.acc-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.acc-map {
+  position: relative;
+  flex: 1;
+  min-height: 420px;
+  border-top: 1px solid var(--line);
+}
+
+.acc-map .map {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  border-radius: 0;
+}
+
+.acc-legend {
+  position: absolute;
+  left: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 1000;
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.acc-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lg-dot.raw {
+  border-color: rgb(232, 98, 12);
+  background: rgba(255, 168, 28, 0.55);
+}
+
+.lg-dot.corrected {
+  border-color: rgb(27, 143, 214);
+  background: rgba(79, 180, 240, 0.55);
+}
+
+.leaflet-tooltip.acc-label {
+  padding: 1px 6px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  text-shadow:
+    0 0 3px var(--solid),
+    0 0 3px var(--solid),
+    0 0 3px var(--solid);
+}
+
+.leaflet-tooltip.acc-label::before {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .v-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .acc-map {
+    min-height: 320px;
+  }
+}
+
+@media (max-width: 600px) {
+  .acc-head {
+    padding: var(--space-4);
+  }
+
+  .acc-map {
+    min-height: 260px;
+  }
+}
+
