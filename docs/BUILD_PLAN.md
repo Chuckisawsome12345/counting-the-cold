@@ -55,13 +55,13 @@ These are settled unless the team agrees to change them here.
 Each teammate needs about 10 minutes. The full checklist is issue [#1](https://github.com/Chuckisawsome12345/counting-the-cold/issues/1).
 
 1. Accept the GitHub collaborator invite and clone the repo.
-2. Pick a role: **A (Data & API)**, **B (Science & Validation)**, or **C (Frontend & Demo)**. See Roles below.
+2. Find your role in the Roles table below: **A (Data & API)** is [@Chuckisawsome12345](https://github.com/Chuckisawsome12345), **B (Science & Validation)** is [@karthikmaheshwaran](https://github.com/karthikmaheshwaran), **C (Frontend & Demo)** is [@Zooomer69](https://github.com/Zooomer69).
 3. Create your env file: `cp .env.example .env`.
     - Only B (who runs the CIMIS fetcher) and A (who deploys the backend) need `CIMIS_KEY`. Get a free key at et.water.ca.gov.
     - Never commit the key, paste it in chat, or put it in an issue.
 4. Start the backend: `cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && uvicorn app.main:app --reload`
 5. Start the frontend: `cd frontend && npm install && npm run dev`. It proxies `/api` to `localhost:8000`.
-6. Claim your work: `gh issue list --label role:<data-api|science|frontend>`, then `gh issue edit <N> --add-assignee @me`.
+6. Your role's issues are already assigned to you: `gh issue list --assignee @me`.
 
 ## Milestones
 
@@ -81,13 +81,13 @@ Suggested sleep shifts, about 3 hours each so someone can always merge: C sleeps
 
 ## Roles and conflict prevention
 
-Each role owns separate folders, so no two people edit the same file. Put your GitHub handle in the Person column in your first PR. The full file-by-file table is in `docs/CONTRIBUTING.md`.
+Each role owns separate folders, so no two people edit the same file. Roles were assigned on Oct 23, and `.github/CODEOWNERS` maps the same folders to the same people, so GitHub requests the owner's review on any PR that touches their files. The full file-by-file table is in `docs/CONTRIBUTING.md`.
 
 | Role | Person | Owns (only this person edits) | Core work | Issues |
 | --- | --- | --- | --- | --- |
-| **A: Data & API** (strongest backend person) |  | `backend/app/{main,config,schemas}.py`, `routes/`, `sources/` (except `cimis.py`), `pipeline/`, `scripts/prewarm.py`, `scripts/make_mock.py`, `data/stations.json`, `data/snapshots/`, `requirements.txt`, root files, Render deploy | Open-Meteo client and merge, PST normalization, SQLite cache, `/api/point`, history and forecast assembly, correction wiring, stations and validation routes, snapshots and DEMO_MODE, deploy, README | [#2–#12](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Adata-api) |
-| **B: Science & Validation** (strongest Python and math person) |  | `backend/app/calc/`, `backend/app/validation/`, `backend/tests/` (except test_api and test_sources), `sources/cimis.py`, `scripts/fetch_cimis.py`, `scripts/build_validation.py`, `data/cimis/`, `data/validation.json`, test fixtures | FNRIC reference values; chill hours, Utah, GDD, and seasons by H2 (this unblocks A); Dynamic Model with golden tests; gap filling; CIMIS fetcher (start early); bias model; leave-one-out validation; projection; hull split | [#13–#21](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Ascience) |
-| **C: Frontend & Demo** |  | `frontend/**`, `docs/demo-script.md`, Devpost text, slides, Vercel deploy | Map and pins, cards, season chart, settings, quality badge, validation tab, correction info, compare panel, demo script, backup video | [#22–#31](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Afrontend) |
+| **A: Data & API** (strongest backend person) | [@Chuckisawsome12345](https://github.com/Chuckisawsome12345) | `backend/app/{main,config,schemas}.py`, `routes/`, `sources/` (except `cimis.py`), `pipeline/`, `scripts/prewarm.py`, `scripts/make_mock.py`, `data/stations.json`, `data/snapshots/`, `requirements.txt`, root files, Render deploy | Open-Meteo client and merge, PST normalization, SQLite cache, `/api/point`, history and forecast assembly, correction wiring, stations and validation routes, snapshots and DEMO_MODE, deploy, README | [#2–#12](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Adata-api) |
+| **B: Science & Validation** (strongest Python and math person) | [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) | `backend/app/calc/`, `backend/app/validation/`, `backend/tests/` (except test_api and test_sources), `sources/cimis.py`, `scripts/fetch_cimis.py`, `scripts/build_validation.py`, `data/cimis/`, `data/validation.json`, test fixtures | FNRIC reference values; chill hours, Utah, GDD, and seasons by H2 (this unblocks A); Dynamic Model with golden tests; gap filling; CIMIS fetcher (start early); bias model; leave-one-out validation; projection; hull split | [#13–#21](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Ascience) |
+| **C: Frontend & Demo** | [@Zooomer69](https://github.com/Zooomer69) | `frontend/**`, `docs/demo-script.md`, Devpost text, slides, Vercel deploy | Map and pins, cards, season chart, settings, quality badge, validation tab, correction info, compare panel, demo script, backup video | [#22–#31](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Afrontend) |
 
 **Rules that prevent overwriting each other's work:**
 
@@ -331,7 +331,7 @@ The one-time setup is complete:
 - Public repo with squash-only merges, branch auto-delete, and the `main` ruleset described in Roles. CI passes on `main`.
 - Labels `role:data-api`, `role:science`, `role:frontend`, `stretch`, `contract`, `plan`, `bug`; milestones M0–M6; 32 unassigned issues.
 
-Still to do: invite teammates (in progress), and add `.github/CODEOWNERS` once everyone's GitHub handle is in the Roles table.
+Roles: A is [@Chuckisawsome12345](https://github.com/Chuckisawsome12345), B is [@karthikmaheshwaran](https://github.com/karthikmaheshwaran), C is [@Zooomer69](https://github.com/Zooomer69). Each role's issues (plus #1 and #32 for everyone) are assigned, and `.github/CODEOWNERS` maps each role's folders to its owner.
 
 ## Sources
 
