@@ -12,20 +12,25 @@ TETMLT = 277.0
 
 
 def chill_hours(t: pd.Series, lo: float = 32.0, hi: float = 45.0) -> pd.Series:
-    """Per hour: 1 if lo <= t <= hi else 0. NaN stays NaN."""
-    return ((t >= lo) & (t <= hi)).astype(float).where(t.notna())
+    """Per hour: 1 if lo < t <= hi else 0. NaN stays NaN.
+
+    FNRIC's convention: exactly 32.0°F doesn't count. This reproduces FNRIC's published daily
+    "hours_32_45" exactly on CIMIS data (24 station-seasons checked, tests/test_fnric.py).
+    """
+    return ((t > lo) & (t <= hi)).astype(float).where(t.notna())
 
 
 def utah_units(t: pd.Series) -> pd.Series:
     """Per hour Utah chill units (Richardson et al. 1974), °F bands:
 
-    <=34: 0 | 35-36: 0.5 | 37-48: 1 | 49-54: 0.5 | 55-60: 0 | 61-65: -0.5 | >65: -1
-    The season cumulative is floored at 0 by the caller (build_point does). Bands are defined on
-    whole degrees, so fractional readings are split at the half degree (34.4 -> 0, 34.5 -> 0.5).
-    NaN stays NaN.
+    <=34: 0 | <=36: 0.5 | <=48: 1 | <=54: 0.5 | <=60: 0 | <=65: -0.5 | >65: -1
+    The season cumulative is floored at 0 by the caller (build_point does). Each band's upper edge
+    is inclusive, so a fractional reading falls in the band above (34.3 -> 0.5, 48.3 -> 0.5): that
+    is FNRIC's convention, and it reproduces FNRIC's published daily Utah units exactly on CIMIS
+    data (24 station-seasons checked, tests/test_fnric.py). NaN stays NaN.
     """
     units = np.select(
-        [t < 34.5, t < 36.5, t < 48.5, t < 54.5, t < 60.5, t < 65.5],
+        [t <= 34, t <= 36, t <= 48, t <= 54, t <= 60, t <= 65],
         [0.0, 0.5, 1.0, 0.5, 0.0, -0.5],
         default=-1.0,
     )

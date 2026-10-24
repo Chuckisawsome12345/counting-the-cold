@@ -5,8 +5,9 @@ from app.calc.chill import chill_hours, dynamic_portions, utah_units
 from tests.helpers import hourly
 
 
-def test_chill_hours_bounds_inclusive():
-    assert chill_hours(hourly([31, 32, 40, 45, 46])).tolist() == [0, 1, 1, 1, 0]
+def test_chill_hours_bounds_match_fnric():
+    # FNRIC counts 32 < t <= 45: exactly freezing doesn't count, 45 does.
+    assert chill_hours(hourly([31, 32, 32.1, 40, 45, 45.1, 46])).tolist() == [0, 0, 1, 1, 1, 0, 0]
 
 
 def test_chill_hours_keeps_missing():
@@ -19,6 +20,12 @@ def test_chill_hours_keeps_missing():
      (55, 0), (60, 0), (61, -0.5), (65, -0.5), (66, -1)],
 )
 def test_utah_band_edges(temp_f, units):
+    assert utah_units(hourly([temp_f])).iloc[0] == units
+
+
+@pytest.mark.parametrize("temp_f, units", [(34.3, 0.5), (36.4, 1), (48.3, 0.5), (54.2, 0), (60.1, -0.5), (65.1, -1)])
+def test_utah_fractional_readings_fall_in_the_band_above(temp_f, units):
+    # FNRIC's convention (upper edges inclusive), checked against its published daily values.
     assert utah_units(hourly([temp_f])).iloc[0] == units
 
 
