@@ -1373,7 +1373,7 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-3) var(--space-2) var(--space-5);
+  padding: var(--space-1) var(--space-1) 0 var(--space-5);
 }
 
 .info-head h3 {
@@ -1404,15 +1404,7 @@ select {
 
 .info-body {
   overflow-y: auto;
-  padding: 0 var(--space-5) var(--space-5);
-}
-
-.info-body h4 {
-  margin: var(--space-3) 0 1px;
-}
-
-.info-body > :first-child {
-  margin-top: 0;
+  padding: 0 var(--space-5) var(--space-4);
 }
 
 .info-body p {
@@ -1421,7 +1413,7 @@ select {
 }
 
 .info-body .info-live {
-  margin: 0 0 var(--space-1);
+  margin: 0 0 var(--space-3);
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--acc, var(--cold3));
   border-radius: var(--radius-md);
@@ -1469,9 +1461,6 @@ select {
     animation-name: info-sheet;
   }
 
-  .info-body {
-    padding-bottom: var(--space-4);
-  }
 }
 
 @keyframes info-sheet {
