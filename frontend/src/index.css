@@ -1456,6 +1456,62 @@ select {
   font-size: 12px;
 }
 
+/* ---------- Statewide chill layer ---------- */
+
+.map-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chill-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgb(159, 227, 255), rgb(79, 180, 240), rgb(29, 95, 176));
+}
+
+.chill-legend {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 170px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.chill-bar {
+  display: block;
+  height: 8px;
+  border-radius: var(--radius-pill);
+}
+
+.chill-range {
+  display: flex;
+  justify-content: space-between;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  .chill-legend {
+    top: auto;
+    right: auto;
+    bottom: var(--space-2);
+    left: var(--space-2);
+    width: 150px;
+  }
+}
+
 .placeholder {
   border: 1px dashed var(--line2);
   border-radius: var(--radius-lg);
