@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchStations } from './api/client'
 import type { Metric, Station } from './api/types'
+import BotPreview from './components/BotPreview'
 import CorrectionInfo from './components/CorrectionInfo'
 import DataQualityBadge from './components/DataQualityBadge'
 import Header, { type Tab } from './components/Header'
@@ -123,6 +124,7 @@ export default function App() {
                 </div>
               </div>
             )}
+            <BotPreview pin={insideCalifornia ? pin : null} />
           </section>
         </main>
       )}

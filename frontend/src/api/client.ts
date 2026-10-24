@@ -1,4 +1,4 @@
-import type { Crop, Metric, PointResponse, StationsResponse, ValidationResponse } from './types'
+import type { BotPreviewResponse, Crop, Metric, PointResponse, StationsResponse, ValidationResponse } from './types'
 import { mockGrid } from './mock/grid'
 import { MOCK_STATIONS } from './mock/stations'
 import { MOCK_VALIDATION } from './mock/validation'
@@ -61,6 +61,15 @@ export function fetchPoint(params: PointParams): Promise<PointResponse> {
   const qs = new URLSearchParams()
   for (const [k, v] of Object.entries(params)) if (v !== undefined) qs.set(k, String(v))
   return getJson(`${API_BASE}/api/point?${qs}`)
+}
+
+export function fetchBotPreview(text: string): Promise<BotPreviewResponse> {
+  if (USE_MOCK)
+    return Promise.resolve({
+      text: text ? `(Sample reply to "${text}": the live bot answers with the season's chill and heat.)` : 'Counting the Cold: send a place or lat,lon.',
+      bot_url: null,
+    })
+  return getJson(`${API_BASE}/api/telegram/preview?${new URLSearchParams({ text })}`)
 }
 
 export function fetchStations(): Promise<StationsResponse> {
