@@ -85,8 +85,8 @@ Each role owns separate folders, so no two people edit the same file. Roles were
 
 | Role | Person | Owns (only this person edits) | Core work | Issues |
 | --- | --- | --- | --- | --- |
-| **A: Data & API** (strongest backend person) | [@Chuckisawsome12345](https://github.com/Chuckisawsome12345) | `backend/app/{main,config,schemas}.py`, `routes/`, `sources/` (except `cimis.py`), `pipeline/`, `scripts/prewarm.py`, `scripts/make_mock.py`, `data/stations.json`, `data/snapshots/`, `requirements.txt`, root files, Render deploy | Open-Meteo client and merge, PST normalization, SQLite cache, `/api/point`, history and forecast assembly, correction wiring, stations and validation routes, snapshots and DEMO_MODE, deploy, README | [#2–#12](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Adata-api) |
-| **B: Science & Validation** (strongest Python and math person) | [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) | `backend/app/calc/`, `backend/app/validation/`, `backend/tests/` (except test_api and test_sources), `sources/cimis.py`, `scripts/fetch_cimis.py`, `scripts/build_validation.py`, `data/cimis/`, `data/validation.json`, test fixtures | FNRIC reference values; chill hours, Utah, GDD, and seasons by H2 (this unblocks A); Dynamic Model with golden tests; gap filling; CIMIS fetcher (start early); bias model; leave-one-out validation; projection | [#13–#21](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Ascience) |
+| **A: Data & API** (strongest backend person) | [@Chuckisawsome12345](https://github.com/Chuckisawsome12345) | `backend/app/{main,config,schemas}.py`, `routes/`, `sources/` (except `cimis.py`), `pipeline/`, `calc/` (from B, Oct 24), `scripts/prewarm.py`, `scripts/make_mock.py`, `data/stations.json`, `data/snapshots/`, `requirements.txt`, root files, Render deploy | Open-Meteo client and merge, PST normalization, SQLite cache, chill hours, Utah, GDD and seasons (#14, taken over from B), `/api/point`, history and forecast assembly, correction wiring, stations and validation routes, snapshots and DEMO_MODE, deploy, README | [#2–#12](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Adata-api) |
+| **B: Science & Validation** (strongest Python and math person) | [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) | `backend/app/validation/`, `backend/tests/` (except test_api and test_sources), `sources/cimis.py`, `scripts/fetch_cimis.py`, `scripts/build_validation.py`, `data/cimis/`, `data/validation.json`, test fixtures | FNRIC reference values; Dynamic Model with golden tests (in A's `calc/`, A reviews); gap filling; CIMIS fetcher (start early); bias model; leave-one-out validation; projection | [#13–#21](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Ascience) |
 | **C: Frontend & Demo** | [@Zooomer69](https://github.com/Zooomer69) | `frontend/**`, `docs/demo-script.md`, Devpost text, slides, Vercel deploy | Map and pins, cards, season chart, settings, quality badge, validation tab, correction info, compare panel, demo script, backup video | [#22–#31](https://github.com/Chuckisawsome12345/counting-the-cold/issues?q=label%3Arole%3Afrontend) |
 
 **Rules that prevent overwriting each other's work:**
@@ -134,7 +134,7 @@ counting-the-cold/
 │   │   ├── sources/    openmeteo.py cache.py snapshots.py  # (A); cimis.py (B)
 │   │   ├── pipeline/   build_point.py timeseries.py        # (A)
 │   │   ├── calc/       chill.py gdd.py seasons.py gaps.py
-│   │   │               projection.py hullsplit.py crops.py # (B)
+│   │   │               projection.py hullsplit.py crops.py # (A; B's #16, #17, #20 land here too)
 │   │   └── validation/ bias.py metrics.py                  # (B)
 │   ├── scripts/
 │   │   ├── fetch_cimis.py        # (B) resumable download -> data/cimis/
@@ -194,7 +194,7 @@ Every pin is served from Open-Meteo through a three-layer cache. CIMIS is used o
 
 **Rate budget:** Open-Meteo's free tier allows about 600 calls/min, 5,000/hour, and 10,000/day, and counts long multi-week requests as several calls (confirm on their terms page). Ten years of hourly data for a new pin is expensive, so we snap, cache forever, and prewarm demo pins at startup.
 
-## Calculation module (B)
+## Calculation module (A, with B's remaining pieces)
 
 All chill and GDD math lives in pure functions with no I/O. Inputs are pandas Series indexed by PST timestamps, in °F, with NaN meaning missing. The stubs in `backend/app/calc/` already have these signatures, and tests marked `@stub` are waiting for them.
 
@@ -372,7 +372,7 @@ Any Claude Code (or other assistant) working in this repo follows these rules. Y
 6. **Git:** branch `<data|sci|ui>/<issue#>-<slug>`, rebase on `origin/main` before pushing, small PR with `Closes #N`. Never push to `main`, force-push a shared branch, or rewrite someone else's commits.
 7. **Never read, print, commit, or log `CIMIS_KEY`** or the contents of `.env`.
 8. **Stay offline-safe:** no CIMIS calls on the request path, every upstream call goes through `sources/cache.py`, and `DEMO_MODE` is respected.
-9. **Check before a PR:** `pytest` for the backend, `npm run build` for the frontend. B's calc functions stay pure, with offline tests. Tests marked `@stub` expect `NotImplementedError`; remove the marker once the function works.
+9. **Check before a PR:** `pytest` for the backend, `npm run build` for the frontend. Calc functions stay pure, with offline tests. Tests marked `@stub` expect `NotImplementedError`; remove the marker once the function works.
 10. **Milestone gate:** no `stretch` issues until M4 is done, and nothing new after the H20 freeze.
 
 ## Repo setup (done Oct 23)

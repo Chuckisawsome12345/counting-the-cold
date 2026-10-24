@@ -202,7 +202,11 @@ def test_stubbed_calc_fails_fast_before_network(monkeypatch):
     def no_network(*a, **k):
         raise AssertionError("must not fetch while calc is stubbed")
 
+    def stub(*a, **k):
+        raise NotImplementedError
+
     monkeypatch.setattr(build_point, "load_hourly", no_network)
+    monkeypatch.setattr(chill, "chill_hours", stub)
     with pytest.raises(NotImplementedError):
         run(2025)
 
