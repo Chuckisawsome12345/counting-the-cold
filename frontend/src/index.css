@@ -862,6 +862,184 @@ select {
   color: var(--ink2);
 }
 
+
+/* ---------- Season chart and totals ---------- */
+
+.chart-card {
+  padding: 20px var(--space-5) var(--space-3);
+}
+
+.chart-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.chart-title {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 30px;
+}
+
+.metric-tabs {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.metric-tabs button {
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--ink2);
+  transition:
+    color var(--dur-controls),
+    border-color var(--dur-controls);
+}
+
+.metric-tabs button[aria-selected='true'] {
+  border-bottom-color: var(--acc2);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.metric-tabs .t-short {
+  display: none;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px var(--space-4);
+  margin: var(--space-2) 0 var(--space-1);
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sw {
+  display: inline-block;
+  width: 22px;
+  height: 0;
+  border-top: 2px solid var(--ink3);
+}
+
+.sw.past {
+  opacity: 0.5;
+}
+
+.sw.median {
+  border-top: 2px dashed var(--ink2);
+}
+
+.sw.current {
+  height: 3px;
+  border: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cold3), var(--heat1), var(--heat3));
+}
+
+.sw.fan {
+  height: 10px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--acc2);
+  opacity: 0.35;
+}
+
+.chart-fade {
+  animation: fade-in 250ms var(--ease-out) both;
+}
+
+.chart-card .recharts-wrapper,
+.totals-card .recharts-wrapper {
+  font-variant-numeric: tabular-nums;
+}
+
+.past-line {
+  animation: fade-in 300ms var(--ease-out) both;
+}
+
+/* Forecast dots and the p10 to p90 fan appear once the current line has reached today. */
+.fan {
+  animation: fade-in 500ms var(--ease-out) var(--dur-chart-draw) both;
+}
+
+.glow-line path {
+  filter: blur(3px);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.chart-tip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--solid);
+  box-shadow: var(--shadow);
+  color: var(--ink2);
+  font-size: 12px;
+}
+
+.chart-tip strong {
+  color: var(--ink);
+}
+
+.chart-tip b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.totals-card {
+  flex: 1.3 1 320px;
+  min-width: 0;
+  padding: 20px var(--space-5) var(--space-3);
+}
+
+.stack {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (max-width: 600px) {
+  .metric-tabs .t-long {
+    display: none;
+  }
+
+  .metric-tabs .t-short {
+    display: inline;
+  }
+}
+
 .placeholder {
   border: 1px dashed var(--line2);
   border-radius: var(--radius-lg);
@@ -876,6 +1054,7 @@ select {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
