@@ -1273,6 +1273,189 @@ select {
   }
 }
 
+
+/* ---------- Data quality, correction, and page states ---------- */
+
+.right-stack,
+.skeleton-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.right-stack {
+  transition: opacity var(--dur-controls);
+}
+
+.right-stack.busy {
+  opacity: 0.55;
+}
+
+.quality-card,
+.correction-card {
+  padding: var(--space-4) var(--space-5);
+}
+
+.quality-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.quality-title.ok {
+  color: var(--ok);
+}
+
+.quality-title.warn {
+  color: var(--warn);
+}
+
+.quality-title strong {
+  color: var(--ink);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tag {
+  position: relative;
+  padding: 3px 10px;
+  border: 1px solid var(--line2);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tag[data-tip]:hover::after,
+.tag[data-tip]:focus-visible::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 10;
+  width: max-content;
+  max-width: 220px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--solid);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.correction-card p {
+  margin: var(--space-2) 0 0;
+  color: var(--ink2);
+}
+
+.correction-card strong {
+  color: var(--ink);
+}
+
+.weight-bar {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  margin-top: var(--space-3);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  background: var(--line);
+}
+
+.weight-bar i {
+  display: block;
+  min-width: 3px;
+}
+
+.banner.warn {
+  color: var(--ink);
+}
+
+.banner.warn > svg {
+  flex: none;
+  color: var(--warn);
+}
+
+.banner-text {
+  flex: 1 1 auto;
+}
+
+.chip.primary {
+  border-color: var(--cold3);
+  background: var(--tab-active);
+}
+
+.error-card {
+  display: flex;
+  gap: var(--space-4);
+  border-color: var(--heatink);
+}
+
+.error-card > svg {
+  flex: none;
+  color: var(--heatink);
+}
+
+.error-card h2 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 30px;
+}
+
+.error-card p {
+  margin: 0 0 var(--space-3);
+  color: var(--ink2);
+}
+
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.error-code {
+  display: block;
+  margin-top: var(--space-3);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.skel-card {
+  padding: var(--space-4) var(--space-5);
+}
+
+.skel-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 300px;
+}
+
+.skel-bars {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.skel-bars .skeleton {
+  flex: 1;
+}
+
+.skel-status {
+  margin: 0;
+  color: var(--ink3);
+  font-size: 12px;
+}
+
 .placeholder {
   border: 1px dashed var(--line2);
   border-radius: var(--radius-lg);
