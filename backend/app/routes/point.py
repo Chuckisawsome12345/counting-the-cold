@@ -3,18 +3,18 @@ from datetime import date
 
 from fastapi import APIRouter, HTTPException, Query
 
+from app import config
 from app.calc.crops import CROPS
-from app.config import DATA_DIR
 from app.pipeline.build_point import build_point
 from app.schemas import PointResponse
-from app.sources import cache
+from app.sources import cache, snapshots
 from app.sources.openmeteo import OpenMeteoError
 
 router = APIRouter(prefix="/api", tags=["point"])
 
 # Synthetic responses from scripts/make_mock.py, served while B's calc functions are stubs.
-MOCK_COMPLETE = DATA_DIR / "mock_point.json"  # season 2025-26
-MOCK_CURRENT = DATA_DIR / "mock_point_current.json"  # season 2026-27, with forecast
+MOCK_COMPLETE = config.DATA_DIR / "mock_point.json"  # season 2025-26
+MOCK_CURRENT = config.DATA_DIR / "mock_point_current.json"  # season 2026-27, with forecast
 
 
 @router.get("/point", response_model=PointResponse)
@@ -30,6 +30,14 @@ def point(
 ):
     if crop not in CROPS:
         raise HTTPException(422, f"unknown crop {crop!r}; choose one of {sorted(CROPS)}")
+    default_starts = (portions_start, hours_start, gdd_start) == snapshots.DEFAULT_STARTS
+
+    if config.DEMO_MODE:
+        snap_resp = snapshots.load_snapshot(lat, lon, season, crop, corrected) if default_starts else None
+        if snap_resp is None:
+            raise HTTPException(503, "Demo mode: this spot isn't preloaded. Try one of the demo pins.")
+        return snap_resp
+
     today = date.today()
     args = (round(lat, 4), round(lon, 4), season, crop, portions_start, hours_start, gdd_start, corrected)
     try:
@@ -37,6 +45,10 @@ def point(
     except NotImplementedError:
         return _mock(season)
     except OpenMeteoError as e:
+        snap_resp = snapshots.load_snapshot(lat, lon, season, crop, corrected) if default_starts else None
+        if snap_resp is not None:
+            snap_resp["quality"]["stale"] = True
+            return snap_resp
         raise HTTPException(503, f"Weather data is unavailable right now ({e}). Try again in a minute.") from e
 
 
