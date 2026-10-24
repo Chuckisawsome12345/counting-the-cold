@@ -74,7 +74,7 @@ The app works end to end by H4 (H = hours from kickoff), and features freeze at 
 | H4–H8 | [M2 Core science](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/3) | Utah and Dynamic Model with golden tests, gap filling, cache, 10-season history, forecast merge. Season chart and settings bar. |
 | H8–H13 | [M3 Differentiator](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/4) | CIMIS pulled for all 9 stations, `validation.json` built, correction wired in. Validation tab, station markers, Durham preset. |
 | H13–H17 | [M4 Projection and polish](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/5) | p10/p50/p90 projection, prewarm and snapshots with `DEMO_MODE`, error and stale handling, responsive layout. |
-| H17–H20 | [M5 Stretch](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/6) | Standout features in priority order (accuracy map, statewide chill map, ML correction), then the public `/api/v1` API (our adoption path). Start only after M4 is done. Cut for scope: see Scope below. |
+| H17–H20 | [M5 Stretch](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/6) | Standout features in priority order (accuracy map, statewide chill map, offline phone mode, text-message access if the Twilio check passes, alerts if texting works, ML correction last), plus the public `/api/v1` API (our adoption path). Start only after M4 is done. Cut for scope: see Scope below. |
 | H20–H24 | [M6 Freeze and demo](https://github.com/Chuckisawsome12345/counting-the-cold/milestone/7) | Feature freeze at H20. Final deploy and snapshot at H21. Rehearse 3 times, record a backup video, write Devpost and README. |
 
 Suggested sleep shifts, about 3 hours each so someone can always merge: C sleeps H11–H14, B H14–H17, A H17–H20.
@@ -272,18 +272,24 @@ A map on the left and the numbers on the right, with a second tab that shows how
 
 ## Standout features (after M4)
 
-These three additions make the demo land harder with judges, honestly: each one shows something real. Build them in this order once M4 is done; each is its own issue in milestone M5.
+These additions make the demo land harder with judges, honestly: each one shows something real. Build them in this order once M4 is done; each is its own issue in milestone M5.
 
 | Priority | Feature | Why it matters | Who |
 | --- | --- | --- | --- |
 | 1 | **Accuracy map** | The validation tab becomes a map: each station is a bubble whose error shrinks from raw to corrected. Our proof of accuracy, visible at a glance. | C (data already in `/api/validation`) |
 | 2 | **Statewide chill map** | A layer coloring the Central Valley by this season's chill, from a grid computed ahead of time. Says "every orchard, not 9 stations" in one picture. | A builds the grid and `/api/grid`; C draws the layer |
-| 3 | **ML bias correction** | A machine-learning model competes with the simple 12 × 24 table on the same leave-one-station-out test. We use whichever wins and show both scores. | B (A adds the dependency) |
+| 3 | **Offline phone mode** | The site installs on a phone (a PWA) and keeps the last-viewed orchards, so it opens with no signal and shows "as of [date]". Orchards often have no data signal. | C (about an hour) |
+| 4 | **Text-message access** | A grower texts a location and gets a one-text summary back. No app, no smartphone, no data plan needed. Only after a 30-minute Twilio go/no-go check. | A |
+| 5 | **Alerts (minimal)** | "Text SUBSCRIBE" registers a number; a script sends the weekly chill update on demand (no real scheduler). Only if texting works. | A |
+| 6 | **ML bias correction** | A machine-learning model competes with the simple 12 × 24 table on the same leave-one-station-out test. We use whichever wins and show both scores. Last: it lands entirely on B, who gates M3. | B (A adds the dependency) |
 
 **Details:**
 
 - **Accuracy map:** stations from `/api/stations`, errors from `/api/validation`. A toggle or animation goes from raw to corrected MAE per station; Durham gets a callout.
 - **Statewide chill map:** `scripts/build_grid.py` (A) computes one season's corrected chill portions on a coarse grid (about 0.25°, Central Valley floor only, 96 cells) and commits `data/grid/<season>.json`. It runs offline once, so it costs nothing at demo time and stays inside Open-Meteo's rate budget. `/api/grid` serves it; the shape goes in `docs/api-contract.md` first.
+- **Offline phone mode:** `vite-plugin-pwa` (C adds it to `package.json`). Cache the app shell plus the last few `/api/point` responses; when offline, show the saved orchard with a clear "as of [date], offline" banner. Design for phone first.
+- **Text-message access:** a Twilio webhook `POST /api/sms` (A) reads the text, builds the same numbers as `/api/point`, and replies with TwiML in one text (under 160 characters), e.g. "Durham orchard 2026-27: 18 chill portions (+12% vs normal), +6 next 14 days, ±1.2." Accepts "lat,lon" first; ZIP codes only if we find a public-domain ZIP-to-location file to commit (no live geocoding). Checks Twilio's request signature with `TWILIO_AUTH_TOKEN` (set in Render, never committed). **Go/no-go first (30 min):** US carriers now require registered senders, and trial accounts may only text verified numbers and prefix a trial notice; confirm a reply actually arrives on your phone before building. Render's ~50 s cold start exceeds Twilio's ~15 s webhook timeout, so warm `/api/health` before demoing.
+- **Alerts (minimal):** a "SUBSCRIBE" text stores the number and pin, and `scripts/send_alerts.py` sends each subscriber their weekly update when run. Render's free disk is wiped on restart, so subscribers live in a small hosted store or are re-added before the demo; demo it by running the script live.
 - **ML bias correction:** gradient-boosted trees (scikit-learn) predicting the hourly CIMIS − gridded offset from month, hour, gridded temperature, elevation, and distance to the coast. Same leave-one-station-out split as the table, so the comparison is fair. `validation.json` reports both MAEs. If ML doesn't beat the table, we say so; the honest comparison is itself a good demo moment.
 
 ## Scope: one workflow, fully working
@@ -296,7 +302,7 @@ Cut (issues closed as not planned; reopen only if the core demo is done early):
 - Pin vs station compare (#11, #30)
 - % of chill requirement met (#40, #41, #42): needs sourced per-variety requirements we don't have time to verify
 
-Kept, in order, after M4: accuracy map, statewide chill map, ML correction, public `/api/v1`.
+Kept, in order, after M4: accuracy map, statewide chill map, offline phone mode, text-message access (after the Twilio check), minimal alerts, ML correction, plus the public `/api/v1`.
 
 ## Adoption path
 
@@ -321,6 +327,7 @@ The demo survives any single upstream outage because demo pins are cached and sn
 | Dynamic Model bug | Golden tests against FNRIC and chillR |
 | Render free-tier cold start (about 50 s) | Ping `/api/health` 2 minutes before judging. Railway as backup. |
 | Venue Wi-Fi fails | Run locally with `DEMO_MODE=1`, plus a backup video |
+| Twilio blocks or delays texts (sender registration, trial limits) | 30-minute go/no-go before building; if it fails, drop texting and alerts, and keep the offline phone mode |
 | Merge conflicts | Folder ownership, scaffold first, small PRs |
 | Scope creep | Stretch goals only after M4. Hard freeze at H20. |
 
@@ -349,8 +356,9 @@ The story is the closed Durham station: a grower loses their station, and we sti
 3. **0:50 History chart.** This season vs the last 10 and the median. "Chill finished X% above normal."
 4. **1:10 Toggle to 2026-27.** Portions have been accumulating since Sep 1. The 14-day forecast runs into November with an end-of-season range.
 5. **1:30 Trust: the accuracy map.** "We checked ourselves against 9 CIMIS stations. Raw gridded data was off by X portions; corrected, by Y. And Durham's decade of records still calibrates the estimate after the station closed."
-6. **2:00 The whole valley.** Turn on the statewide chill map: "every orchard, not 9 stations."
-7. **2:15 Adoption and close.** "We don't replace CIMIS; we fill its gaps. FNRIC can embed this today through our open API." Close on the one-liner.
+6. **1:55 The whole valley.** Turn on the statewide chill map: "every orchard, not 9 stations."
+7. **2:05 No signal, no problem.** "Most orchards don't have signal." Put the phone on airplane mode: the orchard is still there. "And no smartphone? Just text us." Show the reply arriving. (Only the parts that work: skip texting if the Twilio check failed.)
+8. **2:20 Adoption and close.** "We don't replace CIMIS; we fill its gaps. FNRIC can embed this today through our open API." Close on the one-liner.
 
 ## Rules for AI assistants
 
@@ -386,3 +394,4 @@ Pages opened while writing this plan, plus two items still to confirm.
 - [FNRIC almond hull split model development](https://fruitsandnuts.ucdavis.edu/node/5466): GDD90, single-sine method, 12 cultivars. Regression coefficients are in [Tombesi et al. 2010](https://fruitsandnuts.ucdavis.edu/sites/g/files/dgvnsk12441/files/media/documents/Fruit%20Development%20in%20Almond%20is%20Influenced%20by%20Early%20Spring%20Temperatures%20in%20California.pdf) (not yet opened).
 - **To confirm:** FNRIC's chill windows (portions Sep 1, chill hours Nov 1) came from a search summary because the [chilling models page](https://fruitsandnuts.ucanr.edu/Weather_Services/chilling_accumulation_models/) returned 403. B confirms in issue [#13](https://github.com/Chuckisawsome12345/counting-the-cold/issues/13).
 - **To confirm:** Open-Meteo's free-tier limits and how long requests are counted, on their terms page.
+- **To confirm:** Twilio's current rules for US texting from a trial account (sender registration, verified recipients, trial prefix), in the go/no-go check.
