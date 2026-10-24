@@ -4,8 +4,9 @@ import { MOCK_VALIDATION } from './mock/validation'
 import mockCompleteUrl from './mock/point.json?url'
 import mockCurrentUrl from './mock/point_current.json?url'
 
-// Empty in dev: Vite proxies /api to the backend. Set to the Render URL in production.
-const API_BASE = import.meta.env.VITE_API_URL ?? ''
+// Empty in dev: Vite proxies /api to the backend. Set to the backend's URL in production. A trailing slash is
+// dropped, so pasting "https://example.vercel.app/" into VITE_API_URL does not produce "//api/point".
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '')
 // VITE_USE_MOCK=1 serves the synthetic mocks without a backend.
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === '1'
 
