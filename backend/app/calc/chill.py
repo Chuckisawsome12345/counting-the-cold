@@ -38,5 +38,29 @@ def dynamic_portions(t: pd.Series) -> pd.Series:
     Follow chillR: TK = t_C + 273; xi = sr/(1+sr) with sr = exp(SLP*TETMLT*(TK-TETMLT)/TK);
     xs = (A0/A1)*exp((E1-E0)/TK); ak1 = A1*exp(-E1/TK). The intermediate E evolves hour by hour,
     and once E >= 1 a portion of E*xi is banked. Missing hours carry the state and add nothing.
+
+    Matches chillR::Dynamic_Model step for step: the state starts at E = 0 on the first hour
+    (which never banks), and after a banking hour the next step starts from E - E*xi.
+    NaN hours are skipped (the model runs over the valid hours as if they were consecutive);
+    the cumulative total holds its value through them and is 0 before the first valid hour.
     """
-    raise NotImplementedError
+    valid = t.dropna()
+    if valid.empty:
+        return pd.Series(0.0, index=t.index)
+    tk = (valid.to_numpy(dtype=float) - 32.0) * 5.0 / 9.0 + 273.0
+    sr = np.exp(SLP * TETMLT * (tk - TETMLT) / tk)
+    xi = (sr / (1.0 + sr)).tolist()
+    xs = ((A0 / A1) * np.exp((E1 - E0) / tk)).tolist()
+    decay = np.exp(-A1 * np.exp(-E1 / tk)).tolist()
+
+    delt = [0.0] * len(tk)
+    e_prev = 0.0
+    for i in range(1, len(tk)):
+        s = e_prev if e_prev < 1.0 else e_prev - e_prev * xi[i - 1]
+        e = xs[i] - (xs[i] - s) * decay[i]
+        if e >= 1.0:
+            delt[i] = e * xi[i]
+        e_prev = e
+
+    cumulative = pd.Series(np.cumsum(delt), index=valid.index)
+    return cumulative.reindex(t.index).ffill().fillna(0.0)
