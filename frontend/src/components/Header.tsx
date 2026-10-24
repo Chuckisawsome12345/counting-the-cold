@@ -5,6 +5,7 @@ interface Props {
   onTab: (tab: Tab) => void
   mock: boolean
   onToggleTheme: () => void
+  onLocate: () => void
 }
 
 const TABS: { id: Tab; label: string }[] = [
@@ -55,12 +56,23 @@ export function MockBadge() {
       <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
         <path d="M6 1l5.5 10h-11z" fill="none" stroke="currentColor" strokeWidth="1.4" />
       </svg>
-      SYNTHETIC MOCK DATA
+      <span className="t-long">SYNTHETIC MOCK DATA</span>
+      <span className="t-short">MOCK</span>
     </span>
   )
 }
 
-export default function Header({ tab, onTab, mock, onToggleTheme }: Props) {
+function LocateIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="10" cy="10" r="1.4" fill="currentColor" />
+      <path d="M10 1.5v3M10 15.5v3M1.5 10h3M15.5 10h3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export default function Header({ tab, onTab, mock, onToggleTheme, onLocate }: Props) {
   return (
     <>
       <header className="header">
@@ -86,6 +98,9 @@ export default function Header({ tab, onTab, mock, onToggleTheme }: Props) {
         </nav>
         <div className="header-end">
           {mock && <MockBadge />}
+          <button type="button" className="icon-btn locate-btn" aria-label="Use my location" onClick={onLocate}>
+            <LocateIcon />
+          </button>
           <button
             type="button"
             className="icon-btn"

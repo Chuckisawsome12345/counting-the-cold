@@ -66,7 +66,9 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
             <strong>
               {arrow} {Math.abs(pct).toFixed(1)}%
             </strong>
-            <span>vs 10-season median</span>
+            <span>
+              vs <span className="t-long">10-season </span>median
+            </span>
           </>
         )}
       </div>
@@ -87,7 +89,8 @@ function MetricCard({ data, info, index }: { data: PointResponse; info: MetricIn
 
 export default function SummaryCards({ data }: { data: PointResponse }) {
   return (
-    <div className="cards">
+    <div className="cards" role="group" aria-label="Season summary">
+      <h2 className="sr-only">Season summary</h2>
       {METRICS.map((info, i) => (
         <MetricCard key={info.metric} data={data} info={info} index={i} />
       ))}

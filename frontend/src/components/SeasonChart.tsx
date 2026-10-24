@@ -3,6 +3,7 @@ import { Area, CartesianGrid, ComposedChart, Line, ReferenceDot, ResponsiveConta
 import type { Metric, PointResponse } from '../api/types'
 import { buildSeries, type Series } from '../chartData'
 import { formatFixed, formatMonthDay, formatNumber } from '../format'
+import { NARROW_QUERY, useMediaQuery } from '../hooks/useMediaQuery'
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion'
 import { METRICS, type MetricInfo } from '../metrics'
 import ForecastChart from './ForecastChart'
@@ -81,6 +82,7 @@ interface Props {
 
 export default function SeasonChart({ data, metric, onMetric }: Props) {
   const reduced = usePrefersReducedMotion()
+  const narrow = useMediaQuery(NARROW_QUERY)
   const info = METRICS.find((m) => m.metric === metric) ?? METRICS[0]
   const series = useMemo(() => buildSeries(data, metric), [data, metric])
   const { season } = data
@@ -150,15 +152,15 @@ export default function SeasonChart({ data, metric, onMetric }: Props) {
 
       <div id="chart-panel" role="tabpanel" aria-labelledby={`tab-${metric}`}>
         <div className="chart-fade" key={metric} role="img" aria-label={summarize(data, info, series)}>
-          <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={series.rows} margin={{ top: 26, right: 30, bottom: 4, left: 0 }}>
+          <ResponsiveContainer width="100%" height={narrow ? 240 : 300}>
+            <ComposedChart accessibilityLayer={false} data={series.rows} margin={{ top: 26, right: narrow ? 16 : 30, bottom: 4, left: 0 }}>
               <Gradients />
               <CartesianGrid vertical={false} stroke="var(--line)" />
               <XAxis
                 dataKey="day"
                 type="number"
                 domain={[0, series.lastDay]}
-                ticks={series.monthTicks.map((t) => t.day)}
+                ticks={series.monthTicks.filter((_, i) => !narrow || i % 2 === 0).map((t) => t.day)}
                 tickFormatter={(d: number) => series.monthTicks.find((t) => t.day === d)?.label ?? ''}
                 tickLine={false}
                 axisLine={{ stroke: 'var(--line)' }}
@@ -169,7 +171,7 @@ export default function SeasonChart({ data, metric, onMetric }: Props) {
                 ticks={series.yTicks}
                 tickLine={false}
                 axisLine={false}
-                width={46}
+                width={narrow ? 38 : 46}
                 tick={{ fontSize: 11, fill: 'var(--ink3)' }}
                 tickFormatter={(n: number) => formatNumber(n, 1)}
               />

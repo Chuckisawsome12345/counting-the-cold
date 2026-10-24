@@ -61,7 +61,7 @@ export default function SettingsBar({ settings, onChange }: Props) {
   const olderSelected = settings.season < 2025
 
   return (
-    <div className="card settings">
+    <div className="card settings" role="group" aria-label="Season, crop and start-date settings">
       <div className="field">
         <span className="lbl">Season</span>
         <div className="field-row">
