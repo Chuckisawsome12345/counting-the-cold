@@ -4,7 +4,7 @@ Hackathon app: chill and GDD for any California orchard pin, from Open-Meteo, bi
 
 Three people work here in parallel, each with their own Claude. Before changing anything:
 
-1. Ask your human which role they are if you don't know: **A** (Data & API), **B** (Science & Validation), or **C** (Frontend & Demo).
+1. Work out your human's role from their GitHub login (`gh api user --jq .login`): Chuckisawsome12345 is **A** (Data & API), karthikmaheshwaran is **B** (Science & Validation), Zooomer69 is **C** (Frontend & Demo). If that doesn't settle it, ask.
 2. Read `docs/BUILD_PLAN.md` (the team plan and source of truth, including its "Rules for AI assistants"), `docs/CONTRIBUTING.md` (folder ownership, git workflow), and `docs/api-contract.md` (JSON shapes).
 
 Rules:
