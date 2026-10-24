@@ -88,7 +88,9 @@ function Results({ data, stations }: { data: ValidationResponse; stations: Stati
   const summary = data.summary[metric]
   const closedIds = new Set(stations.filter((s) => !s.active).map((s) => s.id))
   const closed = stations.find((s) => !s.active && data.stations.some((v) => v.id === s.id))
+  // Rounded up, so "within N" is always true (Durham's 3.2 reads "within 4", never "within 3").
   const closedError = data.stations.find((v) => v.id === closed?.id)?.mae.chill_portions?.corrected_mae
+  const within = closedError === undefined ? undefined : Math.ceil(closedError)
   // Closed stations first (Durham is the story), then the order the API gives.
   const rows = [...data.stations]
     .filter((s) => s.mae[metric])
@@ -182,9 +184,9 @@ function Results({ data, stations }: { data: ValidationResponse; stations: Stati
           </strong>{' '}
           {metric === 'gdd' && 'Its decade of records still calibrates our heat (GDD) estimate.'}
           {/* "Closer than the nearest station" is left out: /api/validation does not carry that comparison yet. */}
-          {metric === 'chill_portions' && closedError !== undefined && (
+          {metric === 'chill_portions' && within !== undefined && (
             <>
-              Our chill estimate lands within {Math.round(closedError)} chill {Math.round(closedError) === 1 ? 'portion' : 'portions'} at {closed.name}.
+              Our chill estimate lands within {within} chill {within === 1 ? 'portion' : 'portions'} at {closed.name}.
             </>
           )}
         </section>
