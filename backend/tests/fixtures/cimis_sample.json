@@ -1,0 +1,37 @@
+{
+  "_about": "CIMIS responses in the documented shape (https://et.water.ca.gov/Rest/Index), trimmed. Values are illustrative, not real readings. Used by tests/test_cimis.py.",
+  "hourly": {
+    "Data": {
+      "Providers": [
+        {
+          "Name": "cimis",
+          "Type": "station",
+          "Owner": "water.ca.gov",
+          "Records": [
+            {"Date": "2024-01-01", "Julian": "1", "Hour": "0100", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "hourly", "HlyAirTmp": {"Value": "38.4", "Qc": " ", "Unit": "(F)"}},
+            {"Date": "2024-01-01", "Julian": "1", "Hour": "0200", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "hourly", "HlyAirTmp": {"Value": null, "Qc": "M", "Unit": "(F)"}},
+            {"Date": "2024-01-01", "Julian": "1", "Hour": "0300", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "hourly", "HlyAirTmp": {"Value": "36.9", "Qc": "Y", "Unit": "(F)"}},
+            {"Date": "2024-01-01", "Julian": "1", "Hour": "0400", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "hourly", "HlyAirTmp": {"Value": "99.0", "Qc": "R", "Unit": "(F)"}},
+            {"Date": "2024-01-01", "Julian": "1", "Hour": "2300", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "hourly", "HlyAirTmp": {"Value": "41.2", "Qc": " ", "Unit": "(F)"}},
+            {"Date": "2024-01-01", "Julian": "1", "Hour": "2400", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "hourly", "HlyAirTmp": {"Value": "40.5", "Qc": " ", "Unit": "(F)"}}
+          ]
+        }
+      ]
+    }
+  },
+  "daily": {
+    "Data": {
+      "Providers": [
+        {
+          "Name": "cimis",
+          "Type": "station",
+          "Owner": "water.ca.gov",
+          "Records": [
+            {"Date": "2024-01-01", "Julian": "1", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "daily", "DayAirTmpMax": {"Value": "57.3", "Qc": " ", "Unit": "(F)"}, "DayAirTmpMin": {"Value": "29.8", "Qc": " ", "Unit": "(F)"}},
+            {"Date": "2024-01-02", "Julian": "2", "Station": "6", "Standard": "english", "ZipCodes": "95616, 95617, 95618", "Scope": "daily", "DayAirTmpMax": {"Value": "55.0", "Qc": "Y", "Unit": "(F)"}, "DayAirTmpMin": {"Value": "", "Qc": "M", "Unit": "(F)"}}
+          ]
+        }
+      ]
+    }
+  }
+}
