@@ -1,5 +1,248 @@
 {
-  "_about": "Published FNRIC chill values used as golden tests (role B). One object per value; tests recompute each from committed CIMIS data.",
-  "_example": {"station": 6, "season": "2023-24", "model": "chill_portions", "start": "2023-09-01", "end": "2024-02-28", "value": 0.0, "url": "https://..."},
-  "values": []
+  "_about": "Published FNRIC chill values used as golden tests (role B). Each value is FNRIC's total of its own daily values from start to end inclusive (CIMIS hour-ending days), retrieved 2026-10-24 from the API behind https://fruitsandnuts.ucdavis.edu/chill-calculator. Windows follow FNRIC: chill portions from Sep 1 (Dynamic Model), chill hours (32-45F) and Utah from Nov 1, all to the end of February. tests/test_fnric.py recomputes each from committed CIMIS data.",
+  "source_page": "https://fruitsandnuts.ucdavis.edu/chill-calculator",
+  "methods_page": "https://fruitsandnuts.ucdavis.edu/about-chilling-hours-units-and-portions",
+  "retrieved": "2026-10-24",
+  "values": [
+    {
+      "station": 6,
+      "name": "Davis",
+      "season": "2023-24",
+      "model": "chill_portions",
+      "start": "2023-09-01",
+      "end": "2024-02-29",
+      "value": 70.85,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-6&chill-year=2023-2024"
+    },
+    {
+      "station": 6,
+      "name": "Davis",
+      "season": "2023-24",
+      "model": "chill_hours",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 622.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-6&chill-year=2023-2024"
+    },
+    {
+      "station": 6,
+      "name": "Davis",
+      "season": "2023-24",
+      "model": "utah_units",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 1128.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-6&chill-year=2023-2024"
+    },
+    {
+      "station": 6,
+      "name": "Davis",
+      "season": "2024-25",
+      "model": "chill_portions",
+      "start": "2024-09-01",
+      "end": "2025-02-28",
+      "value": 73.39,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-6&chill-year=2024-2025"
+    },
+    {
+      "station": 6,
+      "name": "Davis",
+      "season": "2024-25",
+      "model": "chill_hours",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 769.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-6&chill-year=2024-2025"
+    },
+    {
+      "station": 6,
+      "name": "Davis",
+      "season": "2024-25",
+      "model": "utah_units",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 1282.5,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-6&chill-year=2024-2025"
+    },
+    {
+      "station": 39,
+      "name": "Parlier",
+      "season": "2023-24",
+      "model": "chill_portions",
+      "start": "2023-09-01",
+      "end": "2024-02-29",
+      "value": 60.53,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-39&chill-year=2023-2024"
+    },
+    {
+      "station": 39,
+      "name": "Parlier",
+      "season": "2023-24",
+      "model": "chill_hours",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 771.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-39&chill-year=2023-2024"
+    },
+    {
+      "station": 39,
+      "name": "Parlier",
+      "season": "2023-24",
+      "model": "utah_units",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 1038.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-39&chill-year=2023-2024"
+    },
+    {
+      "station": 39,
+      "name": "Parlier",
+      "season": "2024-25",
+      "model": "chill_portions",
+      "start": "2024-09-01",
+      "end": "2025-02-28",
+      "value": 70.59,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-39&chill-year=2024-2025"
+    },
+    {
+      "station": 39,
+      "name": "Parlier",
+      "season": "2024-25",
+      "model": "chill_hours",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 951.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-39&chill-year=2024-2025"
+    },
+    {
+      "station": 39,
+      "name": "Parlier",
+      "season": "2024-25",
+      "model": "utah_units",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 1298.5,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-39&chill-year=2024-2025"
+    },
+    {
+      "station": 5,
+      "name": "Shafter",
+      "season": "2023-24",
+      "model": "chill_portions",
+      "start": "2023-09-01",
+      "end": "2024-02-29",
+      "value": 58.89,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-5&chill-year=2023-2024"
+    },
+    {
+      "station": 5,
+      "name": "Shafter",
+      "season": "2023-24",
+      "model": "chill_hours",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 702.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-5&chill-year=2023-2024"
+    },
+    {
+      "station": 5,
+      "name": "Shafter",
+      "season": "2023-24",
+      "model": "utah_units",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 896.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-5&chill-year=2023-2024"
+    },
+    {
+      "station": 5,
+      "name": "Shafter",
+      "season": "2024-25",
+      "model": "chill_portions",
+      "start": "2024-09-01",
+      "end": "2025-02-28",
+      "value": 65.45,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-5&chill-year=2024-2025"
+    },
+    {
+      "station": 5,
+      "name": "Shafter",
+      "season": "2024-25",
+      "model": "chill_hours",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 983.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-5&chill-year=2024-2025"
+    },
+    {
+      "station": 5,
+      "name": "Shafter",
+      "season": "2024-25",
+      "model": "utah_units",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 1182.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-5&chill-year=2024-2025"
+    },
+    {
+      "station": 12,
+      "name": "Durham",
+      "season": "2023-24",
+      "model": "chill_portions",
+      "start": "2023-09-01",
+      "end": "2024-02-29",
+      "value": 72.57,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-12&chill-year=2023-2024"
+    },
+    {
+      "station": 12,
+      "name": "Durham",
+      "season": "2023-24",
+      "model": "chill_hours",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 794.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-12&chill-year=2023-2024"
+    },
+    {
+      "station": 12,
+      "name": "Durham",
+      "season": "2023-24",
+      "model": "utah_units",
+      "start": "2023-11-01",
+      "end": "2024-02-29",
+      "value": 1179.5,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-12&chill-year=2023-2024"
+    },
+    {
+      "station": 12,
+      "name": "Durham",
+      "season": "2024-25",
+      "model": "chill_portions",
+      "start": "2024-09-01",
+      "end": "2025-02-28",
+      "value": 72.23,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-12&chill-year=2024-2025"
+    },
+    {
+      "station": 12,
+      "name": "Durham",
+      "season": "2024-25",
+      "model": "chill_hours",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 891.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-12&chill-year=2024-2025"
+    },
+    {
+      "station": 12,
+      "name": "Durham",
+      "season": "2024-25",
+      "model": "utah_units",
+      "start": "2024-11-01",
+      "end": "2025-02-28",
+      "value": 1322.0,
+      "url": "https://f5dby14cj5.execute-api.us-west-2.amazonaws.com/prod/chill-models?station-id=CIMIS-12&chill-year=2024-2025"
+    }
+  ]
 }
