@@ -16,6 +16,7 @@
 /backend/tests/                         @karthikmaheshwaran
 /backend/tests/test_api.py              @Chuckisawsome12345
 /backend/tests/test_sources.py          @Chuckisawsome12345
+/backend/tests/test_pipeline.py         @Chuckisawsome12345
 
 # C
 /frontend/                              @Zooomer69
