@@ -139,3 +139,119 @@ def test_season_slice_is_sep_1_to_aug_31(fake_om):
     s = build_point.season_slice(frame, 2020)
     assert (s.index[0], s.index[-1]) == (pd.Timestamp("2020-09-01", tz=PST), pd.Timestamp("2021-08-31 23:00", tz=PST))
     assert len(s) == 365 * 24
+
+
+# --- full pipeline (build_point.build_point) with synthetic weather and stand-in calc ---
+
+from app.calc import chill, gdd, seasons  # noqa: E402
+from app.schemas import PointResponse  # noqa: E402
+
+
+def synthetic_hourly(lat, lon, season, today, history_seasons=build_point.HISTORY_SEASONS):
+    """Stands in for build_point.load_hourly: a seasonal + daily temperature cycle, no network."""
+    start = pd.Timestamp(f"{season - history_seasons}-09-01", tz=PST)
+    end_season = pd.Timestamp(f"{season + 1}-08-31 23:00", tz=PST)
+    end = min(end_season, pd.Timestamp(today, tz=PST) + pd.Timedelta(days=16) - pd.Timedelta(hours=1))
+    idx = pd.date_range(start, end, freq="h")
+    doy = idx.day_of_year.to_numpy()
+    temps = 61 + 16 * np.sin(2 * np.pi * (doy - 110) / 365) + 11 * np.sin(2 * np.pi * (idx.hour.to_numpy() - 9) / 24)
+    source = np.where(idx < pd.Timestamp(today - timedelta(days=6), tz=PST), "archive", "forecast")
+    frame = pd.DataFrame({"temp_f": temps, "source": source}, index=idx)
+    frame.attrs["stale"] = False
+    return frame
+
+
+def stand_in_calc(monkeypatch):
+    """Simple test-only versions of B's required functions (the real ones live in app.calc)."""
+
+    def window(s, mmdd):
+        month, day = map(int, mmdd.split("-"))
+        return date(s if month >= 9 else s + 1, month, day), date(s + 1, 8, 31)
+
+    monkeypatch.setattr(seasons, "season_label", lambda s: f"{s}-{str(s + 1)[2:]}")
+    monkeypatch.setattr(seasons, "season_window", window)
+    monkeypatch.setattr(chill, "chill_hours", lambda t: ((t >= 32) & (t <= 45)).astype(float).where(t.notna()))
+    monkeypatch.setattr(
+        chill, "utah_units",
+        lambda t: pd.Series(np.select([t <= 34, t <= 36, t <= 48, t <= 54, t <= 60, t <= 65], [0, 0.5, 1, 0.5, 0, -0.5], -1), index=t.index),
+    )
+    monkeypatch.setattr(
+        gdd, "daily_gdd",
+        lambda tmax, tmin, base, upper=None, method="average": (((tmax.clip(upper=upper) if upper else tmax) + tmin) / 2 - base).clip(lower=0),
+    )
+
+
+@pytest.fixture
+def pipeline(monkeypatch, tmp_path):
+    from app.sources import cache
+
+    monkeypatch.setattr(cache, "DB_PATH", tmp_path / "http.sqlite")
+    monkeypatch.setattr(build_point, "load_hourly", synthetic_hourly)
+    monkeypatch.setattr(build_point, "BIAS_TABLES_PATH", tmp_path / "none.json")
+    monkeypatch.setattr(build_point, "VALIDATION_PATH", tmp_path / "none.json")
+    stand_in_calc(monkeypatch)
+
+
+def run(season, today=date(2026, 10, 23), **kw):
+    args = dict(lat=39.64, lon=-121.79, season=season, crop="almond", portions_start="09-01",
+                hours_start="11-01", gdd_start="01-01", corrected=True)
+    return build_point.build_point(**{**args, **kw}, today=today)
+
+
+def test_stubbed_calc_fails_fast_before_network(monkeypatch):
+    def no_network(*a, **k):
+        raise AssertionError("must not fetch while calc is stubbed")
+
+    monkeypatch.setattr(build_point, "load_hourly", no_network)
+    with pytest.raises(NotImplementedError):
+        run(2025)
+
+
+def test_complete_season_matches_contract(pipeline):
+    body = PointResponse.model_validate(run(2025)).model_dump()
+    assert body["mock"] is False
+    assert body["season"]["label"] == "2025-26" and body["season"]["complete"] is True
+    assert body["forecast"] is None and body["climatology"] is None
+    assert len(body["history"]) == 10 and body["history"][0]["season"] == "2015-16"
+    assert len(body["daily"]) == 365
+    t = body["totals"]
+    assert t["chill_hours"] > 300 and t["gdd"] > 1000 and t["utah_units"] > 0
+    assert t["chill_portions"] == 0  # Dynamic Model still a stub: degrades to 0
+    assert body["nearest_station"]["name"] == "Durham"
+    assert body["correction"] == {"applied": False, "stations": [], "expected_error": None}
+    assert body["quality"]["interpolated_hours"] == 0  # fill_gaps still a stub
+
+
+def test_metrics_respect_start_dates(pipeline):
+    daily = {r["date"]: r for r in run(2025)["daily"]}
+    assert daily["2025-10-31"]["chill_hours"] == 0 and daily["2025-11-30"]["chill_hours"] > 0
+    assert daily["2025-12-31"]["gdd"] == 0 and daily["2026-08-31"]["gdd"] > 0
+    hours = [r["chill_hours"] for r in run(2025)["daily"]]
+    assert hours == sorted(hours)  # cumulative
+    assert daily["2026-02-28"]["utah_units"] == daily["2026-08-31"]["utah_units"] > 0  # held after Feb
+    assert daily["2026-02-28"]["chill_hours"] == daily["2026-08-31"]["chill_hours"]
+
+
+def test_current_season_splits_observed_and_forecast(pipeline):
+    body = PointResponse.model_validate(run(2026)).model_dump()
+    assert body["season"]["complete"] is False
+    assert body["daily"][-1]["date"] == "2026-10-22"
+    f = body["forecast"]
+    assert len(f["daily"]) == 16 and f["daily"][0]["date"] == "2026-10-23"
+    assert f["plus14"]["chill_hours"] >= f["plus7"]["chill_hours"] >= body["totals"]["chill_hours"]
+    assert body["climatology"] is None  # projection still a stub
+
+
+def test_dynamic_model_used_once_available(pipeline, monkeypatch):
+    monkeypatch.setattr(chill, "dynamic_portions", lambda t: pd.Series(np.arange(len(t)) / 100.0, index=t.index))
+    assert run(2025)["totals"]["chill_portions"] > 0
+
+
+def test_unknown_crop_rejected(pipeline):
+    with pytest.raises(KeyError):
+        run(2025, crop="kiwi")
+
+
+def test_floored_cumsum_never_negative():
+    out = build_point._floored_cumsum(pd.Series([1.0, -3.0, 2.0, -1.0]))
+    assert out.tolist() == [1.0, 0.0, 2.0, 1.0]

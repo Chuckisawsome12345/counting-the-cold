@@ -1,8 +1,22 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.pipeline import build_point
+from app.sources import cache
+from tests.test_pipeline import synthetic_hourly
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def offline(monkeypatch, tmp_path):
+    """No network in CI: once B's calc lands, /api/point runs on synthetic weather."""
+    monkeypatch.setattr(build_point, "load_hourly", synthetic_hourly)
+    monkeypatch.setattr(cache, "DB_PATH", tmp_path / "http.sqlite")
+    cache.clear_results()
+
+
 DURHAM_PIN = {"lat": 39.64, "lon": -121.79}
 
 
@@ -24,7 +38,7 @@ def test_point_current_season_has_forecast():
     body = client.get("/api/point", params={**DURHAM_PIN, "season": 2026}).json()
     assert body["season"]["label"] == "2026-27"
     assert len(body["forecast"]["daily"]) == 16
-    assert body["climatology"] is not None
+    assert "climatology" in body  # null until B's projection lands
 
 
 def test_point_rejects_outside_california():
@@ -41,3 +55,7 @@ def test_stations_include_closed_durham():
 def test_crops_and_validation():
     assert any(c["id"] == "almond" for c in client.get("/api/crops").json()["crops"])
     assert client.get("/api/validation").status_code == 200
+
+
+def test_point_rejects_unknown_crop():
+    assert client.get("/api/point", params={**DURHAM_PIN, "crop": "kiwi"}).status_code == 422
