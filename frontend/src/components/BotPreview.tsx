@@ -1,7 +1,7 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react'
 import { fetchBotPreview } from '../api/client'
 
-// "Try the bot": the Telegram bot's own replies (same backend code), so people without Telegram can see what it sends.
+// Orchard chat: ask about a place in plain words. The answers come from the same backend code as the Telegram bot.
 
 interface Message {
   id: number
@@ -37,7 +37,6 @@ function Linked({ text }: { text: string }) {
 
 export default function BotPreview({ pin }: { pin: [number, number] | null }) {
   const [messages, setMessages] = useState<Message[]>([])
-  const [botUrl, setBotUrl] = useState<string | null>(null)
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
   const nextId = useRef(0)
@@ -45,14 +44,15 @@ export default function BotPreview({ pin }: { pin: [number, number] | null }) {
 
   const add = (m: Omit<Message, 'id'>) => setMessages((ms) => [...ms, { ...m, id: nextId.current++ }].slice(-MAX_MESSAGES))
 
-  // The bot's welcome (its /start text) and its Telegram link.
+  // The welcome: how to ask.
   useEffect(() => {
+    let live = true // React's dev double-run would otherwise show it twice
     fetchBotPreview('')
-      .then((r) => {
-        setBotUrl(r.bot_url)
-        add({ from: 'bot', text: r.text })
-      })
+      .then((r) => live && add({ from: 'bot', text: r.text }))
       .catch(() => {})
+    return () => {
+      live = false
+    }
   }, [])
 
   // Keep the newest message in view from its first line: replies are long, and they read top down.
@@ -69,10 +69,9 @@ export default function BotPreview({ pin }: { pin: [number, number] | null }) {
     setBusy(true)
     try {
       const r = await fetchBotPreview(t)
-      setBotUrl(r.bot_url)
       add({ from: 'bot', text: r.text })
     } catch {
-      add({ from: 'bot', text: "Couldn't reach the bot right now. Try again in a moment.", failed: true })
+      add({ from: 'bot', text: "Couldn't get an answer right now. Try again in a moment.", failed: true })
     } finally {
       setBusy(false)
     }
@@ -88,16 +87,9 @@ export default function BotPreview({ pin }: { pin: [number, number] | null }) {
   return (
     <section className="card bot-card" aria-labelledby="bot-title">
       <div className="bot-head">
-        <div>
-          <span className="lbl">Text it</span>
-          <h2 id="bot-title">Try our Telegram bot</h2>
-          <p>Growers can get these numbers by messaging our bot in Telegram. Here is exactly what it replies.</p>
-        </div>
-        {botUrl && (
-          <a className="chip primary bot-open" href={botUrl} target="_blank" rel="noreferrer">
-            Open in Telegram
-          </a>
-        )}
+        <span className="lbl">Ask</span>
+        <h2 id="bot-title">Ask about an orchard</h2>
+        <p>Type a place or coordinates and get its chill and heat in plain words, plus what to watch for.</p>
       </div>
 
       <div className="bot-log" ref={logRef} aria-live="polite">
@@ -107,7 +99,7 @@ export default function BotPreview({ pin }: { pin: [number, number] | null }) {
           </div>
         ))}
         {busy && (
-          <div className="bubble bot typing" aria-label="The bot is replying">
+          <div className="bubble bot typing" aria-label="Getting an answer">
             <i />
             <i />
             <i />
@@ -130,7 +122,7 @@ export default function BotPreview({ pin }: { pin: [number, number] | null }) {
 
       <form className="bot-form" onSubmit={submit}>
         <label className="sr-only" htmlFor="bot-input">
-          Message the bot
+          Ask about a place
         </label>
         <input
           id="bot-input"

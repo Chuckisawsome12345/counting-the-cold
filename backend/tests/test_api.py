@@ -291,9 +291,10 @@ def test_telegram_preview_matches_the_bot(monkeypatch):
     monkeypatch.setattr(tg_route, "telegram_api", lambda token, method, payload: {"ok": True, "result": {"username": "CountingTheColdBot"}})
     for text in ("/durham", "39.64,-121.79", "/suggest davis", "/start", "hello?"):
         body = client.get("/api/telegram/preview", params={"text": text}).json()
-        assert body["text"] == tg(tg_text(text)).json()["text"]
+        assert body["text"] == tg_route.for_web(tg(tg_text(text)).json()["text"])
+        assert "paperclip" not in body["text"] and "Charts and details" not in body["text"]
         assert body["bot_url"] == "https://t.me/CountingTheColdBot"
-    assert "Share your orchard's location" in client.get("/api/telegram/preview").json()["text"]
+    assert client.get("/api/telegram/preview").json()["text"] == tg_route.WEB_HELP
     assert client.get("/api/telegram/preview", params={"text": "x" * 201}).status_code == 422
 
 

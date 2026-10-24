@@ -2136,12 +2136,6 @@ select {
   gap: var(--space-4);
 }
 
-.bot-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
 
 .bot-head h2 {
   margin: var(--space-1) 0;
@@ -2151,12 +2145,6 @@ select {
 .bot-head p {
   margin: 0;
   color: var(--ink2);
-}
-
-.bot-open {
-  flex: none;
-  text-decoration: none;
-  font-weight: 600;
 }
 
 .bot-log {
@@ -2265,10 +2253,6 @@ select {
 }
 
 @media (max-width: 600px) {
-  .bot-head {
-    flex-direction: column;
-  }
-
   .bubble {
     max-width: 100%;
   }
