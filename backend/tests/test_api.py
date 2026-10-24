@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -217,6 +219,11 @@ def tg_text(text):
 def test_telegram_needs_token(monkeypatch):
     monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", "")
     assert tg(tg_text("/start")).status_code == 503
+
+
+def test_httpx_request_urls_not_logged():
+    # Telegram API URLs carry the bot token; httpx logs request URLs at INFO.
+    assert not logging.getLogger("httpx").isEnabledFor(logging.INFO)
 
 
 def test_telegram_rejects_wrong_secret(monkeypatch):
