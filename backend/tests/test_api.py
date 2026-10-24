@@ -207,6 +207,14 @@ from app.routes import telegram as tg_route  # noqa: E402
 TOKEN = "123456:test-token"
 
 
+@pytest.fixture(autouse=True)
+def telegram_sent(monkeypatch):
+    """Record the bot's outgoing Telegram calls instead of making them."""
+    sent = []
+    monkeypatch.setattr(tg_route, "telegram_api", lambda token, method, payload: sent.append((method, payload)) or {"ok": True})
+    return sent
+
+
 def tg(update, secret=None):
     headers = {"X-Telegram-Bot-Api-Secret-Token": tg_route.webhook_secret(TOKEN) if secret is None else secret}
     return client.post("/api/telegram", json=update, headers=headers)
@@ -234,12 +242,22 @@ def test_telegram_rejects_wrong_secret(monkeypatch):
 def test_telegram_start_place_and_location(monkeypatch):
     monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
     start = tg(tg_text("/start")).json()
-    assert start["method"] == "sendMessage" and start["chat_id"] == 42 and "Share your orchard's location" in start["text"]
+    assert start["ok"] and start["chat_id"] == 42 and "Share your orchard's location" in start["text"]
     assert tg(tg_text("/durham@CountingTheColdBot")).json()["text"].startswith("Durham ")
     assert tg(tg_text("39.64, -121.79")).json()["text"].startswith("Orchard near Durham ")
     shared = {"update_id": 2, "message": {"message_id": 8, "chat": {"id": 42}, "location": {"latitude": 36.6, "longitude": -119.5}}}
     assert tg(shared).json()["text"].startswith("Orchard near Parlier ")
     assert "outside California" in tg(tg_text("47.6,-122.3")).json()["text"]
+
+
+def test_telegram_sends_the_reply_and_reports_failures(monkeypatch, telegram_sent):
+    monkeypatch.setattr(config, "TELEGRAM_BOT_TOKEN", TOKEN)
+    body = tg(tg_text("/durham")).json()
+    method, payload = telegram_sent[-1]
+    assert method == "sendMessage" and payload["chat_id"] == 42 and payload["text"] == body["text"]
+    assert "method" not in body  # no second copy via the webhook answer
+    monkeypatch.setattr(tg_route, "telegram_api", lambda token, method, payload: {"ok": False, "error_code": 403, "description": "Forbidden: bot was blocked by the user"})
+    assert tg(tg_text("/start")).json()["ok"] is False
 
 
 def test_telegram_ignores_non_message_updates(monkeypatch):

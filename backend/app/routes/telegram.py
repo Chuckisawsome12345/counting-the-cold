@@ -1,7 +1,7 @@
 """Telegram bot: message a place or share a location, get the chill and heat summary back.
 
-Free alternative to SMS (no carrier registration). Replies ride on the webhook response itself
-(Telegram's "answer the webhook with a method" pattern), so no outbound call per message.
+Free alternative to SMS (no carrier registration). Each reply is sent with Telegram's sendMessage,
+so its outcome (or Telegram's error) shows in the logs.
 Only Telegram knows the webhook secret, which is derived from the bot token.
 
 Setup: create a bot with @BotFather, set TELEGRAM_BOT_TOKEN on the backend, redeploy, then open
@@ -57,10 +57,17 @@ async def telegram(request: Request) -> dict:
         log.info("telegram update ignored: %s", ", ".join(k for k in update if k != "update_id"))
         return {}  # other update types: acknowledge and ignore
     reply = reply_for_message(message, date.today())
+    # Sent with an explicit call (not as the webhook's answer) so Telegram's verdict is known and logged.
+    chat_id = message["chat"]["id"]
+    result = telegram_api(token, "sendMessage", {"chat_id": chat_id, "text": reply, "disable_web_page_preview": True})
     # Just the kind of message, never its text or location.
     kind = "location" if "location" in message else (message.get("text") or "").split(" ")[0].split("@")[0][:20] or "other"
-    log.info("telegram update answered: %s -> %d chars", kind if kind.startswith("/") or kind == "location" else "text", len(reply))
-    return {"method": "sendMessage", "chat_id": message["chat"]["id"], "text": reply}
+    kind = kind if kind.startswith("/") or kind == "location" else "text"
+    if result.get("ok"):
+        log.info("telegram reply sent: %s -> %d chars", kind, len(reply))
+    else:
+        log.warning("telegram reply failed: %s -> %s %s", kind, result.get("error_code"), result.get("description"))
+    return {"ok": bool(result.get("ok")), "chat_id": chat_id, "text": reply}
 
 
 def reply_for_message(message: dict, today: date) -> str:
