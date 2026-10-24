@@ -5,17 +5,14 @@ from app.calc.chill import chill_hours, dynamic_portions, utah_units
 from tests.helpers import hourly, stub
 
 
-@stub
 def test_chill_hours_bounds_inclusive():
     assert chill_hours(hourly([31, 32, 40, 45, 46])).tolist() == [0, 1, 1, 1, 0]
 
 
-@stub
 def test_chill_hours_keeps_missing():
     assert np.isnan(chill_hours(hourly([40, np.nan, 40])).iloc[1])
 
 
-@stub
 @pytest.mark.parametrize(
     "temp_f, units",
     [(34, 0), (35, 0.5), (36, 0.5), (37, 1), (48, 1), (49, 0.5), (54, 0.5),

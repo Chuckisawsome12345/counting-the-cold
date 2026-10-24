@@ -13,7 +13,12 @@ def daily_gdd(
 ) -> pd.Series:
     """Per-day degree days, indexed by date.
 
-    average: max(0, (tmax + tmin)/2 - base), with tmax clipped to upper (horizontal cutoff).
-    single_sine: Zalom et al. 1983, used by UC IPM and the hull split model.
+    average: max(0, (tmax + tmin)/2 - base), with both clipped to upper (horizontal cutoff).
+    single_sine: Zalom et al. 1983. Not implemented: it was only needed for hull split, which is cut.
+    A day with a missing tmax or tmin stays NaN.
     """
-    raise NotImplementedError
+    if method != "average":
+        raise NotImplementedError("single_sine GDD isn't implemented (only the hull split model needed it)")
+    if upper is not None:
+        tmax, tmin = tmax.clip(upper=upper), tmin.clip(upper=upper)
+    return ((tmax + tmin) / 2 - base).clip(lower=0)

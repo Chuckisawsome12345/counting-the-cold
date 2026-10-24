@@ -1,4 +1,5 @@
 """Chill models. Pure functions: hourly °F Series (PST index, NaN = missing) in, Series out."""
+import numpy as np
 import pandas as pd
 
 # Dynamic Model constants (Fishman et al. 1987; chillR::Dynamic_Model).
@@ -12,16 +13,23 @@ TETMLT = 277.0
 
 def chill_hours(t: pd.Series, lo: float = 32.0, hi: float = 45.0) -> pd.Series:
     """Per hour: 1 if lo <= t <= hi else 0. NaN stays NaN."""
-    raise NotImplementedError
+    return ((t >= lo) & (t <= hi)).astype(float).where(t.notna())
 
 
 def utah_units(t: pd.Series) -> pd.Series:
     """Per hour Utah chill units (Richardson et al. 1974), °F bands:
 
     <=34: 0 | 35-36: 0.5 | 37-48: 1 | 49-54: 0.5 | 55-60: 0 | 61-65: -0.5 | >65: -1
-    The season cumulative is floored at 0 by the caller (document the choice).
+    The season cumulative is floored at 0 by the caller (build_point does). Bands are defined on
+    whole degrees, so fractional readings are split at the half degree (34.4 -> 0, 34.5 -> 0.5).
+    NaN stays NaN.
     """
-    raise NotImplementedError
+    units = np.select(
+        [t < 34.5, t < 36.5, t < 48.5, t < 54.5, t < 60.5, t < 65.5],
+        [0.0, 0.5, 1.0, 0.5, 0.0, -0.5],
+        default=-1.0,
+    )
+    return pd.Series(units, index=t.index).where(t.notna())
 
 
 def dynamic_portions(t: pd.Series) -> pd.Series:
