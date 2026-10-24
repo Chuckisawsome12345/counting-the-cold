@@ -130,3 +130,69 @@ def test_grid_serves_one_metric(monkeypatch, tmp_path):
     body = client.get("/api/grid", params={"metric": "gdd"}).json()
     assert body["unit"] == "°F-days" and body["cells"] == [{"lat": 39.5, "lon": -121.75, "value": 2400}]
     assert client.get("/api/grid", params={"metric": "rainfall"}).status_code == 422
+
+
+# --- text-message access (/api/sms) ---
+
+import re  # noqa: E402
+
+from app.routes import sms as sms_route  # noqa: E402
+
+
+def text(body, **headers):
+    r = client.post("/api/sms", data={"Body": body, "From": "+15550001111"}, headers=headers)
+    m = re.search(r"<Message>(.*)</Message>", r.text, re.S)
+    return r, (m.group(1) if m else None)
+
+
+def test_sms_help_and_empty():
+    for body in ("", "help", "  HELP "):
+        r, msg = text(body)
+        assert r.status_code == 200 and r.headers["content-type"].startswith("application/xml")
+        assert msg.startswith("Counting the Cold: text your orchard")
+
+
+def test_sms_latlon_reply_fits_one_text():
+    r, msg = text("39.64,-121.79")
+    assert msg.startswith("Orchard near Durham ") and "chill portions" in msg and "chill hrs" in msg
+    assert re.search(r"\d{4}-\d{2}:", msg)
+    assert len(msg) <= 160 and msg.isascii()
+
+
+def test_sms_place_name_and_parenthesised_latlon():
+    assert text("Durham")[1].startswith("Durham ")
+    assert text("(36.6, -119.5)")[1].startswith("Orchard near Parlier ")
+
+
+def test_sms_outside_california_and_gibberish():
+    assert "outside California" in text("47.6,-122.3")[1]
+    assert text("what is chill")[1].startswith("Sorry, I didn't get that")
+
+
+def test_sms_stop_gets_no_reply():
+    r, msg = text("STOP")
+    assert r.status_code == 200 and msg is None and "<Response></Response>" in r.text
+
+
+def test_sms_signature_required_when_token_set(monkeypatch):
+    monkeypatch.setattr(config, "TWILIO_AUTH_TOKEN", "test-token")
+    params = {"Body": "help", "From": "+15550001111"}
+    good = sms_route.signature("http://testserver/api/sms", params, "test-token")
+    assert client.post("/api/sms", data=params, headers={"X-Twilio-Signature": good}).status_code == 200
+    assert client.post("/api/sms", data=params, headers={"X-Twilio-Signature": "forged"}).status_code == 403
+    assert client.post("/api/sms", data=params).status_code == 403
+
+
+def test_sms_signature_matches_twilio_reference():
+    # Worked example from https://www.twilio.com/docs/usage/security ("Explore the algorithm yourself").
+    params = {"Digits": "1234", "To": "+18005551212", "From": "+14158675310", "Caller": "+14158675310", "CallSid": "CA1234567890ABCDE"}
+    assert sms_route.signature("https://example.com/myapp.php?foo=1&bar=2", params, "12345") == "L/OH5YylLD5NRKLltdqwSvS0BnU="
+
+
+def test_sms_mentions_last_season_before_chill_starts():
+    p = point_route._mock(2026)
+    p["totals"] = dict.fromkeys(p["totals"], 0.0)
+    msg = sms_route.summarize(p, "Durham")
+    last = p["history"][-1]
+    assert f"Last season ({last['season']}): {last['totals']['chill_hours']:.0f} chill hrs" in msg
+    assert len(msg) <= 160
