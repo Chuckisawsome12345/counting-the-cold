@@ -243,7 +243,10 @@ def test_current_season_splits_observed_and_forecast(pipeline):
     f = body["forecast"]
     assert len(f["daily"]) == 16 and f["daily"][0]["date"] == "2026-10-23"
     assert f["plus14"]["chill_hours"] >= f["plus7"]["chill_hours"] >= body["totals"]["chill_hours"]
-    assert body["climatology"] is None  # projection still a stub
+    c = body["climatology"]  # projection landed (#20)
+    for m in ("chill_portions", "chill_hours", "utah_units", "gdd"):
+        assert c[m]["p10"] <= c[m]["p50"] <= c[m]["p90"]
+    assert c["chill_hours"]["p50"] >= body["totals"]["chill_hours"]
 
 
 def test_dynamic_model_used_once_available(pipeline, monkeypatch):
