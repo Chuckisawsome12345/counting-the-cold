@@ -171,6 +171,9 @@ export default function ValidationPanel({ stations }: { stations: Station[] }) {
         </div>
         <div className="table-scroll">
           <table className="vtable">
+            <caption className="sr-only">
+              Average error per station, raw and corrected, in {info.footUnit}
+            </caption>
             <thead>
               <tr>
                 <th scope="col">Station</th>
@@ -187,6 +190,29 @@ export default function ValidationPanel({ stations }: { stations: Station[] }) {
             </tbody>
           </table>
         </div>
+        <ul className="v-list">
+          {rows.map((s) => {
+            const e = s.mae[metric]
+            if (!e) return null
+            const pct = improvement(e.raw_mae, e.corrected_mae)
+            return (
+              <li key={s.id} className={closedIds.has(s.id) ? 'closed-row' : undefined}>
+                <span>
+                  <strong>
+                    {s.name} #{s.id}
+                  </strong>
+                  {closedIds.has(s.id) && <span className="closed-tag">CLOSED</span>}
+                </span>
+                <span className="v-pair">
+                  <span className="raw">±{formatFixed(e.raw_mae, info.digits)}</span> → <span className="corr">±{formatFixed(e.corrected_mae, info.digits)}</span>{' '}
+                  <span className="impr-pct">
+                    {pct >= 0 ? '▼' : '▲'} {Math.abs(Math.round(pct))}%
+                  </span>
+                </span>
+              </li>
+            )
+          })}
+        </ul>
       </section>
 
       {closed && (
