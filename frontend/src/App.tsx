@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { fetchStations } from './api/client'
-import type { Station } from './api/types'
+import type { Metric, Station } from './api/types'
 import CorrectionInfo from './components/CorrectionInfo'
 import DataQualityBadge from './components/DataQualityBadge'
-import ForecastChart from './components/ForecastChart'
 import Header, { type Tab } from './components/Header'
 import MapPicker from './components/MapPicker'
 import SeasonChart from './components/SeasonChart'
+import SeasonTotals from './components/SeasonTotals'
 import SettingsBar from './components/SettingsBar'
 import SummaryCards from './components/SummaryCards'
 import ValidationPanel from './components/ValidationPanel'
@@ -22,6 +22,7 @@ export default function App() {
   const [pin, setPin] = useState<[number, number]>([DEMO_PINS[0].lat, DEMO_PINS[0].lon])
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [stations, setStations] = useState<Station[]>([])
+  const [metric, setMetric] = useState<Metric>('chill_portions')
   const insideCalifornia = inCalifornia(pin[0], pin[1])
   // No request for pins outside California: the API would answer 422.
   const { data, error, loading } = usePoint(insideCalifornia ? { lat: pin[0], lon: pin[1], ...settings } : null)
@@ -63,10 +64,14 @@ export default function App() {
             {insideCalifornia && data && (
               <>
                 <SummaryCards data={data} />
-                <SeasonChart data={data} />
-                {data.forecast && <ForecastChart data={data} />}
-                <DataQualityBadge quality={data.quality} />
-                <CorrectionInfo correction={data.correction} />
+                <SeasonChart data={data} metric={metric} onMetric={setMetric} />
+                <div className="split">
+                  <SeasonTotals data={data} metric={metric} />
+                  <div className="stack">
+                    <DataQualityBadge quality={data.quality} />
+                    <CorrectionInfo correction={data.correction} />
+                  </div>
+                </div>
               </>
             )}
           </section>
