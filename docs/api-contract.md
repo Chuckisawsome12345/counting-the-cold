@@ -48,7 +48,7 @@ Conventions:
   "forecast": {                        // null when season.complete
     "daily": [/* 16 rows, same shape as daily, source "forecast" */],
     "plus7":  {"chill_portions": 1.2, "chill_hours": 0, "utah_units": 0, "gdd": 0},
-    "plus14": {"chill_portions": 3.0, "chill_hours": 30, "utah_units": 39, "gdd": 0}
+    "plus14": {"chill_portions": 3.0, "chill_hours": 30, "utah_units": 39, "gdd": 0}   // running totals (season-to-date) at +7 and +14 days, not gains; gain = plus14 - totals
   },
   "history": [                         // the 10 seasons before this one, oldest first
     {"season": "2015-16",
@@ -159,6 +159,8 @@ One metric on the precomputed Central Valley grid (about 0.25°), for the statew
  "built_at": "2026-10-24T02:00:00+00:00",
  "cells": [{"lat": 39.5, "lon": -121.75, "value": 61.8}]}
 ```
+
+Each cell's `lat`/`lon` is the cell **centre**; the cell spans ±`step_deg`/2 around it.
 
 Before the grid is built: `"built_at": null, "cells": []`.
 
