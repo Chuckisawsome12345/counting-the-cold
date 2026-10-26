@@ -1,11 +1,11 @@
-"""Write synthetic /api/point responses for building the UI before the real pipeline exists (role A).
+"""Write synthetic /api/point responses for tests and the frontend's mock mode.
 
 The weather is made up (a Butte County-like seasonal cycle plus noise). Use it for layout and
 charts only, never for numbers anyone quotes. Re-run after a contract change:
 
     python scripts/make_mock.py
 
-Writes backend/data/mock_point.json (2025-26, complete), backend/data/mock_point_current.json
+Writes backend/tests/fixtures/mock_point.json (2025-26, complete) and mock_point_current.json
 (2026-27, with forecast), and copies both to frontend/src/api/mock/ when that folder exists.
 """
 import json
@@ -193,7 +193,7 @@ def build(season):
 
 def main():
     for season, name in ((2025, "mock_point.json"), (2026, "mock_point_current.json")):
-        path = BACKEND / "data" / name
+        path = BACKEND / "tests" / "fixtures" / name
         path.write_text(json.dumps(build(season), separators=(",", ":")) + "\n")
         print("wrote", path)
         if FRONTEND_MOCK.is_dir():

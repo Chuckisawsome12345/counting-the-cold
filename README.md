@@ -1,75 +1,104 @@
 # Counting the Cold
 
-**Your orchard's chill and heat, not a station's.**
+**Winter chill and heat for any California orchard, not just the nearest weather station.**
 
-**Live:** [counting-the-cold-jfm3.vercel.app](https://counting-the-cold-jfm3.vercel.app) · API [counting-the-cold.vercel.app](https://counting-the-cold.vercel.app) ([docs](https://counting-the-cold.vercel.app/docs))
+🏆 **2nd Overall, 1st in Track, Reboot Earth California @ UC Davis 2026** (UC Davis FNRIC "Counting the Cold" challenge)
 
-Drop a pin on any California orchard and see its chill (chill hours, Utah units, Dynamic Model chill portions) and growing degree days for the season so far, compared with the last 10 seasons, plus a 14-day projection. Estimates come from gridded weather data (Open-Meteo), bias-corrected and validated against CIMIS stations, so they work where there is no station, including near the Durham #12 station that closed in July 2025.
+**Live demo:** [counting-the-cold-jfm3.vercel.app](https://counting-the-cold-jfm3.vercel.app) · **API docs:** [counting-the-cold.vercel.app/docs](https://counting-the-cold.vercel.app/docs) · **Demo video:** _coming soon_ <!-- add the video link here -->
 
-Built at Reboot Earth (UC Davis, Oct 23–24 2026) for the FNRIC "Counting the Cold" challenge.
+## The problem
 
-- **Plan:** [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) (change it with a `plan` PR) · **Progress:** [milestones](https://github.com/Chuckisawsome12345/counting-the-cold/milestones)
-- **How we work:** [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) · **API shapes:** [`docs/api-contract.md`](docs/api-contract.md)
+Fruit and nut trees need a set amount of winter cold ("chill") before they bloom well, and spring heat (growing degree days) drives bloom, pests and harvest. A short winter is expensive: California lost about half its pistachio crop in 2015 after a warm winter.
+
+Growers track both from CIMIS weather stations, but stations are sparse, sit in different microclimates, and close. Durham #12 in Butte County shut down in July 2025. UC Davis's Fruit & Nut Research & Information Center (FNRIC) asked for a way to estimate chill and heat for any orchard, and to show how far to trust the estimate.
+
+## The solution
+
+Drop a pin on any California orchard and get its chill and heat for the season, from gridded hourly weather data validated against real stations.
+
+- **Four standard models:** chill portions (Dynamic Model), chill hours, Utah chill units and growing degree days, the same ones FNRIC uses. Chill hours and Utah units reproduce FNRIC's published daily values exactly (24 station-seasons).
+- **This winter vs the last 10:** a cumulative chart and season totals show early when a winter is running short.
+- **Forecast and outlook:** a 16-day forecast plus a likely end-of-season range based on the last 10 seasons.
+- **Honest accuracy:** every number shows its typical error, from leave-one-station-out validation against 9 CIMIS stations (97 station-seasons). A station bias correction cuts heat (GDD) error roughly in half, from 498 to 233.
+- **Works where stations don't:** a closed station's decade of records still calibrates the orchards around it.
+- **Offline phone mode:** an installable web app that keeps the last 5 orchards viewed, so it opens in the field with no signal.
+- **Text-style chat:** type "durham" or "39.64,-121.79" and get a plain-language summary plus things to watch for. The same replies power a Telegram bot.
+- **Statewide chill map and open API:** a Central Valley chill layer, and a public `/api/v1/models` endpoint other sites can embed.
+
+## Screenshots
+
+| Orchard dashboard | Accuracy map |
+|---|---|
+| ![Orchard dashboard](docs/screenshots/dashboard.png) | ![Accuracy map](docs/screenshots/accuracy.png) |
+| **Season chart** | **Chat and offline mode** |
+| ![Season chart](docs/screenshots/season-chart.png) | ![Chat and offline mode](docs/screenshots/chat-mobile.png) |
+
+## Tech stack
+
+- **Backend:** Python 3.12, FastAPI, pandas, NumPy, Pydantic, SQLite cache, pytest (183 tests)
+- **Frontend:** React 19, TypeScript, Vite, React Leaflet, Recharts, a service worker for offline mode
+- **Data:** Open-Meteo hourly archive and forecast, CIMIS station data (validation only)
+- **Infrastructure:** Vercel (API and site), GitHub Actions CI
+
+## Architecture
+
+The API fetches hourly temperatures for the pin, fills short gaps, applies the station bias correction to heat, runs the models for this season and the last 10, and returns one JSON response that the dashboard renders. Upstream responses are cached in SQLite, and saved snapshots of the demo pins cover outages. CIMIS data is used offline only, to build the validation and correction tables.
+
+```mermaid
+flowchart LR
+  OM[Open-Meteo<br/>hourly temps] --> API
+  subgraph API[FastAPI backend]
+    C[(SQLite cache)] --> P[Pipeline:<br/>gap fill, bias correction,<br/>chill and GDD models]
+  end
+  CIMIS[CIMIS stations] -. offline scripts .-> V[Validation and<br/>bias tables]
+  V --> P
+  API -- JSON --> WEB[React dashboard<br/>+ offline service worker]
+  API --> CHAT[Chat box /<br/>Telegram bot]
+```
+
+More detail: [API contract](docs/api-contract.md) · [deployment and bot setup](docs/deploy.md) · [hackathon build plan](docs/BUILD_PLAN.md)
 
 ## Run it locally
+
+Needs Python 3.12+ and Node 22+.
 
 ```bash
 cp .env.example .env
 ```
 
-Backend (Python 3.12+), on http://localhost:8000 with docs at `/docs`:
+Backend on http://localhost:8000 (API docs at `/docs`):
 
 ```bash
 cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && uvicorn app.main:app --reload
 ```
 
-Frontend, on http://localhost:5173 (proxies `/api` to the backend):
+Frontend on http://localhost:5173 (proxies `/api` to the backend):
 
 ```bash
 cd frontend && npm install && npm run dev
 ```
 
-No backend handy? Run the frontend on synthetic data: `VITE_USE_MOCK=1 npm run dev`.
+No backend? `VITE_USE_MOCK=1 npm run dev` runs the frontend on synthetic data. Checks: `cd backend && pytest` and `cd frontend && npm run build`.
 
-## Text-message access
+**Environment variables** (all optional for local use, see [`.env.example`](.env.example)):
 
-`POST /api/sms` is a Twilio webhook: text a location (`39.64,-121.79`) or `DURHAM`, `DAVIS`, `PARLIER` and get a one-text summary back (plain ASCII, at most 160 characters). Setup, once the Twilio check (#55) passes:
+| Variable | What it does |
+|---|---|
+| `ALLOWED_ORIGINS` | Origins allowed by CORS (default `http://localhost:5173`) |
+| `DEMO_MODE` | `1` serves saved snapshots of the demo pins, no network needed |
+| `CIMIS_KEY` | Only for the offline CIMIS download script |
+| `TELEGRAM_BOT_TOKEN` | Only to run the Telegram bot |
+| `VITE_API_URL` | Frontend only: the backend URL in production (empty in dev) |
 
-1. In Twilio, set the number's "A message comes in" webhook to `https://counting-the-cold.vercel.app/api/sms` (HTTP POST).
-2. In the Vercel backend project, set `TWILIO_AUTH_TOKEN` to the account's auth token, so only signed Twilio requests are answered, and redeploy.
-3. Open `/api/health` a minute before demoing so the first text isn't a cold start (Twilio waits about 15 s).
+## What I'd build next
 
-## Telegram bot
+- Proactive alerts when an orchard's chill falls behind normal
+- A machine-learning correction for chill, shipped only if it beats the current error
+- Higher-resolution data (PRISM, 800 m) to catch frost pockets and microclimates
+- More crop presets and shareable links to a specific orchard
 
-`POST /api/telegram` answers a Telegram bot: share a location, type `39.64,-121.79`, or send `/durham`, `/davis`, `/parlier`, and the bot replies with the chill and heat summary. It's the free alternative to SMS (no carrier registration). Setup:
+## Author
 
-1. In Telegram, message **@BotFather**, send `/newbot`, pick a name and a username ending in `bot`, and copy the token it gives you.
-2. In the Vercel backend project, set `TELEGRAM_BOT_TOKEN` to that token (Production) and redeploy.
-3. Open `https://counting-the-cold.vercel.app/api/telegram/setup` once. It should answer `{"ok": true, ...}`.
-4. Message the bot `/start`, then `/durham`, or share a location.
+**Krish Sharda** · [GitHub](https://github.com/Chuckisawsome12345) · [LinkedIn](https://www.linkedin.com/in/your-profile) <!-- update the LinkedIn link -->
 
-No Telegram? `GET /api/telegram/preview?text=durham` returns the bot's exact reply (and `bot_url`, the link to the real bot), for the website's "Try the bot" box.
-
-## Checks
-
-```bash
-cd backend && pytest
-cd frontend && npm run build
-```
-
-## Deploy
-
-- **Backend (Vercel project `counting-the-cold`, https://counting-the-cold.vercel.app):** root `backend` (Python function `api/index.py`, routing in `backend/vercel.json`). Pushes to `main` redeploy; other branches and PRs get no backend preview (`git.deploymentEnabled` in `backend/vercel.json`), to stay under the free plan's 100 builds a day. Env: `ALLOWED_ORIGINS` = the frontend URL; `CIMIS_KEY` is optional (only the offline CIMIS scripts use it). The cache lives in `/tmp` there and resets on cold starts; committed snapshots cover the demo pins.
-- **Frontend (Vercel project `counting-the-cold-jfm3`, https://counting-the-cold-jfm3.vercel.app):** root `frontend`, Vite preset, `VITE_API_URL` = the backend URL (no trailing slash).
-- **Backup:** `render.yaml` still describes a Render deploy if we ever need it.
-
-Hit `/api/health` on the backend a minute before a demo so the first click isn't a cold start.
-
-## Status
-
-Scaffold only. `/api/point` serves synthetic mock data (`"mock": true`) until the real pipeline lands; see the milestones in the plan.
-
-## Data
-
-- [Open-Meteo](https://open-meteo.com) historical archive and forecast (no key).
-- [CIMIS](https://cimis.water.ca.gov) station data for validation (key required, offline scripts only).
+Built in 24 hours with teammates [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) and [@Zooomer69](https://github.com/Zooomer69). Licensed under [MIT](LICENSE).

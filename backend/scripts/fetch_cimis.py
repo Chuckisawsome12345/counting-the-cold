@@ -1,4 +1,4 @@
-"""Download CIMIS hourly + daily temps for the validation stations into data/cimis/ (role B).
+"""Download CIMIS hourly + daily temps for the validation stations into data/cimis/.
 
 Resumable: one file per station-season (data/cimis/<station>_<season>_{hourly,daily}.json.gz);
 files for finished seasons are skipped on re-runs, and every request is also kept in the L1 cache

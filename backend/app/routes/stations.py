@@ -16,7 +16,7 @@ def stations():
 
 
 def _validation_maes() -> dict[int, dict]:
-    """Per-station MAE from B's validation.json (empty until it exists)."""
+    """Per-station MAE from validation.json (empty until it exists)."""
     path = DATA_DIR / "validation.json"
     if not path.exists():
         return {}

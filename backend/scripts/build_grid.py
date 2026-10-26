@@ -1,8 +1,8 @@
-"""Precompute one season's chill and heat on a Central Valley grid -> data/grid/<season>.json (role A).
+"""Precompute one season's chill and heat on a Central Valley grid -> data/grid/<season>.json.
 
 Runs offline, once per season, so the statewide map costs nothing at demo time. Each cell is one
 season of hourly data (no history), fetched politely in sequence to stay inside Open-Meteo's
-free-tier limits; everything lands in the L1 cache, so re-runs are fast. Needs B's calc functions.
+free-tier limits; everything lands in the L1 cache, so re-runs are fast.
 
     cd backend && python scripts/build_grid.py --season 2025
 """
@@ -72,11 +72,7 @@ def main() -> int:
     parser.add_argument("--season", type=int, default=2025)
     parser.add_argument("--step", type=float, default=0.25)
     args = parser.parse_args()
-    try:
-        doc = build(args.season, args.step)
-    except NotImplementedError:
-        print("B's calc functions aren't implemented yet; can't build the grid.")
-        return 1
+    doc = build(args.season, args.step)
     GRID_DIR.mkdir(parents=True, exist_ok=True)
     path = GRID_DIR / f"{args.season}.json"
     path.write_text(json.dumps(doc, separators=(",", ":")) + "\n")
