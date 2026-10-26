@@ -68,7 +68,11 @@ def test_stations_include_closed_durham():
 
 
 def test_crops_and_validation():
-    assert any(c["id"] == "almond" for c in client.get("/api/crops").json()["crops"])
+    crops = {c["id"]: c for c in client.get("/api/crops").json()["crops"]}
+    assert {"almond", "pistachio", "walnut", "prune"} <= set(crops)
+    # UC IPM: navel orangeworm 55/94 °F (almond, pistachio); codling moth and peach twig borer 50/88 °F.
+    assert (crops["pistachio"]["base_f"], crops["pistachio"]["upper_f"]) == (55, 94)
+    assert (crops["prune"]["base_f"], crops["prune"]["upper_f"]) == (50, 88)
     assert client.get("/api/validation").status_code == 200
 
 

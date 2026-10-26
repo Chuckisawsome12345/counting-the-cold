@@ -1,11 +1,12 @@
 import type { PointResponse } from './api/types'
+import type { CROP_IDS } from './settings'
 
 // "Will my trees bloom on time?": compares an orchard's chill portions with what the crop needs, and turns the
 // result into plain next steps. Needs are in chill portions (Dynamic Model, counted from Sep 1), from the UC chill
 // requirement table compiled by UC Cooperative Extension (Pope; Doll, "Chill Portion Requirements for California
 // Crops") and the UCCE walnut dormancy updates.
 
-export type CropId = 'almond' | 'pistachio' | 'walnut' | 'prune'
+export type CropId = (typeof CROP_IDS)[number]
 
 export interface CropNeed {
   id: CropId

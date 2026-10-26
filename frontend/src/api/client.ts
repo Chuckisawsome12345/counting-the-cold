@@ -1,4 +1,4 @@
-import type { BotPreviewResponse, Crop, Metric, PointResponse, StationsResponse, ValidationResponse } from './types'
+import type { BotPreviewResponse, Metric, PointResponse, StationsResponse, ValidationResponse } from './types'
 import { mockGrid } from './mock/grid'
 import { MOCK_STATIONS } from './mock/stations'
 import { MOCK_VALIDATION } from './mock/validation'
@@ -80,18 +80,6 @@ export function fetchStations(): Promise<StationsResponse> {
 export function fetchValidation(): Promise<ValidationResponse> {
   if (USE_MOCK) return Promise.resolve(MOCK_VALIDATION)
   return getJson(`${API_BASE}/api/validation`)
-}
-
-// Crop presets. Mock mode (and a failed call, see SettingsBar) falls back to the three standard presets.
-export const FALLBACK_CROPS: Crop[] = [
-  { id: 'almond', label: 'Almond', base_f: 55, upper_f: 94 },
-  { id: 'walnut', label: 'Walnut', base_f: 50, upper_f: 88 },
-  { id: 'generic', label: 'Generic', base_f: 50, upper_f: null },
-]
-
-export async function fetchCrops(): Promise<Crop[]> {
-  if (USE_MOCK) return FALLBACK_CROPS
-  return (await getJson<{ crops: Crop[] }>(`${API_BASE}/api/crops`)).crops
 }
 
 // Mirrors GET /api/grid in docs/api-contract.md. Not in types.ts: that file changes only through a contract PR.

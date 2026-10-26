@@ -11,7 +11,7 @@ const STEPS = [
   },
   {
     title: 'Pick your crop',
-    text: 'In "Will my trees bloom on time?", choose almond, pistachio, walnut or prune. We compare your orchard\'s winter chill with what that crop needs.',
+    text: 'In "Will my trees bloom on time?", choose almond, pistachio, walnut or prune. We compare your orchard\'s winter chill with what that crop needs, and set the heat numbers for its main pest.',
   },
   {
     title: 'Follow the steps',

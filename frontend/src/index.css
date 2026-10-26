@@ -2288,6 +2288,12 @@ select {
   font-size: 13px;
 }
 
+.bloom-crop-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
 .bloom-crops {
   flex-wrap: wrap;
 }
@@ -2491,6 +2497,10 @@ select {
 @media (max-width: 600px) {
   .bloom-verdict {
     font-size: 17px;
+  }
+
+  .bloom-crop-field {
+    width: 100%;
   }
 
   .bloom-crops {
