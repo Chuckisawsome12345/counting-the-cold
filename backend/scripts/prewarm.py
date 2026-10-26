@@ -1,7 +1,6 @@
-"""Warm the L1 cache for config.DEMO_PINS and, with --snapshots, write L3 snapshots (role A).
+"""Warm the L1 cache for config.DEMO_PINS and, with --snapshots, write L3 snapshots.
 
-Render runs it in the background at startup (see render.yaml) so the first judge's click is fast.
-Before judging, refresh the committed snapshots from your laptop and commit them:
+Run it after the models or validation change to refresh the committed snapshots, then commit them:
 
     cd backend && python scripts/prewarm.py --snapshots
 """
@@ -30,9 +29,6 @@ def main() -> int:
                 t = time.perf_counter()
                 try:
                     response = build_point(lat, lon, season, "almond", *snapshots.DEFAULT_STARTS, corrected)
-                except NotImplementedError:
-                    print("B's calc functions aren't implemented yet; nothing to warm.")
-                    return 0
                 except OpenMeteoError as e:
                     print(f"{name} {season}: Open-Meteo failed ({e}); skipping")
                     continue

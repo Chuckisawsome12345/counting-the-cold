@@ -142,7 +142,7 @@ def test_season_slice_is_sep_1_to_aug_31(fake_om):
     assert len(s) == 365 * 24
 
 
-# --- full pipeline (build_point.build_point) with synthetic weather and stand-in calc ---
+# --- full pipeline (build_point.build_point) with synthetic weather ---
 
 from app.calc import chill, gdd, seasons  # noqa: E402
 from app.schemas import PointResponse  # noqa: E402
@@ -162,26 +162,6 @@ def synthetic_hourly(lat, lon, season, today, history_seasons=build_point.HISTOR
     return frame
 
 
-def stand_in_calc(monkeypatch):
-    """Simple test-only versions of B's required functions (the real ones live in app.calc)."""
-
-    def window(s, mmdd):
-        month, day = map(int, mmdd.split("-"))
-        return date(s if month >= 9 else s + 1, month, day), date(s + 1, 8, 31)
-
-    monkeypatch.setattr(seasons, "season_label", lambda s: f"{s}-{str(s + 1)[2:]}")
-    monkeypatch.setattr(seasons, "season_window", window)
-    monkeypatch.setattr(chill, "chill_hours", lambda t: ((t >= 32) & (t <= 45)).astype(float).where(t.notna()))
-    monkeypatch.setattr(
-        chill, "utah_units",
-        lambda t: pd.Series(np.select([t <= 34, t <= 36, t <= 48, t <= 54, t <= 60, t <= 65], [0, 0.5, 1, 0.5, 0, -0.5], -1), index=t.index),
-    )
-    monkeypatch.setattr(
-        gdd, "daily_gdd",
-        lambda tmax, tmin, base, upper=None, method="average": (((tmax.clip(upper=upper) if upper else tmax) + tmin) / 2 - base).clip(lower=0),
-    )
-
-
 @pytest.fixture
 def pipeline(monkeypatch, tmp_path):
     from app.sources import cache
@@ -190,26 +170,12 @@ def pipeline(monkeypatch, tmp_path):
     monkeypatch.setattr(build_point, "load_hourly", synthetic_hourly)
     monkeypatch.setattr(build_point, "BIAS_TABLES_PATH", tmp_path / "none.json")
     monkeypatch.setattr(build_point, "VALIDATION_PATH", tmp_path / "none.json")
-    stand_in_calc(monkeypatch)
 
 
 def run(season, today=date(2026, 10, 23), **kw):
     args = dict(lat=39.64, lon=-121.79, season=season, crop="almond", portions_start="09-01",
                 hours_start="11-01", gdd_start="01-01", corrected=True)
     return build_point.build_point(**{**args, **kw}, today=today)
-
-
-def test_stubbed_calc_fails_fast_before_network(monkeypatch):
-    def no_network(*a, **k):
-        raise AssertionError("must not fetch while calc is stubbed")
-
-    def stub(*a, **k):
-        raise NotImplementedError
-
-    monkeypatch.setattr(build_point, "load_hourly", no_network)
-    monkeypatch.setattr(chill, "chill_hours", stub)
-    with pytest.raises(NotImplementedError):
-        run(2025)
 
 
 def test_complete_season_matches_contract(pipeline):
@@ -221,10 +187,10 @@ def test_complete_season_matches_contract(pipeline):
     assert len(body["daily"]) == 365
     t = body["totals"]
     assert t["chill_hours"] > 300 and t["gdd"] > 1000 and t["utah_units"] > 0
-    assert t["chill_portions"] > 0  # Dynamic Model landed (#16)
+    assert t["chill_portions"] > 0
     assert body["nearest_station"]["name"] == "Durham"
     assert body["correction"] == {"applied": False, "stations": [], "expected_error": None}
-    assert body["quality"]["interpolated_hours"] == 0  # fill_gaps still a stub
+    assert body["quality"]["interpolated_hours"] == 0  # the synthetic weather has no gaps
 
 
 def test_metrics_respect_start_dates(pipeline):

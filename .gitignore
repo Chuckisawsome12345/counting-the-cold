@@ -5,18 +5,33 @@
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 .venv/
+venv/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
 backend/.cache/
 
-# Node
+# Node / build output
 node_modules/
-frontend/dist/
+dist/
+build/
 *.tsbuildinfo
 .vercel/
 
+# Logs
+*.log
+npm-debug.log*
+
+# Claude Code local settings
+.claude/settings.local.json
+
 # OS / editors
 .DS_Store
+Thumbs.db
 .idea/
 .vscode/
+*.swp

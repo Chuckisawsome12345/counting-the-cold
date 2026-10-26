@@ -6,20 +6,24 @@ import type { PointResponse } from '../api/types'
 // page can dim it (loading) or offer "show last saved numbers" (error). `reload` re-runs the same request.
 export function usePoint(params: PointParams | null) {
   const [data, setData] = useState<PointResponse | null>(null)
-  const [error, setError] = useState<Error | null>(null)
-  const [loading, setLoading] = useState(params !== null)
+  // The outcome of the most recent request to finish; loading and error are derived from it below.
+  const [settled, setSettled] = useState<{ id: string; error: Error | null } | null>(null)
   const [attempt, setAttempt] = useState(0)
   const key = params ? JSON.stringify(params) : null
+  // Identifies one request, so UI state tied to an error ("show last numbers") resets when a new request starts.
+  const requestId = `${key}#${attempt}`
 
   useEffect(() => {
     if (!key) return
     let cancelled = false
-    setLoading(true)
-    setError(null)
+    const id = `${key}#${attempt}`
     fetchPoint(JSON.parse(key) as PointParams)
-      .then((d) => !cancelled && setData(d))
-      .catch((e: Error) => !cancelled && setError(e))
-      .finally(() => !cancelled && setLoading(false))
+      .then((d) => {
+        if (cancelled) return
+        setData(d)
+        setSettled({ id, error: null })
+      })
+      .catch((e: Error) => !cancelled && setSettled({ id, error: e }))
     return () => {
       cancelled = true
     }
@@ -27,9 +31,11 @@ export function usePoint(params: PointParams | null) {
 
   const reload = useCallback(() => setAttempt((n) => n + 1), [])
 
-  // Identifies one request, so UI state tied to an error ("show last numbers") resets when a new request starts.
+  const current = settled?.id === requestId
+  const loading = key !== null && !current
+  const error = current ? settled.error : null
   // True when `data` is a saved copy served because there is no signal.
   const offline = data !== null && servedOffline.has(data)
 
-  return { data, error, loading, offline, reload, requestId: `${key}#${attempt}` }
+  return { data, error, loading, offline, reload, requestId }
 }

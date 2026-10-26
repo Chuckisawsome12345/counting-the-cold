@@ -1,4 +1,4 @@
-"""Build data/validation.json and data/bias_tables.json from committed CIMIS data (role B).
+"""Build data/validation.json and data/bias_tables.json from committed CIMIS data.
 
 For each station and season: totals from CIMIS (truth), raw gridded, and corrected gridded,
 where station X is corrected only from the other stations' bias tables (leave-one-station-out),

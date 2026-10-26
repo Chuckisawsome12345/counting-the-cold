@@ -12,7 +12,6 @@ This file is the single source of truth for the plan. It replaced the Claude Doc
 - **AI assistants (Claude Code etc.):** read "Rules for AI assistants" below before touching the repo. Your human tells you their role. The root `CLAUDE.md` repeats the essentials.
 - **Changing the plan:** edit this file in a small PR labeled `plan`, and @mention the other two so they see it. Changes to the API contract also need a `contract` PR (see Roles).
 - **Progress:** tracked on the [GitHub milestones](https://github.com/Chuckisawsome12345/counting-the-cold/milestones) and issues, not in this file.
-- **Printable copy:** `docs/BUILD_PLAN.pdf` is a snapshot of this file. Regenerate it after big changes.
 
 ## Context
 

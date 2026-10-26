@@ -1,4 +1,3 @@
-import json
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, Query
@@ -11,10 +10,6 @@ from app.sources import cache, snapshots
 from app.sources.openmeteo import OpenMeteoError
 
 router = APIRouter(prefix="/api", tags=["point"])
-
-# Synthetic responses from scripts/make_mock.py, served while B's calc functions are stubs.
-MOCK_COMPLETE = config.DATA_DIR / "mock_point.json"  # season 2025-26
-MOCK_CURRENT = config.DATA_DIR / "mock_point_current.json"  # season 2026-27, with forecast
 
 
 @router.get("/point", response_model=PointResponse)
@@ -42,15 +37,9 @@ def point(
     args = (round(lat, 4), round(lon, 4), season, crop, portions_start, hours_start, gdd_start, corrected)
     try:
         return cache.remember(f"point:{args}:{today}", lambda: build_point(*args, today=today))
-    except NotImplementedError:
-        return _mock(season)
     except OpenMeteoError as e:
         snap_resp = snapshots.load_snapshot(lat, lon, season, crop, corrected) if default_starts else None
         if snap_resp is not None:
             snap_resp["quality"]["stale"] = True
             return snap_resp
         raise HTTPException(503, f"Weather data is unavailable right now ({e}). Try again in a minute.") from e
-
-
-def _mock(season: int) -> dict:
-    return json.loads((MOCK_CURRENT if season >= 2026 else MOCK_COMPLETE).read_text())
