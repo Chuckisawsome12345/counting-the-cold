@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { fetchStations } from './api/client'
 import type { Metric, Station } from './api/types'
+import BloomOutlook from './components/BloomOutlook'
 import BotPreview from './components/BotPreview'
 import CorrectionInfo from './components/CorrectionInfo'
 import DataQualityBadge from './components/DataQualityBadge'
+import GettingStarted from './components/GettingStarted'
 import Header, { type Tab } from './components/Header'
 import { WarnIcon } from './components/icons'
 import MapPicker from './components/MapPicker'
@@ -18,7 +20,20 @@ import { inCalifornia } from './geo'
 import { usePoint } from './hooks/usePoint'
 import { useTheme } from './hooks/useTheme'
 import { firstAvailable } from './metrics'
-import { DEFAULT_SETTINGS, type Settings } from './settings'
+import { DEFAULT_SETTINGS, SEASONS, type Settings } from './settings'
+
+const GUIDE_KEY = 'ctc-guide-seen'
+
+// The first-visit guide shows once per browser; blocked storage just means it shows again next time.
+function guideSeen(): boolean {
+  try {
+    return localStorage.getItem(GUIDE_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+const seasonLabel = (s: number) => `${s}-${String(s + 1).slice(2)}`
 
 export default function App() {
   const { toggle: toggleTheme } = useTheme()
@@ -28,6 +43,8 @@ export default function App() {
   const [stations, setStations] = useState<Station[]>([])
   const [chosenMetric, setMetric] = useState<Metric | null>(null) // null until a tab is clicked
   const [locateMessage, setLocateMessage] = useState<string | null>(null)
+  const [guideOpen, setGuideOpen] = useState(() => !guideSeen())
+  const [pinPicks, setPinPicks] = useState(0) // counts pins the user chose, so phones can scroll to the answer
   const insideCalifornia = inCalifornia(pin[0], pin[1])
   // No request for pins outside California: the API would answer 422.
   const { data, error, loading, offline, reload, requestId } = usePoint(insideCalifornia ? { lat: pin[0], lon: pin[1], ...settings } : null)
@@ -42,7 +59,17 @@ export default function App() {
   const pick = (lat: number, lon: number) => {
     setLocateMessage(null)
     setPin([lat, lon])
+    setPinPicks((n) => n + 1)
   }
+
+  const closeGuide = useCallback(() => {
+    setGuideOpen(false)
+    try {
+      localStorage.setItem(GUIDE_KEY, '1')
+    } catch {
+      // Not remembered; it shows again next visit.
+    }
+  }, [])
 
   // "Use my location": the phone's position becomes the pin, like a map click would.
   const locate = () => {
@@ -68,7 +95,8 @@ export default function App() {
       <a className="skip-link" href="#main">
         Skip to main content
       </a>
-      <Header tab={tab} onTab={setTab} mock={data?.mock === true} onToggleTheme={toggleTheme} onLocate={locate} />
+      <Header tab={tab} onTab={setTab} mock={data?.mock === true} onToggleTheme={toggleTheme} onLocate={locate} onHelp={() => setGuideOpen(true)} />
+      {guideOpen && <GettingStarted onClose={closeGuide} />}
 
       {tab === 'orchard' && insideCalifornia && offline && data && (
         <div className="top-banner">
@@ -113,6 +141,12 @@ export default function App() {
             {insideCalifornia && loading && !data && <LoadingSkeleton lat={pin[0]} lon={pin[1]} />}
             {insideCalifornia && data && !showErrorCard && (
               <div className={`right-stack${loading ? ' busy' : ''}`} aria-busy={loading}>
+                <BloomOutlook
+                  data={data}
+                  settingsCrop={settings.crop}
+                  live={settings.season === SEASONS[0] ? null : seasonLabel(SEASONS[0])}
+                  revealKey={pinPicks}
+                />
                 <SummaryCards data={data} />
                 <SeasonChart data={data} metric={metric} onMetric={setMetric} />
                 <div className="split">
