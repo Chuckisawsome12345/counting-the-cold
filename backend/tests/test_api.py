@@ -1,4 +1,6 @@
+import json
 import logging
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -13,11 +15,17 @@ from app.sources import cache
 from tests.test_pipeline import synthetic_hourly
 
 client = TestClient(app)
+FIXTURES = Path(__file__).parent / "fixtures"
+
+
+def mock_point(season: int) -> dict:
+    """A synthetic /api/point response (scripts/make_mock.py): 2025-26 complete, or 2026-27 in progress."""
+    return json.loads((FIXTURES / ("mock_point_current.json" if season >= 2026 else "mock_point.json")).read_text())
 
 
 @pytest.fixture(autouse=True)
 def offline(monkeypatch, tmp_path):
-    """No network in CI: once B's calc lands, /api/point runs on synthetic weather."""
+    """No network in CI: /api/point runs on synthetic weather."""
     monkeypatch.setattr(build_point, "load_hourly", synthetic_hourly)
     monkeypatch.setattr(cache, "DB_PATH", tmp_path / "http.sqlite")
     cache.clear_results()
@@ -69,7 +77,7 @@ def test_point_rejects_unknown_crop():
 
 
 def saved_snapshot(season=2025):
-    body = point_route._mock(season)
+    body = mock_point(season)
     snapshots.save_snapshot(DURHAM_PIN["lat"], DURHAM_PIN["lon"], season, body)
     return body
 
@@ -192,7 +200,7 @@ def test_sms_signature_matches_twilio_reference():
 
 
 def test_sms_mentions_last_season_before_chill_starts():
-    p = point_route._mock(2026)
+    p = mock_point(2026)
     p["totals"] = dict.fromkeys(p["totals"], 0.0)
     msg = sms_route.summarize(p, "Durham")
     last = p["history"][-1]
@@ -306,7 +314,7 @@ def test_telegram_preview_works_without_the_bot(monkeypatch):
 
 
 def test_telegram_describe_is_fuller_than_sms():
-    p = point_route._mock(2026)  # as of 2026-10-23: chill hours start Nov 1, GDD Jan 1
+    p = mock_point(2026)  # as of 2026-10-23: chill hours start Nov 1, GDD Jan 1
     msg = tg_route.describe(p, "Durham")
     assert msg.startswith("Durham · 2026-27 season (as of Oct 23)")
     assert "Chill (winter cold)" in msg and "\nHeat\n" in msg
@@ -318,7 +326,7 @@ def test_telegram_describe_is_fuller_than_sms():
 
 
 def test_telegram_describe_compares_finished_season_with_normal():
-    p = point_route._mock(2025)
+    p = mock_point(2025)
     msg = tg_route.describe(p, None)
     assert "(complete)" in msg and "vs the 10-season median" in msg or "about normal" in msg
     p["totals"]["chill_portions"] = 0
@@ -336,14 +344,14 @@ def test_telegram_suggest_command(monkeypatch):
 
 
 def test_suggest_before_chill_starts_points_at_last_winter():
-    p = point_route._mock(2026)  # as of Oct 23, chill hours start Nov 1
+    p = mock_point(2026)  # as of Oct 23, chill hours start Nov 1
     msg = tg_route.suggest(p, "Durham")
     last = p["history"][-1]
     assert f"Chill hours start counting Nov 1. Last winter ({last['season']})" in msg
 
 
 def test_suggest_flags_slow_chill_bloom_frost_and_heat():
-    p = point_route._mock(2026)
+    p = mock_point(2026)
     p["season"]["as_of"] = "2027-02-10"
     p["season"]["hours_start"] = "2026-11-01"
     p["daily"] = p["daily"] * 4  # about 160 days in, so past winters have real chill to compare with
@@ -358,4 +366,4 @@ def test_suggest_flags_slow_chill_bloom_frost_and_heat():
 
 
 def test_place_reply_ends_with_suggest_hint():
-    assert tg_route.describe(point_route._mock(2026), "Durham").rstrip().endswith("What to watch for: /suggest durham")
+    assert tg_route.describe(mock_point(2026), "Durham").rstrip().endswith("What to watch for: /suggest durham")

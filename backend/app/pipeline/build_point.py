@@ -1,17 +1,14 @@
 """Assemble the /api/point response: fetch, normalize, correct, compute, shape.
 
-The math comes from role B's pure functions in app.calc and app.validation. Chill hours, Utah,
-GDD and season windows are required (until they exist build_point raises NotImplementedError and
-the route serves the mock). The rest degrade until B lands them: the Dynamic Model reads 0, gaps
-stay unfilled, the bias correction is skipped (correction.applied = False), and the end-of-season
-range is null.
+The math lives in the pure functions of app.calc and app.validation; this module does the I/O
+and the shaping. The bias correction is skipped (correction.applied = False) where no station
+tables are available.
 """
 import json
 import math
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import date, timedelta
-from typing import Any, Callable
 
 import numpy as np
 import pandas as pd
@@ -32,7 +29,7 @@ FORECAST_DAYS = 16
 # that value; otherwise summer's negative Utah hours wipe the season total to 0.
 CHILL_HOURS_END_MMDD = "03-01"  # exclusive
 METRICS = ("chill_portions", "chill_hours", "utah_units", "gdd")
-# Written by B's scripts/build_validation.py: {"stations": {"<id>": {"table": [12 rows x 24], "seasons": n}}}
+# Written by scripts/build_validation.py: {"stations": {"<id>": {"table": [12 rows x 24], "seasons": n}}}
 BIAS_TABLES_PATH = DATA_DIR / "bias_tables.json"
 VALIDATION_PATH = DATA_DIR / "validation.json"
 STATIONS_PATH = DATA_DIR / "stations.json"
@@ -119,11 +116,9 @@ def build_point(
 ) -> dict:
     """Return a dict matching schemas.PointResponse.
 
-    Raises NotImplementedError (before any network call) while B's required calc functions are
-    stubs, and KeyError for an unknown crop. history_seasons=0 skips history (used by the
-    statewide grid, which only needs one season per cell).
+    Raises KeyError for an unknown crop. history_seasons=0 skips history (used by the statewide
+    grid, which only needs one season per cell).
     """
-    _require_calc()
     today = today or date.today()
     preset = CROPS[crop]
     settings = Settings(crop, preset["base_f"], preset["upper_f"], portions_start, hours_start, gdd_start)
@@ -133,7 +128,7 @@ def build_point(
 
     station_list = _stations(lat, lon)
     correction = {"applied": False, "stations": [], "expected_error": None}
-    # The station correction applies to heat only. B's leave-one-station-out validation
+    # The station correction applies to heat only. The leave-one-station-out validation
     # (validation.json "method") found it halves GDD error but makes the chill models worse,
     # so chill is computed from the uncorrected temperatures.
     heat = temps
@@ -200,29 +195,9 @@ def build_point(
     }
 
 
-def _require_calc() -> None:
-    """Fail fast, before any network call, while B's required functions are stubs."""
-    probe = pd.Series([40.0], index=pd.DatetimeIndex([pd.Timestamp("2025-11-01", tz=PST)]))
-    seasons.season_label(2025)
-    seasons.season_window(2025, "09-01")
-    chill.chill_hours(probe)
-    chill.utah_units(probe)
-    gdd.daily_gdd(pd.Series([60.0]), pd.Series([40.0]), base=50.0)
-
-
-def _optional(fn: Callable[[], Any], fallback: Any) -> Any:
-    try:
-        return fn()
-    except NotImplementedError:
-        return fallback
-
-
-def _fill(raw: pd.Series) -> tuple[pd.Series, pd.Series, Any]:
-    """Gap-fill with B's fill_gaps; until it exists, keep raw values and report no gaps filled."""
-    result = _optional(lambda: gaps.fill_gaps(raw), None)
-    if result is None:
-        return raw, pd.Series(False, index=raw.index), None
-    filled, report = result
+def _fill(raw: pd.Series) -> tuple[pd.Series, pd.Series, gaps.GapReport]:
+    """Interpolate short gaps; also return which hours were filled."""
+    filled, report = gaps.fill_gaps(raw)
     return filled, raw.isna() & filled.notna(), report
 
 
@@ -246,7 +221,7 @@ def _season_daily(work: pd.DataFrame, season: int, settings: Settings) -> pd.Dat
         by_day = cumulative.groupby(cumulative.index.normalize().tz_localize(None)).last()
         return by_day.reindex(daily.index).ffill().fillna(0.0)
 
-    portions = _optional(lambda: chill.dynamic_portions(since(settings.portions_start)), pd.Series(dtype=float))
+    portions = chill.dynamic_portions(since(settings.portions_start))
     hours_end = pd.Timestamp(seasons.season_window(season, CHILL_HOURS_END_MMDD)[0]).tz_localize(PST)
     hours_window = since(settings.hours_start)
     hours_window = hours_window[hours_window.index < hours_end]
@@ -296,17 +271,16 @@ def _climatology(totals: dict, day_of_season: int, history: list[dict]) -> dict 
         curves = [pd.Series([p[m] for p in h["cumulative"]]) for h in history]
         return projection.analog_percentiles(totals[m], day_of_season, curves)
 
-    return _optional(lambda: {m: per_metric(m) for m in METRICS}, None)
+    return {m: per_metric(m) for m in METRICS}
 
 
-def _quality(work: pd.DataFrame, report: Any, season: int, stale: bool) -> dict:
+def _quality(work: pd.DataFrame, report: gaps.GapReport, season: int, stale: bool) -> dict:
     sl = season_slice(work, season)
     start, end = sl.index.min(), sl.index.max()
     long_gaps = []
-    if report is not None:
-        for g in report.long_gaps:
-            if start <= g.start <= end:
-                long_gaps.append({"start": g.start.strftime("%Y-%m-%dT%H:%M"), "end": g.end.strftime("%Y-%m-%dT%H:%M"), "hours": int(g.hours)})
+    for g in report.long_gaps:
+        if start <= g.start <= end:
+            long_gaps.append({"start": g.start.strftime("%Y-%m-%dT%H:%M"), "end": g.end.strftime("%Y-%m-%dT%H:%M"), "hours": int(g.hours)})
     return {
         "missing_hours": int(sl["temp_f"].isna().sum()),
         "interpolated_hours": int(sl["filled"].sum()),
@@ -329,7 +303,7 @@ def _km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 
 def _blend_bias(station_list: list[dict]) -> tuple[pd.DataFrame, list[dict]] | None:
-    """B's blended bias table for the pin, plus the stations used, or None if unavailable."""
+    """The blended bias table for the pin, plus the stations used, or None if unavailable."""
     if not BIAS_TABLES_PATH.exists():
         return None
     tables = json.loads(BIAS_TABLES_PATH.read_text())["stations"]
@@ -345,7 +319,7 @@ def _blend_bias(station_list: list[dict]) -> tuple[pd.DataFrame, list[dict]] | N
         for sid, entry in tables.items()
         if int(sid) in by_id
     ]
-    result = _optional(lambda: bias.blend_tables(candidates), None)
+    result = bias.blend_tables(candidates)
     if result is None:
         return None
     table, weights = result
@@ -359,7 +333,7 @@ def _blend_bias(station_list: list[dict]) -> tuple[pd.DataFrame, list[dict]] | N
 
 
 def _expected_error(corrected: bool) -> dict | None:
-    """Mean absolute error per metric from B's validation.json, if it has all four."""
+    """Mean absolute error per metric from validation.json, if it has all four."""
     if not VALIDATION_PATH.exists():
         return None
     summary = json.loads(VALIDATION_PATH.read_text()).get("summary", {})
