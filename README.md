@@ -30,8 +30,8 @@ Drop a pin on any California orchard and get its chill and heat for the season, 
 | Orchard dashboard | Accuracy map |
 |---|---|
 | ![Orchard dashboard](docs/screenshots/dashboard.png) | ![Accuracy map](docs/screenshots/accuracy.png) |
-| **Season chart** | **Chat and offline mode** |
-| ![Season chart](docs/screenshots/season-chart.png) | ![Chat and offline mode](docs/screenshots/chat-mobile.png) |
+| **This winter vs the last 10** | **Ask about an orchard (phone)** |
+| ![Season chart](docs/screenshots/season-chart.png) | ![Orchard chat on a phone](docs/screenshots/chat-mobile.png) |
 
 ## Tech stack
 
@@ -99,6 +99,6 @@ No backend? `VITE_USE_MOCK=1 npm run dev` runs the frontend on synthetic data. C
 
 ## Author
 
-**Krish Sharda** · [GitHub](https://github.com/Chuckisawsome12345) · [LinkedIn](https://www.linkedin.com/in/your-profile) <!-- update the LinkedIn link -->
+**Krish Sharda** · [GitHub](https://github.com/Chuckisawsome12345) · [LinkedIn](https://www.linkedin.com/in/krishsharda/)
 
 Built in 24 hours with teammates [@karthikmaheshwaran](https://github.com/karthikmaheshwaran) and [@Zooomer69](https://github.com/Zooomer69). Licensed under [MIT](LICENSE).
