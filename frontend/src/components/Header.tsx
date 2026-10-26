@@ -6,6 +6,7 @@ interface Props {
   mock: boolean
   onToggleTheme: () => void
   onLocate: () => void
+  onHelp: () => void
 }
 
 const TABS: { id: Tab; label: string }[] = [
@@ -72,7 +73,17 @@ function LocateIcon() {
   )
 }
 
-export default function Header({ tab, onTab, mock, onToggleTheme, onLocate }: Props) {
+function HelpIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M7.6 7.6a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="10" cy="14.6" r="1" fill="currentColor" />
+    </svg>
+  )
+}
+
+export default function Header({ tab, onTab, mock, onToggleTheme, onLocate, onHelp }: Props) {
   return (
     <>
       <header className="header">
@@ -98,6 +109,9 @@ export default function Header({ tab, onTab, mock, onToggleTheme, onLocate }: Pr
         </nav>
         <div className="header-end">
           {mock && <MockBadge />}
+          <button type="button" className="icon-btn" aria-label="How it works" title="How it works" onClick={onHelp}>
+            <HelpIcon />
+          </button>
           <button type="button" className="icon-btn locate-btn" aria-label="Use my location" onClick={onLocate}>
             <LocateIcon />
           </button>
