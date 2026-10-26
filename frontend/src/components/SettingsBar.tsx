@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react'
-import { FALLBACK_CROPS, fetchCrops } from '../api/client'
-import type { Crop } from '../api/types'
 import { SEASONS, type Settings } from '../settings'
 
 interface Props {
@@ -15,11 +12,6 @@ const OLDER_SEASONS = SEASONS.filter((s) => s < 2025)
 
 function seasonLabel(s: number) {
   return `${s}-${String(s + 1).slice(2)}`
-}
-
-// "Almond (navel orangeworm)" -> "Almond"
-function shortCropLabel(c: Crop) {
-  return c.label.split(/[\s(]/)[0] || c.id
 }
 
 function DateField({ label, value, onChange }: { label: string; value: string; onChange: (mmdd: string) => void }) {
@@ -50,18 +42,10 @@ function DateField({ label, value, onChange }: { label: string; value: string; o
 }
 
 export default function SettingsBar({ settings, onChange }: Props) {
-  const [crops, setCrops] = useState<Crop[]>(FALLBACK_CROPS)
-
-  useEffect(() => {
-    fetchCrops()
-      .then((list) => list.length && setCrops(list))
-      .catch(() => setCrops(FALLBACK_CROPS))
-  }, [])
-
   const olderSelected = settings.season < 2025
 
   return (
-    <div className="card settings" role="group" aria-label="Season, crop and start-date settings">
+    <div className="card settings" role="group" aria-label="Season and start-date settings">
       <div className="field">
         <span className="lbl">Season</span>
         <div className="field-row">
@@ -91,17 +75,6 @@ export default function SettingsBar({ settings, onChange }: Props) {
               </option>
             ))}
           </select>
-        </div>
-      </div>
-
-      <div className="field">
-        <span className="lbl">Crop</span>
-        <div className="seg" role="group" aria-label="Crop">
-          {crops.map((c) => (
-            <button key={c.id} type="button" aria-pressed={settings.crop === c.id} title={c.label} onClick={() => onChange({ crop: c.id })}>
-              {shortCropLabel(c)}
-            </button>
-          ))}
         </div>
       </div>
 

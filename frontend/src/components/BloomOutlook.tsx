@@ -1,33 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import type { PointResponse } from '../api/types'
 import { bloomOutlook, CROP_NEEDS, headline, nextSteps, statusLabel, type CropId } from '../bloomAdvice'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { CheckIcon, WarnIcon } from './icons'
 
-const STORAGE_KEY = 'ctc-crop'
 // Below this width the map sits above the results (index.css), so a new pin's answer is off screen.
 const STACKED_QUERY = '(max-width: 900px)'
 
-function savedCrop(fallback: string): CropId {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (CROP_NEEDS.some((c) => c.id === saved)) return saved as CropId
-  } catch {
-    // Storage blocked (private window): fall through to the settings' crop.
-  }
-  return CROP_NEEDS.some((c) => c.id === fallback) ? (fallback as CropId) : 'almond'
-}
-
 interface Props {
   data: PointResponse
-  settingsCrop: string // the GDD preset, used as the first guess for the crop
+  crop: string // settings.crop: also picks the heat (GDD) preset
+  onCrop: (id: CropId) => void
   live: string | null // label of the season still being counted, or null when that season is shown
   revealKey: number // bumps when the user picks a new pin; on phones the card scrolls into view
 }
 
 // "Will my trees bloom on time?": the orchard's chill against the crop's need, a verdict, and what to do next.
-export default function BloomOutlook({ data, settingsCrop, live, revealKey }: Props) {
-  const [cropId, setCropId] = useState<CropId>(() => savedCrop(settingsCrop))
+export default function BloomOutlook({ data, crop: cropId, onCrop, live, revealKey }: Props) {
   const crop = CROP_NEEDS.find((c) => c.id === cropId) ?? CROP_NEEDS[0]
   const o = bloomOutlook(data, crop)
   const steps = nextSteps(o, data.season.label, live)
@@ -39,15 +28,6 @@ export default function BloomOutlook({ data, settingsCrop, live, revealKey }: Pr
     // Only a new pin should scroll, not a resize.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revealKey])
-
-  const choose = (id: CropId) => {
-    setCropId(id)
-    try {
-      localStorage.setItem(STORAGE_KEY, id)
-    } catch {
-      // Not saved; the choice still applies for this visit.
-    }
-  }
 
   // The bar: 0 to a little past whichever is larger, the need or the orchard's chill.
   const top = Math.max(crop.high * 1.4, o.range ? o.range[1] : o.value) * 1.05
@@ -66,12 +46,15 @@ export default function BloomOutlook({ data, settingsCrop, live, revealKey }: Pr
             {o.mode === 'past' ? `The ${data.season.label} winter` : `This winter (${data.season.label})`} · chill portions
           </p>
         </div>
-        <div className="seg bloom-crops" role="group" aria-label="Your crop">
-          {CROP_NEEDS.map((c) => (
-            <button key={c.id} type="button" aria-pressed={c.id === crop.id} onClick={() => choose(c.id)}>
-              {c.label}
-            </button>
-          ))}
+        <div className="bloom-crop-field">
+          <span className="lbl">Your crop</span>
+          <div className="seg bloom-crops" role="group" aria-label="Your crop">
+            {CROP_NEEDS.map((c) => (
+              <button key={c.id} type="button" aria-pressed={c.id === crop.id} onClick={() => onCrop(c.id)}>
+                {c.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

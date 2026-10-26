@@ -20,7 +20,7 @@ import { inCalifornia } from './geo'
 import { usePoint } from './hooks/usePoint'
 import { useTheme } from './hooks/useTheme'
 import { firstAvailable } from './metrics'
-import { DEFAULT_SETTINGS, SEASONS, type Settings } from './settings'
+import { DEFAULT_SETTINGS, saveCrop, savedCrop, SEASONS, type Settings } from './settings'
 
 const GUIDE_KEY = 'ctc-guide-seen'
 
@@ -39,7 +39,7 @@ export default function App() {
   const { toggle: toggleTheme } = useTheme()
   const [tab, setTab] = useState<Tab>('orchard')
   const [pin, setPin] = useState<[number, number]>([DEMO_PINS[0].lat, DEMO_PINS[0].lon])
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+  const [settings, setSettings] = useState<Settings>(() => ({ ...DEFAULT_SETTINGS, crop: savedCrop() }))
   const [stations, setStations] = useState<Station[]>([])
   const [chosenMetric, setMetric] = useState<Metric | null>(null) // null until a tab is clicked
   const [locateMessage, setLocateMessage] = useState<string | null>(null)
@@ -143,7 +143,11 @@ export default function App() {
               <div className={`right-stack${loading ? ' busy' : ''}`} aria-busy={loading}>
                 <BloomOutlook
                   data={data}
-                  settingsCrop={settings.crop}
+                  crop={settings.crop}
+                  onCrop={(crop) => {
+                    saveCrop(crop)
+                    setSettings((s) => ({ ...s, crop }))
+                  }}
                   live={settings.season === SEASONS[0] ? null : seasonLabel(SEASONS[0])}
                   revealKey={pinPicks}
                 />
