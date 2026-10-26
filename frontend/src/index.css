@@ -1731,14 +1731,6 @@ select {
   }
 }
 
-.placeholder {
-  border: 1px dashed var(--line2);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-  color: var(--ink3);
-  background: var(--panel);
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
