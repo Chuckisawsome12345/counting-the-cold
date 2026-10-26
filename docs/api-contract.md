@@ -115,8 +115,16 @@ Before `build_validation.py` has run: `{"built_at": null, "summary": {}, "statio
 ## GET /api/crops
 
 ```json
-{"crops": [{"id": "almond", "label": "Almond (navel orangeworm)", "base_f": 55, "upper_f": 94}]}
+{"crops": [
+  {"id": "almond",    "label": "Almond (navel orangeworm)",    "base_f": 55, "upper_f": 94},
+  {"id": "pistachio", "label": "Pistachio (navel orangeworm)", "base_f": 55, "upper_f": 94},
+  {"id": "walnut",    "label": "Walnut (codling moth)",        "base_f": 50, "upper_f": 88},
+  {"id": "prune",     "label": "Prune (peach twig borer)",     "base_f": 50, "upper_f": 88},
+  {"id": "generic",   "label": "Generic (base 50°F)",          "base_f": 50, "upper_f": null}
+]}
 ```
+
+Thresholds follow UC IPM degree-day models for each crop's key pest. The website offers the first four (each also has a bloom verdict); `generic` is for API callers.
 
 ## GET /api/v1/models
 

@@ -16,7 +16,7 @@ Growers track both from CIMIS weather stations, but stations are sparse, sit in 
 
 Drop a pin on any California orchard and get its chill and heat for the season, from gridded hourly weather data validated against real stations.
 
-- **"Will my trees bloom on time?":** pick almond, pistachio, walnut or prune and get a verdict (on track, watch closely, at risk) from the orchard's chill against UC's published chill needs, plus crop-specific next steps for a short winter. Added after judge feedback.
+- **"Will my trees bloom on time?":** pick almond, pistachio, walnut or prune and get a verdict (on track, watch closely, at risk) from the orchard's chill against UC's published chill needs, plus crop-specific next steps for a short winter. The same crop choice sets the heat numbers (UC IPM pest models), and a short guide walks first-time visitors through it. Added after judge feedback.
 - **Four standard models:** chill portions (Dynamic Model), chill hours, Utah chill units and growing degree days, the same ones FNRIC uses. Chill hours and Utah units reproduce FNRIC's published daily values exactly (24 station-seasons).
 - **This winter vs the last 10:** a cumulative chart and season totals show early when a winter is running short.
 - **Forecast and outlook:** a 16-day forecast plus a likely end-of-season range based on the last 10 seasons.
@@ -96,7 +96,8 @@ No backend? `VITE_USE_MOCK=1 npm run dev` runs the frontend on synthetic data. C
 - Proactive alerts when an orchard's chill falls behind normal
 - A machine-learning correction for chill, shipped only if it beats the current error
 - Higher-resolution data (PRISM, 800 m) to catch frost pockets and microclimates
-- More crop presets and shareable links to a specific orchard
+- More crops and varieties (cherries, peaches, plums) and shareable links to a specific orchard
+- The bloom verdict in the chat and Telegram replies
 
 ## Author
 
