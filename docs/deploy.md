@@ -5,9 +5,9 @@
 Two Vercel projects deploy from `main`:
 
 - **Backend** (`counting-the-cold`, https://counting-the-cold.vercel.app): root directory `backend`, FastAPI preset. The Python function is `api/index.py`, configured in `backend/vercel.json`. Only `main` builds the backend (`git.deploymentEnabled`), which keeps PRs under the free plan's 100 builds a day.
-  - Env: `ALLOWED_ORIGINS` = the frontend URL. `CIMIS_KEY` is not needed (only the offline CIMIS scripts use it).
+  - Env: `ALLOWED_ORIGINS` is optional: the site's own addresses are always allowed (`SITE_ORIGINS` in `backend/app/config.py`), so it only needs extra origins. `CIMIS_KEY` is not needed (only the offline CIMIS scripts use it).
   - The cache lives in `/tmp` and resets on cold starts; committed snapshots cover the demo pins.
-- **Frontend** (`counting-the-cold-jfm3`, https://counting-the-cold-jfm3.vercel.app): root directory `frontend`, Vite preset.
+- **Frontend** (`counting-the-cold-jfm3`, https://countingthecold.vercel.app): root directory `frontend`, Vite preset.
   - Env: `VITE_API_URL` = the backend URL, no trailing slash.
 
 Open `/api/health` on the backend a minute before a demo so the first request isn't a cold start.

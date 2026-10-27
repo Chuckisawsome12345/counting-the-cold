@@ -23,13 +23,15 @@ SMS_WEBHOOK_URL = os.getenv("SMS_WEBHOOK_URL", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_WEBHOOK_URL = os.getenv("TELEGRAM_WEBHOOK_URL", "")
 # Where bot replies send people for charts.
-FRONTEND_URL = os.getenv("FRONTEND_URL", "https://counting-the-cold-jfm3.vercel.app")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://countingthecold.vercel.app")
 DEMO_MODE = os.getenv("DEMO_MODE", "0") == "1"
-ALLOWED_ORIGINS = [
-    o.strip()
-    for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
-    if o.strip()
-]
+# The site's own production addresses are always allowed, so renaming its domain can't silently
+# block every API call; ALLOWED_ORIGINS adds to them (local dev, previews).
+SITE_ORIGINS = ["https://countingthecold.vercel.app", "https://counting-the-cold-jfm3.vercel.app"]
+ALLOWED_ORIGINS = list(dict.fromkeys([
+    *(o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if o.strip()),
+    *SITE_ORIGINS,
+]))
 
 # Fixed UTC-8 with no daylight saving, to match CIMIS. Note the inverted sign in the Etc/ zone name.
 PST = "Etc/GMT+8"

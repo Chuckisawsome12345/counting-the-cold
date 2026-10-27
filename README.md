@@ -4,7 +4,7 @@
 
 🏆 **2nd Overall, 1st in Track, Reboot Earth California @ UC Davis 2026** (UC Davis FNRIC "Counting the Cold" challenge)
 
-**Live demo:** [counting-the-cold-jfm3.vercel.app](https://counting-the-cold-jfm3.vercel.app) · **API docs:** [counting-the-cold.vercel.app/docs](https://counting-the-cold.vercel.app/docs) · **Pitch Deck:** https://canva.link/j4odddhhjhoplp1<!-- add the video link here -->
+**Live demo:** [countingthecold.vercel.app](https://countingthecold.vercel.app) · **API docs:** [counting-the-cold.vercel.app/docs](https://counting-the-cold.vercel.app/docs) · **Pitch Deck:** https://canva.link/j4odddhhjhoplp1<!-- add the video link here -->
 
 ## The problem
 
