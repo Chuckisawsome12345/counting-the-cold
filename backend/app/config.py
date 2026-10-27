@@ -23,7 +23,7 @@ SMS_WEBHOOK_URL = os.getenv("SMS_WEBHOOK_URL", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_WEBHOOK_URL = os.getenv("TELEGRAM_WEBHOOK_URL", "")
 # Where bot replies send people for charts.
-FRONTEND_URL = os.getenv("FRONTEND_URL", "https://counting-the-cold-jfm3.vercel.app")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://counting-the-cold.vercel.app")
 DEMO_MODE = os.getenv("DEMO_MODE", "0") == "1"
 ALLOWED_ORIGINS = [
     o.strip()

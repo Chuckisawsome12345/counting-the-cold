@@ -325,7 +325,7 @@ def test_telegram_describe_is_fuller_than_sms():
     assert "• Chill hours: not counting yet (starts Nov 1)" in msg
     assert "• Growing degree days: not counting yet (starts Jan 1; almond, base 55°F)" in msg
     assert "Nearest CIMIS station: Durham #12 (closed)" in msg
-    assert "\nCharts and details: https://counting-the-cold-jfm3.vercel.app\n" in msg
+    assert "\nCharts and details: https://counting-the-cold.vercel.app\n" in msg
     assert len(msg) < 4096  # Telegram's message limit
 
 
