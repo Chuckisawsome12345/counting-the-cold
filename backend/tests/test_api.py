@@ -60,6 +60,13 @@ def test_point_rejects_outside_california():
     assert client.get("/api/point", params={"lat": 47.6, "lon": -122.3}).status_code == 422
 
 
+def test_cors_allows_the_site_wherever_it_lives():
+    for origin in ("https://countingthecold.vercel.app", "https://counting-the-cold-jfm3.vercel.app"):
+        r = client.get("/api/health", headers={"Origin": origin})
+        assert r.headers.get("access-control-allow-origin") == origin
+    assert "access-control-allow-origin" not in client.get("/api/health", headers={"Origin": "https://evil.example"}).headers
+
+
 def test_stations_include_closed_durham():
     stations = {s["id"]: s for s in client.get("/api/stations").json()["stations"]}
     assert len(stations) == 9
@@ -325,7 +332,7 @@ def test_telegram_describe_is_fuller_than_sms():
     assert "• Chill hours: not counting yet (starts Nov 1)" in msg
     assert "• Growing degree days: not counting yet (starts Jan 1; almond, base 55°F)" in msg
     assert "Nearest CIMIS station: Durham #12 (closed)" in msg
-    assert "\nCharts and details: https://counting-the-cold-jfm3.vercel.app\n" in msg
+    assert "\nCharts and details: https://countingthecold.vercel.app\n" in msg
     assert len(msg) < 4096  # Telegram's message limit
 
 
