@@ -6,10 +6,10 @@ Three people have 24 hours at Reboot Earth (UC Davis, Oct 23–24 2026) to ship 
 
 ## How to use this plan
 
-This file is the single source of truth for the plan. It replaced the Claude Doc we started in, because everyone's Claude can read and edit a repo file.
+This file is the single source of truth for the plan. It replaced the shared doc we started in, because everyone can read and edit a repo file.
 
 - **Teammates:** read Onboarding and Roles first, pick a role (A, B, or C), then take the [GitHub issues](https://github.com/Chuckisawsome12345/counting-the-cold/issues) labeled for your role.
-- **AI assistants (Claude Code etc.):** read "Rules for AI assistants" below before touching the repo. Your human tells you their role. The root `CLAUDE.md` repeats the essentials.
+- **AI assistants:** read "Rules for AI assistants" below before touching the repo. Your human tells you their role.
 - **Changing the plan:** edit this file in a small PR labeled `plan`, and @mention the other two so they see it. Changes to the API contract also need a `contract` PR (see Roles).
 - **Progress:** tracked on the [GitHub milestones](https://github.com/Chuckisawsome12345/counting-the-cold/milestones) and issues, not in this file.
 
@@ -113,9 +113,8 @@ The letter in parentheses is the role that owns each path.
 
 ```
 counting-the-cold/
-├── README.md  CLAUDE.md          # setup + run; rules for AI assistants (A)
+├── README.md                     # setup + run (A)
 ├── .gitignore  .env.example      # CIMIS_KEY=, DEMO_MODE=0, ALLOWED_ORIGINS= (A)
-├── .claude/launch.json           # dev servers for the Claude desktop app (A)
 ├── render.yaml                   # Render Blueprint, kept as a backup deploy (A)
 ├── .github/
 │   ├── workflows/ci.yml          # backend-tests + frontend-build, always run
@@ -362,7 +361,7 @@ The story is the closed Durham station: a grower loses their station, and we sti
 
 ## Rules for AI assistants
 
-Any Claude Code (or other assistant) working in this repo follows these rules. Your human tells you their role: A, B, or C. The root `CLAUDE.md` loads these automatically in Claude Code.
+Any AI assistant working in this repo follows these rules. Your human tells you their role: A, B, or C.
 
 1. **Read first:** this file, `docs/CONTRIBUTING.md`, and `docs/api-contract.md`.
 2. **Only create or edit files your role owns** (see Roles and `docs/CONTRIBUTING.md`). If a task needs a change elsewhere, stop and tell your human who owns it.
@@ -379,7 +378,7 @@ Any Claude Code (or other assistant) working in this repo follows these rules. Y
 
 The one-time setup is complete:
 
-- Scaffold on `main`: FastAPI skeleton serving the mock, Vite frontend with react-leaflet and Recharts, stub modules with the signatures above, stub tests, `stations.json`, `.env.example`, `CLAUDE.md`.
+- Scaffold on `main`: FastAPI skeleton serving the mock, Vite frontend with react-leaflet and Recharts, stub modules with the signatures above, stub tests, `stations.json`, `.env.example`.
 - Public repo with squash-only merges, branch auto-delete, and the `main` ruleset described in Roles. CI passes on `main`.
 - Labels `role:data-api`, `role:science`, `role:frontend`, `stretch`, `contract`, `plan`, `bug`; milestones M0–M6; 32 unassigned issues.
 

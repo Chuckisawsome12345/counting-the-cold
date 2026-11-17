@@ -61,7 +61,7 @@ Need something in a folder you don't own? Comment on the owner's issue or ping t
 
 ## Plan changes
 
-`docs/BUILD_PLAN.md` is the team plan and the source of truth (it replaced the Claude Doc). To change it:
+`docs/BUILD_PLAN.md` is the team plan and the source of truth (it replaced the shared doc we started in). To change it:
 
 1. Open a small PR labeled `plan` that edits only that file, and @mention the other two.
 2. Stick to your own role's sections unless the team agreed; say what changed in the PR description.
